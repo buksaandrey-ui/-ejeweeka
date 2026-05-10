@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - Замена меню (Black/Gold)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header { padding: 16px 20px 8px; display: flex; flex-direction: column; gap: 4px; background: #FFF; z-index: 10; border-bottom: 1px solid var(--color-divider); }
+    .header-top { display: flex; align-items: center; gap: 16px; }
+    .header-title { font-size: 20px; font-weight: 700; color: var(--color-text-primary); }
+    /* Day Tabs */
+    .day-tabs { display: flex; gap: 12px; margin-top: 16px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+    .day-tabs::-webkit-scrollbar { display: none; }
+    .day-tab { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--color-divider); background: var(--color-bg-main); font-size: 14px; font-weight: 600; color: var(--color-text-secondary); white-space: nowrap; cursor: pointer; }
+    .day-tab.active { background: var(--color-primary); color: #FFF; border-color: var(--color-primary); }
+    .meal-section { padding: 20px 16px 0; display: flex; flex-direction: column; gap: 12px; }
+    .meal-header { display: flex; justify-content: space-between; align-items: center; }
+    .meal-title { font-size: 18px; font-weight: 700; color: var(--color-text-primary); }
+    .tariff-badge { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+    .tariff-badge.black { background: var(--color-black); color: #FFF; }
+    .tariff-badge.gold { background: linear-gradient(135deg, #FFD700, #C8A96E); color: #FFF; }
+    /* Carousel for meal options */
+    .meal-options { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; padding-right: 16px; margin-right: -16px; padding-left: 4px; }
+    .meal-options::-webkit-scrollbar { display: none; }
+    .option-card { min-width: 260px; max-width: 260px; background: var(--color-surface); border-radius: 20px; border: 2px solid var(--color-divider); padding: 12px; display: flex; flex-direction: column; gap: 12px; transition: border-color 0.2s; position: relative; }
+    .option-card.selected { border-color: var(--color-primary); box-shadow: 0 4px 12px rgba(245,146,43,0.15); }
+    .option-card.selected::after { content: '✓ Выбрано'; position: absolute; top: 12px; right: 12px; background: var(--color-primary); color: #FFF; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 8px; z-index: 2; }
+    .img-wrapper { width: 100%; height: 140px; border-radius: 12px; overflow: hidden; position: relative; }
+    .meal-img { width: 100%; height: 100%; object-fit: cover; }
+    .meal-info { display: flex; flex-direction: column; gap: 4px; }
+    .meal-name { font-size: 15px; font-weight: 700; color: var(--color-text-primary); line-height: 1.3; }
+    .meal-stats { display: flex; gap: 12px; font-size: 12px; color: var(--color-text-secondary); font-weight: 600; }
+    .btn-select { width: 100%; padding: 12px; border-radius: 12px; background: #F3F4F6; color: var(--color-text-primary); font-size: 13px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; }
+    .option-card.selected .btn-select { background: #FFF7ED; color: var(--color-primary); cursor: default; }
+    /* Bottom Action */
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div style="display: flex; gap: 6px; font-size: 16px;">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-top">
+        <button class="btn-back" onclick="history.back()"><i class="ph ph-x"></i></button>
+        <h1 class="header-title">Выбор меню</h1>
+      </div>
+      <div class="day-tabs" id="dayTabs">
+        <!-- Dynamic: filled by JS below -->
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      
+      <!-- Breakfast -->
+      <section class="meal-section">
+        <div class="meal-header">
+          <h2 class="meal-title">🍳 Завтрак</h2>
+          <div class="tariff-badge gold">
+            <i class="ph ph-crown"></i> 3 варианта
+          </div>
+        </div>
+        <div class="meal-options">
+          
+          <div class="option-card selected">
+            <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1525351484163-7529414344d8?w=300&h=200&fit=crop" class="meal-img"></div>
+            <div class="meal-info">
+              <div class="meal-name">Овсянка с ягодами и миндалём</div>
+              <div class="meal-stats"><span>310 ккал</span><span>•</span><span>10 мин</span></div>
+            </div>
+            <button class="btn-select">Выбрано</button>
+          </div>
+
+          <div class="option-card">
+            <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1510442650500-9321f8d59128?w=300&h=200&fit=crop" class="meal-img"></div>
+            <div class="meal-info">
+              <div class="meal-name">Тост с авокадо и лососем</div>
+              <div class="meal-stats"><span>340 ккал</span><span>•</span><span>5 мин</span></div>
+            </div>
+            <button class="btn-select">Выбрать</button>
+          </div>
+
+          <div class="option-card">
+            <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=200&fit=crop" class="meal-img"></div>
+            <div class="meal-info">
+              <div class="meal-name">Сырники с греческим йогуртом</div>
+              <div class="meal-stats"><span>290 ккал</span><span>•</span><span>15 мин</span></div>
+            </div>
+            <button class="btn-select">Выбрать</button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Lunch -->
+      <section class="meal-section">
+        <div class="meal-header">
+          <h2 class="meal-title">🍲 Обед</h2>
+          <div class="tariff-badge black">
+            <i class="ph ph-diamond"></i> 2 варианта
+          </div>
+        </div>
+        <div class="meal-options">
+          
+          <div class="option-card selected">
+            <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&h=200&fit=crop" class="meal-img"></div>
+            <div class="meal-info">
+              <div class="meal-name">Куриная грудка с киноа</div>
+              <div class="meal-stats"><span>450 ккал</span><span>•</span><span>25 мин</span></div>
+            </div>
+            <button class="btn-select">Выбрано</button>
+          </div>
+
+          <div class="option-card">
+            <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=300&h=200&fit=crop" class="meal-img"></div>
+            <div class="meal-info">
+              <div class="meal-name">Салат Нисуаз с тунцом</div>
+              <div class="meal-stats"><span>420 ккал</span><span>•</span><span>15 мин</span></div>
+            </div>
+            <button class="btn-select">Выбрать</button>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Bottom Action -->
+    <div class="bottom-cta">
+      <button class="btn-primary" onclick="location.href='s1-shopping-list.html'">Применить и обновить список</button>
+    </div>
+
+  </div>
+  
+  <script src="status-wall.js"></script>
+  <script>
+    requireAccessRedirect('black', 'Функция "Съел другое"');
+
+    // S.2: Dynamic day tabs
+    const sub = localStorage.getItem('aidiet_subscription') || 'base';
+    const dayCount = sub === 'gold' ? 7 : 3;
+    const dayTabs = document.getElementById('dayTabs');
+    const months = ['Янв','Фев','Мар','Апр','Мая','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+    const dayNames = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+    const now = new Date();
+    for (let i = 0; i < dayCount; i++) {
+        const d = new Date(now);
+        d.setDate(now.getDate() + i);
+        const tab = document.createElement('div');
+        tab.className = 'day-tab' + (i === 0 ? ' active' : '');
+        tab.innerText = `${dayNames[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+        if (dayTabs) dayTabs.appendChild(tab);
+    }
+
+    // JS for interaction demo
+    document.querySelectorAll('.meal-options').forEach(carousel => {
+      carousel.addEventListener('click', e => {
+        const btn = e.target.closest('.btn-select');
+        if (!btn) return;
+        
+        const card = btn.closest('.option-card');
+        const container = card.closest('.meal-options');
+        
+        container.querySelectorAll('.option-card').forEach(c => {
+          c.classList.remove('selected');
+          c.querySelector('.btn-select').innerText = 'Выбрать';
+        });
+        
+        card.classList.add('selected');
+        btn.innerText = 'Выбрано';
+      });
+    });
+  </script>
+</body>
+</html>

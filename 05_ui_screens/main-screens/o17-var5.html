@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>O-17 Variant 5</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .accordion { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+    .acc-item { background: var(--color-surface); border: 1.5px solid var(--color-divider); border-radius: 16px; overflow: hidden; transition: all 0.3s; }
+    .acc-header { padding: 18px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 16px; color: var(--color-text-primary); }
+    .acc-header i { color: var(--color-text-secondary); transition: transform 0.3s; }
+    .acc-body { padding: 0 16px; max-height: 0; overflow: hidden; transition: max-height 0.3s, padding 0.3s; background: #FAFAFA; }
+    .acc-list { display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--color-text-secondary); line-height: 1.4; padding-bottom: 16px; }
+    .acc-list div { display: flex; gap: 8px; align-items: flex-start; }
+    .acc-list i { color: var(--color-primary); font-size: 16px; margin-top: 1px; }
+    
+    .acc-item.active { border-color: var(--color-primary); box-shadow: 0 4px 15px rgba(245,146,43,0.1); }
+    .acc-item.active .acc-header { color: var(--color-primary); }
+    .acc-item.active .acc-header i { transform: rotate(180deg); color: var(--color-primary); }
+    .acc-item.active .acc-body { max-height: 300px; padding-top: 12px; }
+    
+    .gift-banner { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 16px; margin-top: 30px; }
+    .gift-icon { width: 48px; height: 48px; background: #FFF; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--color-primary); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .gift-text { flex: 1; }
+    .gift-title { font-size: 15px; font-weight: 800; color: var(--color-primary); margin-bottom: 4px; }
+    .gift-sub { font-size: 12px; color: #D97706; line-height: 1.3; }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><div><i class="ph ph-wifi-high"></i> <i class="ph ph-battery-full"></i></div></div>
+    <div class="content">
+      
+      <h1 style="font-size: 28px; font-weight: 800; margin-bottom: 8px;">Система уровней</h1>
+      <p style="color: var(--color-text-secondary); font-size: 14px;">Подробное описание возможностей каждого уровня в умном наставнике.</p>
+
+      <div class="accordion">
+        <div class="acc-item" onclick="toggleAcc(this)">
+          <div class="acc-header">Статус Base <i class="ph ph-caret-down"></i></div>
+          <div class="acc-body">
+            <div class="acc-list">
+              <div><i class="ph ph-check"></i> Базовый дневник питания</div>
+              <div><i class="ph ph-check"></i> Трекер веса и воды</div>
+              <div><i class="ph ph-check"></i> База знаний по нутрициологии</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item" onclick="toggleAcc(this)">
+          <div class="acc-header">Статус Black <i class="ph ph-caret-down"></i></div>
+          <div class="acc-body">
+            <div class="acc-list">
+              <div><i class="ph ph-check"></i> Всё из Статуса Base</div>
+              <div><i class="ph ph-check"></i> Индивидуальный расчет КБЖУ</div>
+              <div><i class="ph ph-check"></i> Еженедельные смарт-планы питания</div>
+              <div><i class="ph ph-check"></i> Подробные рецепты и список покупок</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item active" onclick="toggleAcc(this)">
+          <div class="acc-header">Статус Gold <i class="ph ph-caret-down"></i></div>
+          <div class="acc-body">
+            <div class="acc-list">
+              <div><i class="ph ph-check"></i> Всё из Статуса Black</div>
+              <div><i class="ph ph-camera"></i> Умный сканер еды по фото</div>
+              <div><i class="ph ph-barbell"></i> Персональные домашние тренировки</div>
+              <div><i class="ph ph-pill"></i> Протоколы витаминов и БАДов</div>
+              <div><i class="ph ph-heartbeat"></i> Интеграция с Apple Health</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item" onclick="toggleAcc(this)">
+          <div class="acc-header">Статус Gold Family <i class="ph ph-caret-down"></i></div>
+          <div class="acc-body">
+            <div class="acc-list">
+              <div><i class="ph ph-check"></i> Функционал Gold для 4 человек</div>
+              <div><i class="ph ph-arrows-merge"></i> Синхронизация общих списков покупок</div>
+              <div><i class="ph ph-users"></i> Семейные порции в рецептах</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gift-banner">
+        <div class="gift-icon"><i class="ph ph-gift"></i></div>
+        <div class="gift-text">
+          <div class="gift-title">3 дня Статус Gold в подарок</div>
+          <div class="gift-sub">Тебе активирован полный доступ. Начинаем!</div>
+        </div>
+      </div>
+
+      <div style="flex: 1;"></div>
+      <button class="btn-primary" style="margin-top: 24px;">Перейти к моему плану</button>
+    </div>
+  </div>
+  <script>
+    function toggleAcc(el) {
+      document.querySelectorAll('.acc-item').forEach(i => {
+        if(i !== el) i.classList.remove('active');
+      });
+      el.classList.toggle('active');
+    }
+  </script>
+
+<script>
+// Универсальный фильтр фичей статуса
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const raw = localStorage.getItem('aidiet_profile');
+        if (!raw) return;
+        const p = JSON.parse(raw);
+        
+        const _meds = p['takes_medications'] || p['takes_medication']; const noMeds = (!_meds || _meds === 'Нет' || _meds === 'false');
+        const _supps = p['currently_takes_supplements'] || p['takes_supplements']; const noSupps = (!_supps || _supps === 'Нет' || _supps === 'false');
+        const actFreq = p['activity_frequency'];
+        const noTrain = (!actFreq || actFreq === 'Не готов(а) сейчас' || actFreq === 'Не готов сейчас');
+
+        const walkDOM = (node, func) => {
+            func(node);
+            node = node.firstChild;
+            while (node) {
+                walkDOM(node, func);
+                node = node.nextSibling;
+            }
+        };
+
+        walkDOM(document.body, (node) => {
+            if (node.nodeType === 3) { // Text node
+                const text = node.nodeValue.toLowerCase();
+                
+                // Лекарства -> заменяем
+                if (noMeds && text.includes('лекарств') && text.includes('совместимость')) {
+                    node.nodeValue = 'Интеграция с Health Connect и трекерами активности';
+                }
+                
+                // Витамины -> скрываем родителя
+                if (noSupps && (text.includes('витаминов') || text.includes('бадов')) && !node.parentElement.closest('#dynamicPlanBullet')) {
+                    // Ищем ближайший контейнер-строку (обычно div)
+                    const row = node.parentElement.closest('div');
+                    if (row && row.children.length > 0 && row.innerText.length < 100) {
+                        row.style.display = 'none';
+                    }
+                }
+                
+                // Тренировки -> скрываем родителя
+                if (noTrain && text.includes('тренировк') && !node.parentElement.closest('#dynamicPlanBullet')) {
+                    const row = node.parentElement.closest('div');
+                    if (row && row.children.length > 0 && row.innerText.length < 100) {
+                        row.style.display = 'none';
+                    }
+                }
+            }
+        });
+    } catch(e) {
+        console.warn('Error in status feature filter', e);
+    }
+});
+</script>
+</body>
+</html>

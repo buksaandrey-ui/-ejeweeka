@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 3: Landing Variant 3 (Organic & Fresh)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #FAFAFA; color: #0F172A; }
+        :root {
+            --primary: #9333EA;
+            --accent: #166534;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-[var(--accent)] selection:text-white overflow-x-hidden">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2 font-black tracking-tight text-2xl text-[#0F172A]">
+                <i class="ph-bold ph-plant text-[var(--accent)] text-3xl"></i> Ежевика
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-bold text-gray-500">
+                <a href="#" class="hover:text-[#0F172A] transition">Как это работает</a>
+                <a href="#" class="hover:text-[#0F172A] transition">Микробиом</a>
+                <a href="#" class="hover:text-[#0F172A] transition">Рецепты</a>
+            </div>
+            <button class="px-6 py-2.5 bg-[var(--accent)] text-white rounded-[20px] font-bold shadow-lg shadow-[var(--accent)]/20 hover:-translate-y-0.5 transition-transform">Войти</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-40 pb-32 px-6 flex flex-col items-center text-center overflow-hidden">
+        <!-- Organic Blobs -->
+        <div class="absolute top-20 right-[-10%] w-[600px] h-[600px] bg-[var(--accent)] rounded-full blur-[120px] opacity-[0.07] pointer-events-none"></div>
+        <div class="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-[var(--primary)] rounded-full blur-[120px] opacity-[0.05] pointer-events-none"></div>
+        
+        <div class="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white shadow-sm border border-gray-100 mb-8 text-xs font-black uppercase tracking-widest text-[var(--accent)]">
+            <i class="ph-bold ph-leaf"></i> 100% фокус на здоровье
+        </div>
+        
+        <h1 class="text-5xl md:text-7xl lg:text-[90px] font-black mb-8 leading-[1.05] tracking-tight max-w-5xl text-[#0F172A]">
+            Свежий взгляд на <br>
+            <span style="color: var(--primary);">твоё питание</span>
+        </h1>
+        
+        <p class="text-xl md:text-2xl text-gray-500 mb-12 max-w-3xl leading-relaxed font-medium">
+            Сбалансированный план, в котором есть место любимой еде и заботе о микробиоме. 60+ параметров для идеального самочувствия.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-4">
+            <button class="px-10 py-5 bg-[var(--accent)] text-white rounded-[24px] font-bold text-xl shadow-[0_10px_30px_rgba(22,101,52,0.2)] hover:-translate-y-1 transition-transform">
+                Начать здоровый путь
+            </button>
+        </div>
+        
+        <!-- Trust indicators -->
+        <div class="mt-20 flex items-center gap-8 opacity-60">
+            <div class="flex items-center gap-2 font-bold text-sm"><i class="ph-bold ph-check-circle text-xl text-[var(--accent)]"></i> Без диет</div>
+            <div class="flex items-center gap-2 font-bold text-sm"><i class="ph-bold ph-check-circle text-xl text-[var(--accent)]"></i> Вкусно</div>
+            <div class="flex items-center gap-2 font-bold text-sm"><i class="ph-bold ph-check-circle text-xl text-[var(--accent)]"></i> Научный подход</div>
+        </div>
+    </section>
+
+    <!-- Features Bento Grid -->
+    <section class="py-24 px-6 bg-gray-50/50 border-t border-gray-100">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-5xl font-black text-center mb-16 tracking-tight text-[#0F172A]">Природный интеллект</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Large Card 1 -->
+                <div class="md:col-span-2 lg:col-span-2 bg-white rounded-[40px] p-10 border border-gray-100 shadow-[0_10px_40px_rgba(0,0,0,0.02)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.06)] transition-shadow">
+                    <div class="w-16 h-16 rounded-[20px] bg-purple-50 text-[var(--primary)] flex items-center justify-center mb-8">
+                        <i class="ph-bold ph-camera text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-black mb-4 text-[#0F172A]">AI-фото сканер</h3>
+                    <p class="text-gray-500 text-lg leading-relaxed">Больше не нужно вбивать еду вручную. Сфотографируй тарелку, и умная система мгновенно разложит блюдо на БЖУ и витамины.</p>
+                </div>
+                
+                <!-- Large Card 2 -->
+                <div class="md:col-span-2 lg:col-span-2 bg-white rounded-[40px] p-10 border border-gray-100 shadow-[0_10px_40px_rgba(0,0,0,0.02)] hover:shadow-[0_15px_50px_rgba(0,0,0,0.06)] transition-shadow">
+                    <div class="w-16 h-16 rounded-[20px] bg-green-50 text-[var(--accent)] flex items-center justify-center mb-8">
+                        <i class="ph-bold ph-sliders text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-black mb-4 text-[#0F172A]">Умная подстройка</h3>
+                    <p class="text-gray-500 text-lg leading-relaxed">План учитывает вашу активность, качество сна, аллергии и даже любимые продукты, чтобы создать идеальный рацион на каждый день.</p>
+                </div>
+
+                <!-- Small Cards -->
+                <div class="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm hover:-translate-y-1 transition-transform">
+                    <i class="ph-bold ph-pill text-4xl text-[var(--primary)] mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-[#0F172A]">Витамины</h3>
+                    <p class="text-gray-500 text-sm">Напоминания о приеме с учетом совместимости с едой.</p>
+                </div>
+                <div class="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm hover:-translate-y-1 transition-transform">
+                    <i class="ph-bold ph-map-pin text-4xl text-[var(--accent)] mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-[#0F172A]">Локация</h3>
+                    <p class="text-gray-500 text-sm">Сезонные продукты в вашем регионе.</p>
+                </div>
+                <div class="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm hover:-translate-y-1 transition-transform">
+                    <i class="ph-bold ph-arrows-clockwise text-4xl text-[var(--primary)] mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-[#0F172A]">Свобода</h3>
+                    <p class="text-gray-500 text-sm">Съели лишнего? План мягко скомпенсирует это.</p>
+                </div>
+                <div class="bg-white rounded-[32px] p-8 border border-gray-100 shadow-sm hover:-translate-y-1 transition-transform">
+                    <i class="ph-bold ph-shopping-cart text-4xl text-[var(--accent)] mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2 text-[#0F172A]">Список</h3>
+                    <p class="text-gray-500 text-sm">Удобный список покупок на неделю.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <section class="py-32 px-6 text-center bg-white">
+        <h2 class="text-4xl md:text-5xl font-black mb-8 text-[#0F172A]">Начни заботу о себе сегодня</h2>
+        <button class="px-12 py-6 bg-[var(--primary)] text-white rounded-[24px] font-black text-xl hover:-translate-y-1 shadow-xl shadow-[var(--primary)]/20 transition-transform">
+            Попробовать бесплатно
+        </button>
+    </section>
+</body>
+</html>

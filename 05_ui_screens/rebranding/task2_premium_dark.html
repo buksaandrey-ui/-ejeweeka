@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 2: Premium Dark Exclusive Screens</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #1A1A24; color: white; }
+        .phone-mockup { 
+            width: 390px; height: 844px; border-radius: 40px; 
+            border: 14px solid #000000; background-color: #0F0A1A;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            position: relative; overflow-y: auto; scroll-behavior: smooth;
+            flex-shrink: 0; scroll-snap-align: center;
+        }
+        .phone-mockup::-webkit-scrollbar { display: none; }
+        .notch {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 150px; height: 28px; background-color: #000000;
+            border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; z-index: 50;
+        }
+        :root {
+            --primary: #4C1D95;
+            --secondary: #F3E8FF;
+            --gold: #F5922B;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        @keyframes fill-water {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(40%); }
+        }
+        .wave {
+            background: linear-gradient(180deg, rgba(59,130,246,0.4) 0%, rgba(37,99,235,0.8) 100%);
+            animation: fill-water 3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="pb-20">
+    <div class="max-w-7xl mx-auto pt-16 px-8 mb-12">
+        <h1 class="text-4xl font-extrabold text-white mb-4">Задача 2: Premium Dark (Эксклюзивы)</h1>
+        <p class="text-xl text-gray-400">Голодание, Вода, Синхронизация, Успешная оплата</p>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-8">
+        <div class="flex gap-10 overflow-x-auto pb-12 pt-4 px-4 -mx-4" style="scroll-snap-type: x mandatory;">
+            
+            <!-- Screen 4: Fasting Timer -->
+            <div class="phone-mockup relative overflow-hidden">
+                <div class="notch"></div>
+                <div class="absolute inset-0 bg-[#0F0A1A]"></div>
+                <!-- Glowing Orb Background -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-[var(--primary)] blur-[100px] opacity-30" style="animation: pulse-glow 4s ease-in-out infinite;"></div>
+                
+                <div class="pt-16 px-6 pb-6 relative z-10 flex flex-col h-full">
+                    <div class="flex justify-between items-center mb-12">
+                        <h2 class="text-2xl font-black text-white tracking-wide">Голодание</h2>
+                        <button class="w-10 h-10 rounded-full bg-white/5 backdrop-blur border border-white/10 flex items-center justify-center text-white"><i class="ph-bold ph-gear"></i></button>
+                    </div>
+
+                    <div class="flex-1 flex flex-col items-center justify-center">
+                        <div class="relative w-64 h-64 flex items-center justify-center mb-8">
+                            <svg class="w-full h-full transform -rotate-90 absolute" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="4"></circle>
+                                <circle cx="60" cy="60" r="54" fill="none" stroke="var(--primary)" stroke-width="6" stroke-dasharray="339" stroke-dashoffset="100" stroke-linecap="round" style="filter: drop-shadow(0 0 8px rgba(76,29,149,0.8));"></circle>
+                            </svg>
+                            <div class="text-center">
+                                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Осталось</div>
+                                <div class="text-5xl font-black text-white tracking-tighter" style="text-shadow: 0 0 20px rgba(255,255,255,0.3);">04:22:15</div>
+                                <div class="text-xs font-medium text-[var(--primary)] mt-2">Сжигание жира началось</div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-8 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 w-full mb-12">
+                            <div class="flex-1 text-center">
+                                <div class="text-[10px] uppercase font-bold text-gray-500 tracking-widest mb-1">Начало</div>
+                                <div class="font-bold text-white text-lg">20:00</div>
+                            </div>
+                            <div class="w-px h-10 bg-white/10"></div>
+                            <div class="flex-1 text-center">
+                                <div class="text-[10px] uppercase font-bold text-[var(--primary)] tracking-widest mb-1">Цель (16:8)</div>
+                                <div class="font-bold text-white text-lg">12:00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-5 rounded-2xl font-bold text-white text-lg border border-white/20 bg-white/5 backdrop-blur hover:bg-white/10 transition-colors">
+                        Завершить досрочно
+                    </button>
+                </div>
+            </div>
+
+            <!-- Screen 5: Water Tracker -->
+            <div class="phone-mockup relative overflow-hidden bg-[#0F0A1A]">
+                <div class="notch z-50"></div>
+                
+                <!-- Water Fill Background (Glassmorphism effect underneath) -->
+                <div class="absolute inset-x-0 bottom-0 top-0 overflow-hidden rounded-[40px] z-0">
+                    <div class="absolute inset-x-0 bottom-0 h-full wave"></div>
+                    <!-- Glass layer on top of water -->
+                    <div class="absolute inset-0 bg-[#0F0A1A]/40 backdrop-blur-[2px]"></div>
+                </div>
+
+                <div class="pt-16 px-6 pb-6 relative z-10 flex flex-col h-full">
+                    <div class="flex justify-between items-center mb-12">
+                        <h2 class="text-2xl font-black text-white tracking-wide">Водный баланс</h2>
+                        <button class="w-10 h-10 rounded-full bg-white/10 backdrop-blur border border-white/10 flex items-center justify-center text-white"><i class="ph-bold ph-chart-bar"></i></button>
+                    </div>
+
+                    <div class="flex-1 flex flex-col items-center justify-center text-center mt-[-100px]">
+                        <div class="w-20 h-20 rounded-[24px] bg-blue-500/20 text-blue-400 flex items-center justify-center text-4xl mb-6 shadow-[0_0_40px_rgba(59,130,246,0.3)]">
+                            <i class="ph-fill ph-drop"></i>
+                        </div>
+                        <div class="text-6xl font-black text-white mb-2">1.2<span class="text-3xl text-white/50">л</span></div>
+                        <div class="text-sm font-bold text-blue-300 uppercase tracking-widest">из 2.5 литров</div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4">
+                        <button class="bg-white/10 backdrop-blur-xl border border-white/20 py-4 rounded-3xl flex flex-col items-center gap-2 hover:bg-white/20 transition-all">
+                            <i class="ph-bold ph-coffee text-xl text-white"></i>
+                            <span class="text-xs font-bold text-white">150 мл</span>
+                        </button>
+                        <button class="bg-blue-500/80 shadow-[0_0_30px_rgba(59,130,246,0.5)] border border-blue-400 py-4 rounded-3xl flex flex-col items-center justify-center gap-2 transform -translate-y-4 hover:scale-105 transition-transform">
+                            <i class="ph-fill ph-plus text-2xl text-white"></i>
+                            <span class="text-sm font-bold text-white">250 мл</span>
+                        </button>
+                        <button class="bg-white/10 backdrop-blur-xl border border-white/20 py-4 rounded-3xl flex flex-col items-center gap-2 hover:bg-white/20 transition-all">
+                            <i class="ph-bold ph-drop text-xl text-white"></i>
+                            <span class="text-xs font-bold text-white">500 мл</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 6: Device Sync -->
+            <div class="phone-mockup relative overflow-hidden bg-[#0F0A1A]">
+                <div class="notch"></div>
+                <div class="pt-24 px-6 pb-6 relative z-10 flex flex-col h-full items-center text-center">
+                    
+                    <h2 class="text-3xl font-black text-white tracking-wide mb-4">Синхронизация</h2>
+                    <p class="text-sm text-gray-400 mb-16">Подключите умные часы для точного расчета дефицита калорий.</p>
+
+                    <!-- Connection Animation Area -->
+                    <div class="relative w-full h-64 flex items-center justify-center mb-16">
+                        <!-- App Logo (Center) -->
+                        <div class="absolute w-20 h-20 bg-[var(--primary)] rounded-3xl flex items-center justify-center z-20 shadow-[0_0_50px_rgba(76,29,149,0.5)]">
+                            <i class="ph-bold ph-circles-three text-3xl text-white"></i>
+                        </div>
+                        
+                        <!-- Pulsing Rings -->
+                        <div class="absolute w-40 h-40 rounded-full border border-[var(--primary)] opacity-50" style="animation: pulse-glow 2s infinite;"></div>
+                        <div class="absolute w-60 h-60 rounded-full border border-[var(--primary)] opacity-20" style="animation: pulse-glow 3s infinite 0.5s;"></div>
+                        
+                        <!-- Floating Devices -->
+                        <div class="absolute -left-2 top-10 w-16 h-16 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[20px] flex items-center justify-center">
+                            <i class="ph-fill ph-watch text-2xl text-white"></i>
+                        </div>
+                        <div class="absolute -right-2 bottom-10 w-16 h-16 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[20px] flex items-center justify-center">
+                            <i class="ph-fill ph-heartbeat text-2xl text-red-500"></i>
+                        </div>
+                    </div>
+
+                    <div class="w-full space-y-4 mt-auto">
+                        <button class="w-full p-5 bg-white/5 backdrop-blur border border-white/10 rounded-2xl flex items-center justify-between group hover:bg-white/10 transition-all">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-black"><i class="ph-fill ph-apple-logo text-xl"></i></div>
+                                <div class="text-left"><div class="font-bold text-white">Apple Health</div><div class="text-xs text-[var(--primary)] font-bold">Подключено</div></div>
+                            </div>
+                            <i class="ph-bold ph-check-circle text-2xl text-[var(--primary)]"></i>
+                        </button>
+                        <button class="w-full p-5 bg-white/5 backdrop-blur border border-white/10 rounded-2xl flex items-center justify-between group hover:bg-white/10 transition-all">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-blue-500/20 text-blue-500 rounded-xl flex items-center justify-center"><i class="ph-bold ph-watch text-xl"></i></div>
+                                <div class="text-left"><div class="font-bold text-white">Garmin Connect</div><div class="text-xs text-gray-500 font-bold mt-1">Не подключено</div></div>
+                            </div>
+                            <i class="ph-bold ph-caret-right text-xl text-gray-500"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 7: Premium Success -->
+            <div class="phone-mockup relative overflow-hidden" style="background: linear-gradient(135deg, #0F0A1A 0%, #2E1065 100%);">
+                <div class="notch z-50"></div>
+                
+                <!-- Confetti/Gold overlay -->
+                <div class="absolute inset-0 opacity-30" style="background-image: radial-gradient(circle at center, var(--gold) 0%, transparent 1%); background-size: 20px 20px; background-position: 0 0, 10px 10px;"></div>
+                
+                <div class="absolute top-0 right-0 w-full h-1/2 bg-[var(--primary)] opacity-40 blur-[120px]"></div>
+
+                <div class="pt-24 px-6 pb-12 relative z-10 flex flex-col h-full items-center text-center justify-between">
+                    <div class="w-full flex flex-col items-center">
+                        <div class="w-28 h-28 bg-gradient-to-br from-[var(--gold)] to-yellow-600 rounded-full flex items-center justify-center text-white mb-8 shadow-[0_0_60px_rgba(245,146,43,0.4)] border-4 border-[#0F0A1A]">
+                            <i class="ph-bold ph-crown text-5xl"></i>
+                        </div>
+                        
+                        <div class="inline-block px-4 py-1.5 bg-yellow-500/20 border border-[var(--gold)] rounded-full text-[10px] font-black uppercase tracking-widest text-[var(--gold)] mb-6">
+                            Оплата успешна
+                        </div>
+                        
+                        <h2 class="text-4xl font-black text-white leading-tight mb-4">Добро <br>пожаловать <br>в Gold</h2>
+                        <p class="text-lg text-gray-300 font-medium px-4">Все премиум-функции разблокированы. Твой персональный AI-ассистент готов к работе.</p>
+                    </div>
+
+                    <div class="w-full">
+                        <div class="bg-black/20 backdrop-blur-xl border border-white/10 rounded-3xl p-5 mb-8 text-left">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[var(--gold)]"><i class="ph-fill ph-camera text-xl"></i></div>
+                                <div><div class="font-bold text-white text-sm">Безлимитный AI-сканер еды</div></div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[var(--gold)]"><i class="ph-fill ph-barbell text-xl"></i></div>
+                                <div><div class="font-bold text-white text-sm">Умные видео-тренировки</div></div>
+                            </div>
+                        </div>
+
+                        <button class="w-full py-5 rounded-2xl font-black text-[#0F0A1A] text-xl transition-transform hover:scale-105 shadow-[0_10px_40px_rgba(245,146,43,0.3)]" style="background: linear-gradient(135deg, #FDE047 0%, var(--gold) 100%);">
+                            Начать
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

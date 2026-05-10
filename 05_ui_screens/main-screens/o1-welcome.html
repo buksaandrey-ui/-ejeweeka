@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-1 Приветствие</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <script src="app-utils.js"></script>
+  <style>
+    .logo-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      margin-top: 40px; /* Raised the logo higher as requested */
+      margin-bottom: 8px;
+    }
+    .logo-wrapper {
+      width: 240px;
+      height: auto;
+      margin: 0 auto;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.05));
+    }
+    .logo-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .tagline {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+      max-width: 260px;
+      font-weight: 500;
+    }
+    .usp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .usp-card {
+      background-color: var(--color-surface);
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid var(--color-divider);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: flex;
+      gap: 16px;
+    }
+    .usp-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background-color: #FFF3E0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .usp-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .usp-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+    .usp-desc {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+    .btn-primary:active { transform: scale(0.98); }
+    .onboarding-tip-card {
+      background-color: #E8F5E9;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+      border: 1px solid #C8E6C9;
+    }
+    .onboarding-tip-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .onboarding-tip-text {
+      font-size: 13px;
+      color: #2E7D32;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+    @media (max-width: 440px) {
+    }
+</style>
+
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+    
+    <!-- Scrollable Content -->
+    <div class="content" style="overflow-y:auto!important;-webkit-overflow-scrolling:touch;min-height:0!important;flex:1!important;">
+      
+      <!-- Logo Block -->
+      <div class="logo-block">
+        <div class="logo-wrapper">
+          <img src="assets/logo.png" alt="Health Code" class="logo-img">
+        </div>
+        <p class="tagline">Твой персональный наставник по питанию, сну и физической активности</p>
+      </div>
+
+      <!-- USP Cards -->
+      <div class="usp-list">
+        
+        <div class="usp-card">
+          <div class="usp-icon">
+            <i class="ph ph-clipboard-text"></i>
+          </div>
+          <div class="usp-info">
+            <div class="usp-title">Полный план под тебя</div>
+            <div class="usp-desc">Что есть, как готовить, что купить, как тренироваться — всё в одном плане под твой бюджет и время</div>
+          </div>
+        </div>
+
+        <div class="usp-card">
+          <div class="usp-icon">
+            <i class="ph ph-pill"></i>
+          </div>
+          <div class="usp-info">
+            <div class="usp-title">Умное расписание витаминов</div>
+            <div class="usp-desc">Железо с кофе — деньги на ветер. Витамин D без жирной еды не усвоится. Мы составим расписание, которое реально работает</div>
+          </div>
+        </div>
+
+        <div class="usp-card">
+          <div class="usp-icon">
+            <i class="ph ph-shield-check"></i>
+          </div>
+          <div class="usp-info">
+            <div class="usp-title">Учитываем все нюансы</div>
+            <div class="usp-desc">Веган, аллергия, беременность, подагра — учтём все важные для тебя особенности</div>
+          </div>
+        </div>
+
+        <div class="usp-card">
+          <div class="usp-icon">
+            <i class="ph ph-camera"></i>
+          </div>
+          <div class="usp-info">
+            <div class="usp-title">Фото в ресторане</div>
+            <div class="usp-desc">Ужин в ресторане или в гостях? Просто сфотографируй — мы пересчитаем план</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-cta">
+      <button class="btn-primary" onclick="location.href='o1-country.html'">Начать <i class="ph ph-arrow-right"></i></button>
+      <div style="text-align:center;margin-top:10px;">
+        <span id="resetBtn" style="font-size:12px;color:#9CA3AF;cursor:pointer;text-decoration:underline;" onclick="if(confirm('Очистить все данные онбординга?')){localStorage.removeItem('aidiet_profile');localStorage.removeItem('aidiet_subscription');alert('✅ Данные очищены. Начинай заново!');location.reload();}">🗑 Сбросить данные</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="onboarding-state.js"></script>
+</body>
+</html>

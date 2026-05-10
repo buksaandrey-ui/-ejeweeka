@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - F-1 Групповой доступ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <script src="app-utils.js"></script>
+  <style>
+    .header { padding: 16px 20px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid var(--color-divider); }
+    .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid var(--color-divider); color: var(--color-text-primary); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; }
+    .header-title { font-size: 18px; font-weight: 700; color: var(--color-text-primary); }
+    .subtitle { font-size: 12px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+    /* Members List */
+    .members-list { display: flex; flex-direction: column; gap: 12px; }
+    .member-card { background: #FFFFFF; border: 1px solid var(--color-divider); border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s; position: relative; }
+    .member-card:active { transform: scale(0.98); }
+    .avatar { width: 48px; height: 48px; border-radius: 50%; background: #F3F4F6; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: 700; color: var(--color-primary); flex-shrink: 0; }
+    .member-info { flex: 1; min-width: 0; }
+    .member-name { font-size: 15px; font-weight: 700; color: var(--color-text-primary); }
+    .member-role { font-size: 12px; color: var(--color-text-secondary); font-weight: 500; }
+    .member-restrictions { font-size: 11px; color: var(--color-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .badge-status { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 8px; flex-shrink: 0; }
+    .badge-active { background: #E8F5E2; color: #52B044; }
+    .badge-invite { background: #FFF7ED; color: var(--color-primary); }
+    .btn-remove { position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border-radius: 50%; background: #FEF2F2; border: none; color: #EF4444; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+    .member-card:hover .btn-remove { opacity: 1; }
+    .btn-invite { width: 100%; height: 56px; border-radius: 16px; border: 2px dashed var(--color-divider); background: transparent; color: var(--color-text-secondary); font-size: 15px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; }
+    .btn-invite:hover { border-color: var(--color-primary); color: var(--color-primary); background: #FFF7ED; }
+    /* Settings Group */
+    .settings-group { background: #FFFFFF; border: 1px solid var(--color-divider); border-radius: 20px; overflow: hidden; }
+    .setting-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #F3F4F6; }
+    .setting-item:last-child { border-bottom: none; }
+    .setting-label { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .setting-title { font-size: 15px; font-weight: 600; color: var(--color-text-primary); }
+    .setting-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.3; }
+    /* Toggle */
+    .toggle { width: 44px; height: 24px; background: #E5E7EB; border-radius: 12px; position: relative; cursor: pointer; transition: background 0.2s; flex-shrink: 0; }
+    .toggle.active { background: var(--color-primary); }
+    .toggle.disabled { opacity: 0.4; cursor: not-allowed; }
+    .toggle-circle { width: 20px; height: 20px; background: #FFFFFF; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .toggle.active .toggle-circle { transform: translateX(20px); }
+    /* Conflict Warning */
+    .conflict-banner { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 14px; padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; margin-top: 8px; display: none; }
+    .conflict-banner.visible { display: flex; }
+    .conflict-icon { font-size: 16px; color: #EF4444; flex-shrink: 0; margin-top: 1px; }
+    .conflict-text { font-size: 12px; color: #991B1B; line-height: 1.4; font-weight: 500; }
+    /* Premium banner */
+    .upgrade-banner { background: #FFF7ED; border: 1px solid #FFE4CC; border-radius: 18px; padding: 16px; display: flex; gap: 16px; align-items: center; }
+    .upgrade-icon { font-size: 24px; color: var(--color-primary); flex-shrink: 0; }
+    .upgrade-info { font-size: 13px; font-weight: 500; color: #995400; line-height: 1.4; }
+    /* Modal */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; justify-content: center; align-items: center; }
+    .modal-overlay.active { display: flex; }
+    .modal-box { background: #FFFFFF; border-radius: 24px; padding: 28px; width: 320px; max-width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal-title { font-size: 18px; font-weight: 800; color: var(--color-text-primary); margin-bottom: 8px; }
+    .modal-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 20px; }
+    .modal-input { width: 100%; height: 48px; border: 1.5px solid var(--color-divider); border-radius: 14px; padding: 0 16px; font-size: 14px; font-family: 'Inter', sans-serif; outline: none; margin-bottom: 12px; }
+    .modal-input:focus { border-color: var(--color-primary); }
+    .modal-link { background: #F3F4F6; border-radius: 12px; padding: 12px; font-size: 13px; color: var(--color-text-secondary); word-break: break-all; margin-bottom: 16px; text-align: center; font-weight: 500; }
+    .modal-actions { display: flex; gap: 10px; }
+    .modal-btn { flex: 1; height: 44px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; }
+    .modal-btn-cancel { background: #F3F4F6; color: var(--color-text-secondary); }
+    .modal-btn-action { background: var(--color-primary-gradient); color: #FFFFFF; }
+    .modal-btn-danger { background: #FEF2F2; color: #EF4444; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+      .btn-remove { opacity: 0.7; }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <button class="back-btn" onclick="history.back()" aria-label="Назад"><i class="ph ph-arrow-left"></i></button>
+      <h1 class="header-title">Семья и Группа</h1>
+    </header>
+
+    <!-- Content -->
+    <div class="content" id="content">
+      <!-- Dynamically rendered -->
+    </div>
+  </div>
+
+  <!-- Invite Modal -->
+  <div class="modal-overlay" id="inviteModal">
+    <div class="modal-box">
+      <div class="modal-title">Пригласить участника</div>
+      <div class="modal-desc">Отправьте ссылку или email для подключения к группе.</div>
+      <div class="modal-link" id="inviteLink">https://aidiet.app/invite/abc123</div>
+      <input type="email" class="modal-input" id="inviteEmail" placeholder="Email участника...">
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-cancel" onclick="closeModal('inviteModal')">Отмена</button>
+        <button class="modal-btn modal-btn-action" onclick="sendInvite()">Отправить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Remove Confirm Modal -->
+  <div class="modal-overlay" id="removeModal">
+    <div class="modal-box">
+      <div class="modal-title">Удалить участника?</div>
+      <div class="modal-desc" id="removeDesc">Участник потеряет доступ к групповому плану.</div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-cancel" onclick="closeModal('removeModal')">Отмена</button>
+        <button class="modal-btn modal-btn-danger" onclick="confirmRemove()">Удалить</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ═══════════════════════════════════════════════════════════
+  // F-1: FAMILY GROUP MANAGEMENT
+  // ═══════════════════════════════════════════════════════════
+
+  const FAMILY_KEY = 'aidiet_family_group';
+  const FAMILY_SETTINGS_KEY = 'aidiet_family_settings';
+  const AVATAR_COLORS = ['#F59E2B', '#42A5F5', '#66BB6A', '#AB47BC'];
+  let pendingRemoveIdx = -1;
+
+  // Default family data (demo)
+  function getDefaultFamily() {
+    const profile = window.AIDiet ? window.AIDiet.getProfile() : {};
+    const ownerName = profile['Имя'] || profile['name'] || 'Андрей';
+    const initials = ownerName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || 'АБ';
+    return [
+      { name: ownerName, initials, role: 'owner', status: 'active', restrictions: profile['Тип питания'] || '', allergies: profile['Аллергены'] || '' }
+    ];
+  }
+
+  function getFamily() {
+    try {
+      const data = JSON.parse(localStorage.getItem(FAMILY_KEY));
+      if (Array.isArray(data) && data.length > 0) return data;
+    } catch(e) {}
+    const def = getDefaultFamily();
+    localStorage.setItem(FAMILY_KEY, JSON.stringify(def));
+    return def;
+  }
+
+  function saveFamily(members) {
+    localStorage.setItem(FAMILY_KEY, JSON.stringify(members));
+  }
+
+  function getSettings() {
+    try {
+      return JSON.parse(localStorage.getItem(FAMILY_SETTINGS_KEY)) || { sharedMeals: true, sharedShopping: true };
+    } catch(e) {
+      return { sharedMeals: true, sharedShopping: true };
+    }
+  }
+
+  function saveSettings(settings) {
+    localStorage.setItem(FAMILY_SETTINGS_KEY, JSON.stringify(settings));
+    if (window.AIDiet) {
+      window.AIDiet.saveField('family_shared_meals', String(settings.sharedMeals));
+      window.AIDiet.saveField('family_shared_shopping', String(settings.sharedShopping));
+    }
+  }
+
+  // Check if "Общие блюда" is possible (intersection of restrictions non-empty = possible)
+  function checkConflict(members) {
+    if (members.length <= 1) return false;
+    // If any member has contradicting restrictions → conflict
+    const allRestr = members.map(m => (m.restrictions || '').split(',').map(s => s.trim()).filter(Boolean));
+    // Simple check: if one is Веган and another eats meat-based → conflict
+    const hasVegan = allRestr.some(r => r.includes('Веганство'));
+    const hasNoVegan = allRestr.some(r => !r.includes('Веганство') && !r.includes('Вегетарианство') && r.length > 0);
+    return hasVegan && hasNoVegan;
+  }
+
+  function render() {
+    const members = getFamily();
+    const settings = getSettings();
+    const conflict = checkConflict(members);
+    const maxMembers = 4;
+
+    let html = '';
+
+    // Members section
+    html += `<div>
+      <div class="subtitle">Участники (${members.length} из ${maxMembers})</div>
+      <div class="members-list">`;
+
+    members.forEach((m, i) => {
+      const color = AVATAR_COLORS[i % AVATAR_COLORS.length];
+      const isOwner = m.role === 'owner';
+      const statusBadge = m.status === 'active'
+        ? `<div class="badge-status badge-active">${isOwner ? 'Онлайн' : 'Активен'}</div>`
+        : `<div class="badge-status badge-invite">Приглашён</div>`;
+      const removeBtn = !isOwner
+        ? `<button class="btn-remove" onclick="event.stopPropagation(); removeMember(${i})" title="Удалить"><i class="ph ph-x"></i></button>`
+        : '';
+      const restrText = [m.restrictions, m.allergies].filter(Boolean).join(', ');
+
+      html += `<div class="member-card" onclick="location.href='f2-member-profile.html?id=${i}'">
+        ${removeBtn}
+        <div class="avatar" style="color: ${color};">${m.initials}</div>
+        <div class="member-info">
+          <div class="member-name">${m.name}</div>
+          <div class="member-role">${isOwner ? 'Владелец группы' : 'Участник'}</div>
+          ${restrText ? `<div class="member-restrictions">${restrText}</div>` : ''}
+        </div>
+        ${statusBadge}
+      </div>`;
+    });
+
+    if (members.length < maxMembers) {
+      html += `<button class="btn-invite" onclick="openInvite()"><i class="ph ph-plus-circle"></i> Пригласить участника</button>`;
+    }
+
+    html += `</div></div>`;
+
+    // Settings section
+    const conflictClass = conflict ? 'visible' : '';
+    const disabledClass = conflict ? ' disabled' : '';
+    const mealsActive = settings.sharedMeals && !conflict;
+
+    html += `<div>
+      <div class="subtitle">Настройки группы</div>
+      <div class="settings-group">
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-title">Общие блюда</div>
+            <div class="setting-desc">AI подберёт общее меню для всех участников</div>
+          </div>
+          <div class="toggle${mealsActive ? ' active' : ''}${disabledClass}" id="toggleMeals" data-key="sharedMeals" onclick="toggleSetting(this)">
+            <div class="toggle-circle"></div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <div class="setting-title">Общий список покупок</div>
+            <div class="setting-desc">Объединить закупки всей семьи</div>
+          </div>
+          <div class="toggle${settings.sharedShopping ? ' active' : ''}" id="toggleShopping" data-key="sharedShopping" onclick="toggleSetting(this)">
+            <div class="toggle-circle"></div>
+          </div>
+        </div>
+      </div>
+      <div class="conflict-banner ${conflictClass}" id="conflictBanner">
+        <div class="conflict-icon"><i class="ph ph-warning-circle-fill"></i></div>
+        <div class="conflict-text">Невозможно составить общее меню: у участников конфликтующие ограничения (например, веганство и мясоедение). Общие блюда отключены.</div>
+      </div>
+    </div>`;
+
+    // Premium banner
+    html += `<div class="upgrade-banner">
+      <div class="upgrade-icon"><i class="ph ph-crown-fill"></i></div>
+      <div class="upgrade-info">Групповой доступ Group Gold позволяет подключать до 4 человек. Стоимость +690 ₽/мес за участника.</div>
+    </div>`;
+
+    document.getElementById('content').innerHTML = html;
+  }
+
+  function toggleSetting(el) {
+    if (el.classList.contains('disabled')) return;
+    el.classList.toggle('active');
+    const settings = getSettings();
+    const key = el.dataset.key;
+    settings[key] = el.classList.contains('active');
+    saveSettings(settings);
+  }
+
+  function openInvite() {
+    // Generate a unique-ish invite code
+    const code = Math.random().toString(36).substring(2, 8);
+    document.getElementById('inviteLink').textContent = `https://aidiet.app/invite/${code}`;
+    document.getElementById('inviteEmail').value = '';
+    document.getElementById('inviteModal').classList.add('active');
+  }
+
+  function sendInvite() {
+    const email = document.getElementById('inviteEmail').value.trim();
+    const members = getFamily();
+
+    if (members.length >= 4) {
+      alert('Максимум 4 участника в группе');
+      closeModal('inviteModal');
+      return;
+    }
+
+    // Create a placeholder member
+    const name = email ? email.split('@')[0] : 'Участник';
+    const initials = name.slice(0, 2).toUpperCase();
+    members.push({
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      initials,
+      role: 'member',
+      status: 'invited',
+      restrictions: '',
+      allergies: ''
+    });
+
+    saveFamily(members);
+    closeModal('inviteModal');
+    render();
+  }
+
+  function removeMember(idx) {
+    const members = getFamily();
+    if (idx <= 0 || idx >= members.length) return; // Can't remove owner
+    pendingRemoveIdx = idx;
+    document.getElementById('removeDesc').textContent = `${members[idx].name} потеряет доступ к групповому плану. Это действие необратимо.`;
+    document.getElementById('removeModal').classList.add('active');
+  }
+
+  function confirmRemove() {
+    if (pendingRemoveIdx <= 0) return;
+    const members = getFamily();
+    members.splice(pendingRemoveIdx, 1);
+    saveFamily(members);
+    pendingRemoveIdx = -1;
+    closeModal('removeModal');
+    render();
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+  }
+
+  // Close modals on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) overlay.classList.remove('active');
+    });
+  });
+
+  // Initial render
+  render();
+</script>
+<script src="onboarding-state.js"></script>
+</body>
+</html>

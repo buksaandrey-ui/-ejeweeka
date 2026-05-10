@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - U-1 Профиль</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    /* Profile Header */
+    .profile-header { padding: 24px 20px; display: flex; align-items: center; gap: 20px; background: #FFFFFF; border-bottom: 1px solid var(--color-divider); }
+    .avatar { width: 64px; height: 64px; border-radius: 50%; background-color: #E5E7EB; background-image: url('https://i.pravatar.cc/100?img=11'); background-size: cover; border: 2px solid #FFFFFF; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+    .user-info { flex: 1; }
+    .user-name { font-size: 20px; font-weight: 700; color: var(--color-text-primary); }
+    .plan-badge { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; padding: 4px 10px; background: #FFF7ED; color: #CC7000; font-size: 11px; font-weight: 800; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    /* Menu Sections */
+    .menu-section { margin-top: 24px; }
+    .section-title { padding: 0 20px 8px 20px; font-size: 12px; font-weight: 700; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 1px; }
+    .menu-list { background: #FFFFFF; border-top: 1px solid var(--color-divider); border-bottom: 1px solid var(--color-divider); }
+    .menu-item { 
+      display: flex; align-items: center; gap: 16px; padding: 16px 20px; 
+      text-decoration: none; border-bottom: 1px solid #F3F4F6; transition: background 0.2s; 
+    }
+    .menu-item:last-child { border-bottom: none; }
+    .menu-item:active { background: #F9FAFB; }
+    .menu-icon { width: 32px; height: 32px; border-radius: 10px; background: #F3F4F6; display: flex; justify-content: center; align-items: center; font-size: 18px; color: var(--color-text-primary); }
+    .menu-label { flex: 1; font-size: 15px; font-weight: 600; color: var(--color-text-primary); }
+    .menu-arrow { font-size: 16px; color: var(--color-text-tertiary); }
+    .logout-btn { display: flex; align-items: center; gap: 12px; margin: 32px 20px; color: #EF4444; font-size: 15px; font-weight: 600; text-decoration: none; }
+    /* Tab Bar */
+    .tab-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 84px; background-color: #FFFFFF; border-top: 1px solid var(--color-divider); display: flex; justify-content: space-around; padding: 12px 12px 30px 12px; z-index: 100; }
+    .tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--color-text-tertiary); text-decoration: none; flex: 1; }
+    .tab-item.active, .tab-item:active { color: var(--color-primary); }
+    .tab-item i { font-size: 24px; }
+    .tab-label { font-size: 10px; font-weight: 600; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      
+      <!-- Profile Header -->
+      <section class="profile-header">
+        <div class="avatar"></div>
+        <div class="user-info">
+          <h1 class="user-name">Андрей Букса</h1>
+          <div class="plan-badge"><i class="ph ph-crown-fill"></i> Gold План</div>
+        </div>
+        <i class="ph ph-caret-right menu-arrow"></i>
+      </section>
+
+      <!-- Section: My Plan -->
+      <div class="menu-section">
+        <div class="section-title">Настройки плана</div>
+        <div class="menu-list">
+          <a href="u2-personal-data.html" class="menu-item">
+            <div class="menu-icon" style="background: #EBF5FF; color: #3B82F6;"><i class="ph ph-user"></i></div>
+            <span class="menu-label">Личные данные и цель</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u3-health-settings.html" class="menu-item">
+            <div class="menu-icon" style="background: #FEF2F2; color: #EF4444;"><i class="ph ph-heartbeat"></i></div>
+            <span class="menu-label">Здоровье и симптомы</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u4-restrictions.html" class="menu-item">
+            <div class="menu-icon" style="background: #F0FDF4; color: #22C55E;"><i class="ph ph-leaf"></i></div>
+            <span class="menu-label">Ограничения и аллергии</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u5-supplement-settings.html" class="menu-item">
+            <div class="menu-icon" style="background: #FFF7ED; color: #F59E0B;"><i class="ph ph-pill"></i></div>
+            <span class="menu-label">Витамины и БАДы</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u6-blood-tests.html" class="menu-item">
+            <div class="menu-icon" style="background: #FEF2F2; color: #EF4444;"><i class="ph ph-test-tube"></i></div>
+            <span class="menu-label">Анализы</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u7-food-preferences.html" class="menu-item">
+            <div class="menu-icon" style="background: #FFF7ED; color: #F5922B;"><i class="ph ph-fork-knife"></i></div>
+            <span class="menu-label">Вкусы и предпочтения</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u8-daily-routine.html" class="menu-item">
+            <div class="menu-icon" style="background: #EDE9FE; color: #8B5CF6;"><i class="ph ph-clock-afternoon"></i></div>
+            <span class="menu-label">Режим дня</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u9-activity.html" class="menu-item">
+            <div class="menu-icon" style="background: #FEF2F2; color: #EF4444;"><i class="ph ph-sneaker"></i></div>
+            <span class="menu-label">Активность</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u10-budget-cooking.html" class="menu-item">
+            <div class="menu-icon" style="background: #F0FDF4; color: #22C55E;"><i class="ph ph-wallet"></i></div>
+            <span class="menu-label">Бюджет и готовка</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u15-motivation.html" class="menu-item">
+            <div class="menu-icon" style="background: #FFF7ED; color: #F59E0B;"><i class="ph ph-lightning"></i></div>
+            <span class="menu-label">Мотивация и барьеры</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Section: App Settings -->
+      <div class="menu-section">
+        <div class="section-title">Приложение</div>
+        <div class="menu-list">
+          <a href="u12-subscription.html" class="menu-item">
+            <div class="menu-icon"><i class="ph ph-credit-card"></i></div>
+            <span class="menu-label">Управление статусом</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u11-notifications.html" class="menu-item">
+            <div class="menu-icon"><i class="ph ph-bell"></i></div>
+            <span class="menu-label">Напоминания</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="hc1-health-connect.html" class="menu-item">
+            <div class="menu-icon"><i class="ph ph-activity"></i></div>
+            <span class="menu-label">Health Connect</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u13-themes.html" class="menu-item">
+            <div class="menu-icon"><i class="ph ph-palette"></i></div>
+            <span class="menu-label">Цветовая тема</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+          <a href="u16-about.html" class="menu-item">
+            <div class="menu-icon"><i class="ph ph-info"></i></div>
+            <span class="menu-label">О проекте</span>
+            <i class="ph ph-caret-right menu-arrow"></i>
+          </a>
+        </div>
+      </div>
+
+      <a href="#" class="logout-btn">
+        <i class="ph ph-sign-out"></i>
+        <span>Выйти из аккаунта</span>
+      </a>
+
+    </div>
+
+    <!-- Tab Bar -->
+    <nav class="tab-bar">
+      <a href="h1-dashboard.html" class="tab-item">
+        <i class="ph ph-house"></i>
+        <span class="tab-label">Главная</span>
+      </a>
+      <a href="p1-weekly-plan.html" class="tab-item">
+        <i class="ph ph-calendar-blank"></i>
+        <span class="tab-label">План</span>
+      </a>
+      <a href="s1-shopping-list.html" class="tab-item">
+        <i class="ph ph-shopping-cart"></i>
+        <span class="tab-label">Покупки</span>
+      </a>
+      <a href="pr1-progress.html" class="tab-item">
+        <i class="ph ph-chart-line-up"></i>
+        <span class="tab-label">Прогресс</span>
+      </a>
+      <a href="u1-profile-main.html" class="tab-item active">
+        <i class="ph ph-user"></i>
+        <span class="tab-label">Профиль</span>
+      </a>
+    </nav>
+  </div>
+  <script src="profile-state.js"></script>
+</body>
+</html>

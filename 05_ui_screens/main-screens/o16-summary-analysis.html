@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code — O-16 Твой профиль</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <script src="app-utils.js"></script>
+  <script src="state-contract.js"></script>
+  <script src="onboarding-state.js"></script>
+  <script src="profile-to-api.js"></script>
+  <script src="auth-manager.js"></script>
+  <script src="api-connector.js"></script>
+  <style>
+    .header { padding: 0 20px 16px 20px; flex-shrink: 0; }
+    .header-title { font-size: 26px; font-weight: 800; color: var(--color-text-primary); }
+    .header-desc { font-size: 13px; color: var(--color-text-secondary); margin-top: 4px; line-height: 1.4; }
+    /* Section */
+    .section { margin-bottom: 20px; }
+    .section-title { font-size: 13px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .card { background: var(--color-surface); border-radius: 16px; border: 1px solid var(--color-divider); padding: 16px; margin-bottom: 10px; }
+    .card-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; }
+    .card-row + .card-row { border-top: 1px solid #F3F4F6; }
+    .card-label { font-size: 13px; color: var(--color-text-secondary); font-weight: 500; }
+    .card-value { font-size: 14px; font-weight: 700; color: var(--color-text-primary); text-align: right; max-width: 60%; }
+    .card-edit { font-size: 12px; font-weight: 700; color: var(--color-primary); cursor: pointer; border: none; background: none; padding: 4px 8px; }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .card-header-title { font-size: 15px; font-weight: 700; color: var(--color-text-primary); }
+    .chip-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .chip-sm { padding: 4px 10px; border-radius: 8px; background: #FFF7ED; color: var(--color-primary); font-size: 12px; font-weight: 600; }
+    .chip-sm.green { background: #F0FDF4; color: #15803D; }
+    /* Toggles */
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+    .toggle-row + .toggle-row { border-top: 1px solid #F3F4F6; }
+    .toggle-info { flex: 1; }
+    .toggle-label { font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+    .toggle-hint { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+    .toggle-switch { width: 48px; height: 28px; background: var(--color-primary); border-radius: 14px; position: relative; cursor: pointer; flex-shrink: 0; margin-left: 12px; }
+    .toggle-switch::after { content: ''; width: 22px; height: 22px; background: #FFF; border-radius: 50%; position: absolute; top: 3px; right: 3px; transition: 0.2s; }
+    .toggle-switch.off { background: #D1D5DB; }
+    .toggle-switch.off::after { right: auto; left: 3px; }
+    /* Tip */
+    .tip-card { background: #E8F5E9; border-radius: 16px; padding: 14px; display: flex; gap: 12px; border: 1px solid #C8E6C9; margin-top: 40px; }
+    .tip-icon { font-size: 18px; flex-shrink: 0; }
+    .tip-text { font-size: 12px; color: #2E7D32; line-height: 1.5; font-weight: 500; }
+    /* Generation animation */
+    .gen-overlay { display: none; position: absolute; inset: 0; background: rgba(250,250,250,0.97); z-index: 200; flex-direction: column; justify-content: center; align-items: center; gap: 24px; }
+    .gen-overlay.active { display: flex; }
+    .gen-logo { width: 72px; height: 72px; filter: drop-shadow(0 4px 6px rgba(245,146,43,0.2)); animation: spinY 2s cubic-bezier(0.5, 0, 0.5, 1) infinite; margin-bottom: 8px; }
+    @keyframes spinY { 0% { transform: perspective(400px) rotateY(0deg); } 100% { transform: perspective(400px) rotateY(360deg); } }
+    .gen-progress-container { width: 220px; height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+    .gen-progress-bar { width: 0%; height: 100%; background: var(--color-primary); transition: width 0.4s ease-out; }
+    .gen-text { font-size: 16px; font-weight: 600; color: var(--color-text-primary); text-align: center; }
+    .gen-sub { font-size: 13px; color: var(--color-text-secondary); }
+    /* Bottom */
+    .btn-generate { width: 100%; height: 56px; border-radius: 16px; background: var(--color-primary-gradient); color: #FFF; font-size: 16px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(245,146,43,0.3); }
+    .btn-back-link { text-align: center; font-size: 14px; color: var(--color-text-secondary); font-weight: 600; cursor: pointer; padding: 8px; border: none; background: none; }
+    @media (max-width: 440px) {
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><div><i class="ph ph-wifi-high"></i> <i class="ph ph-battery-full"></i></div></div>
+    
+    <div class="header">
+      <div class="header-title">Твой профиль</div>
+      <div class="header-desc">Проверь данные перед составлением плана</div>
+    </div>
+
+    <div class="content" id="content" style="padding-top:0">
+      <!-- Динамически заполняется из JS -->
+    </div>
+
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="window.location.href='o15-preferences.html'">← Вернуться и поменять</button>
+      <button class="btn-primary" id="btnGenerate" onclick="startGeneration()">Всё верно →</button>
+    </div>
+
+    <!-- Generation overlay -->
+    <div class="gen-overlay" id="genOverlay">
+      <img src="aidiet-logo.png" class="gen-logo" alt="Health Code">
+      <div class="gen-progress-container">
+        <div class="gen-progress-bar" id="genProgressBar"></div>
+      </div>
+      <div class="gen-text" id="genText">Анализируем данные…</div>
+      <div class="gen-sub">Это займёт несколько секунд</div>
+    </div>
+  </div>
+
+<script>
+  const summary = getProfileSummary();
+  const d = summary._raw;
+
+  function renderSection(title, editScreen, rows) {
+    const filteredRows = rows.filter(r => r !== null);
+    if (filteredRows.length === 0) return '';
+    return `
+      <div class="section">
+        <div class="section-title">${title}</div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">${title}</div>
+            <button class="card-edit" onclick="location.href='${editScreen}?from=summary'">Изменить</button>
+          </div>
+          ${filteredRows.join('')}
+        </div>
+      </div>`;
+  }
+
+  function row(label, value) {
+    if (!value || value === '—' || value === '') return null;
+    if (Array.isArray(value)) {
+      if (value.length === 0) return null;
+      return `<div class="card-row" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                <span class="card-label">${label}</span>
+                <div class="chip-list" style="justify-content: flex-start; margin-top: 0;">${value.map(v => `<span class="chip-sm">${v}</span>`).join('')}</div>
+              </div>`;
+    }
+    return `<div class="card-row"><span class="card-label">${label}</span><span class="card-value">${value}</span></div>`;
+  }
+
+  function renderBloodTests() {
+    const tests = summary.bloodTests;
+    if (!tests || Object.keys(tests).length === 0) return '';
+    const chips = Object.values(tests).map(t => `<span class="chip-sm green">${t.label}: ${t.value} ${t.unit}</span>`).join('');
+    return `<div class="card-row"><span class="card-label">Анализы</span><div class="chip-list">${chips}</div></div>`;
+  }
+
+  let html = '';
+
+  // O-2: Цель
+  html += renderSection('Цель', 'o2-goal.html', [
+    row('Цель', summary.goal),
+  ]);
+
+  // O-1: Регион
+  html += renderSection('Регион', 'o1-country.html', [
+    row('Страна', summary.country),
+    row('Город', summary.city),
+  ]);
+
+  // O-3: Антропометрия
+  html += renderSection('Антропометрия', 'o3-profile.html', [
+    row('Имя', summary.name),
+    row('Пол', summary.sex),
+    row('Возраст', summary.age),
+    row('Рост', summary.height),
+    row('Вес', summary.weight),
+    row('Талия', summary.waist),
+    row('ИМТ', summary.bmi),
+    row('Базовый обмен', summary.bmr),
+  ]);
+
+  // O-4: Целевой вес (если есть)
+  if (summary.targetWeight) {
+    html += renderSection('Цель по весу', 'o4-weight-loss.html', [
+      row('Целевой вес', summary.targetWeight),
+      row('Срок', summary.targetTimeline),
+    ]);
+  }
+
+  // O-5: Ограничения
+  html += renderSection('Ограничения и аллергии', 'o5-restrictions.html', [
+    row('Диетические', summary.restrictions),
+    row('Аллергии', summary.allergies),
+  ]);
+
+  // O-6 + O-7: Здоровье
+  html += renderSection('Здоровье', 'o6-health-core.html', [
+    row('Симптомы', summary.symptoms),
+    row('Хронические', summary.conditions),
+    row('Лекарства', summary.medications),
+    row('Гормональные', summary.hormones),
+    row('Женское здоровье', summary.womensHealth),
+  ]);
+
+  // O-8 + O-9: Режим
+  html += renderSection('Режим дня', 'o8-habits.html', [
+    row('Питание', summary.mealPattern),
+    row('Голодание', summary.fastingStatus),
+    row('Сон', summary.sleepTime !== '—' ? (summary.sleepTime === 'Посменно' ? 'Зависит от смены' : `${summary.sleepTime} — ${summary.wakeTime}`) : null),
+  ]);
+
+  // O-10: Активность
+  html += renderSection('Активность', 'o10-activity.html', [
+    row('Частота', summary.activityFreq),
+    row('Виды', summary.activityTypes),
+  ]);
+
+  // O-11: Бюджет
+  html += renderSection('Бюджет и готовка', 'o11-budget-cooking.html', [
+    row('Бюджет', summary.budget),
+    row('Время на готовку', summary.cookingTime),
+  ]);
+
+  // O-12: Анализы
+  const btHtml = renderBloodTests();
+  if (btHtml) {
+    html += `<div class="section"><div class="section-title">Анализы</div><div class="card"><div class="card-header"><div class="card-header-title">Анализы</div><button class="card-edit" onclick="location.href='o12-blood-tests.html?from=summary'">Изменить</button></div>${btHtml}</div></div>`;
+  }
+
+  // O-13: Витамины
+  html += renderSection('Витамины и БАДы', 'o13-supplements.html', [
+    row('Принимает', summary.supplements),
+    row('Готовность', summary.supplementOpenness),
+  ]);
+
+  // O-14: Мотивация
+  html += renderSection('Барьеры', 'o14-motivation.html', [
+    row('Что мешает', summary.barriers),
+  ]);
+
+  // O-15: Предпочтения
+  html += renderSection('Вкусовые предпочтения', 'o15-preferences.html', [
+    row('Не хочу видеть', summary.excludedMeals),
+    row('Люблю', summary.likedFoods),
+    row('Не люблю', summary.dislikedFoods),
+  ]);
+
+  // Уведомления
+  html += `
+    <div class="section">
+      <div class="section-title">Получать напоминания</div>
+      <div class="card">
+        ${['Приёмы пищи|meals|Напомним о завтраке, обеде и ужине',
+           'Витамины|vitamins|Напомним принять витамины по расписанию',
+           'Лекарства|medications|Напомним о приёме лекарств',
+           'Тренировки|workouts|Напомним о запланированной тренировке',
+           'Вода|water|Напомним выпить воду',
+           'Еженедельный отчёт|weekly|Пришлём отчёт каждое воскресенье'
+          ].map(item => {
+            const [label, key, hint] = item.split('|');
+            return `<div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-label">${label}</div><div class="toggle-hint">${hint}</div></div>
+              <div class="toggle-switch" data-key="notif_${key}" onclick="this.classList.toggle('off')"></div>
+            </div>`;
+          }).join('')}
+      </div>
+    </div>`;
+
+  // Health Connect
+  html += `
+    <div class="section">
+      <div class="section-title">Health Connect</div>
+      <div class="card">
+        <div class="card-header"><div class="card-header-title">Подключить данные о здоровье?</div></div>
+        <div style="font-size:12px; color:var(--color-text-secondary); margin-bottom:12px;">Мы можем получить данные о сне, шагах и тренировках из Apple Health / Google Health Connect</div>
+        ${['Сон|hc_sleep', 'Шаги|hc_steps', 'Тренировки|hc_workouts', 'Вес|hc_weight'].map(item => {
+          const [label, key] = item.split('|');
+          return `<div class="toggle-row">
+            <div class="toggle-info"><div class="toggle-label">${label}</div></div>
+            <div class="toggle-switch" data-key="${key}" onclick="this.classList.toggle('off')"></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+
+  // Мотивирующий текст
+  html += `
+    <div class="tip-card">
+      <div class="tip-icon">💡</div>
+      <div class="tip-text">Поздравляем! Ты только что ответил(а) на вопросы, которые хороший диетолог задаёт за 40–60 минут первичного приёма стоимостью 5 000–8 000 ₽. Теперь ты в одной кнопке от персонального плана.</div>
+    </div>`;
+
+  document.getElementById('content').innerHTML = html;
+
+  // Генерация
+  async function startGeneration() {
+    // Сохраняем настройки уведомлений в единый профиль
+    const notifs = {};
+    document.querySelectorAll('.toggle-switch').forEach(t => {
+      notifs[t.dataset.key] = !t.classList.contains('off');
+    });
+    if (window.AIDiet) window.AIDiet.saveField('_notifications', JSON.stringify(notifs));
+    if (window.AIDiet) window.AIDiet.saveField('_o16uiState', JSON.stringify(notifs));
+
+    const overlay = document.getElementById('genOverlay');
+    const text = document.getElementById('genText');
+    overlay.classList.add('active');
+
+    const steps = [
+      'Анализируем данные…',
+      'Подбираем умные wellness-рекомендации…',
+      'Подбираем рецепты…',
+      'Рассчитываем калории…',
+      'Составляем расписание…',
+      'Финализируем план…'
+    ];
+
+    let stepIdx = 0;
+    const stepInterval = setInterval(() => {
+      stepIdx++;
+      if (stepIdx < steps.length) text.textContent = steps[stepIdx];
+    }, 1500);
+
+    const pBar = document.getElementById('genProgressBar');
+    let pct = 0;
+    const progressInterval = setInterval(() => {
+        pct += Math.random() * 8 + 2;
+        if (pct >= 94) pct = 94;
+        if (pBar) pBar.style.width = pct + '%';
+    }, 400);
+
+    try {
+      // Инициализируем auth перед генерацией (критично для STRICT_AUTH=true на production)
+      if (typeof initAuth === 'function') {
+        await initAuth();
+      }
+      // Реальный вызов API
+      await generatePlanAPI((stepText) => {
+        text.textContent = stepText;
+      });
+      clearInterval(stepInterval);
+      clearInterval(progressInterval);
+      if (pBar) pBar.style.width = '100%';
+      text.textContent = 'План готов! ✅';
+      setTimeout(() => {
+        window.location.href = 'o16-5-plan-explanation.html';
+      }, 800);
+    } catch (err) {
+      console.warn('API unavailable, using offline mode:', err.message);
+      // Fallback: локальная анимация без API
+      clearInterval(stepInterval);
+      let fallbackIdx = 0;
+      const fallbackInterval = setInterval(() => {
+        fallbackIdx++;
+        if (fallbackIdx < steps.length) {
+          text.textContent = steps[fallbackIdx];
+        } else {
+          clearInterval(fallbackInterval);
+          clearInterval(progressInterval);
+          if (pBar) pBar.style.width = '100%';
+          if (window.AIDiet) {
+            window.AIDiet.saveField('plan_generated', 'false');
+            window.AIDiet.saveField('plan_mode', 'api_failed');
+          }
+          
+          text.innerHTML = '<span style="color:#ef4444">Ошибка генерации плана</span>';
+          alert("Боевой сервер (Render) вернул ошибку или превысил время ожидания: " + err.message + "\n\nПопробуйте еще раз.");
+          
+          // Возвращаем кнопку для повторной попытки
+          const btn = document.createElement('button');
+          btn.className = 'btn-primary';
+          btn.style.marginTop = '20px';
+          btn.innerText = 'Попробовать снова';
+          btn.onclick = () => location.reload();
+          text.parentNode.appendChild(btn);
+        }
+      }, 800);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const p = window.AIDiet ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+    if (p['_o16uiState']) {
+      try {
+        const state = JSON.parse(p['_o16uiState']);
+        document.querySelectorAll('.toggle-switch').forEach(t => {
+           if (state[t.dataset.key] === false) {
+              t.classList.add('off');
+           } else {
+              t.classList.remove('off');
+           }
+        });
+      } catch(e) {}
+    }
+  });
+</script>
+</body>
+</html>

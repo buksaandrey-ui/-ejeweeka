@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code — O-17.5 Дисклеймер</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <script src="app-utils.js"></script>
+  <style>
+    .shield-icon { width: 80px; height: 80px; background: linear-gradient(135deg, #E8F5E9, #C8E6C9); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
+    .shield-icon i { font-size: 36px; color: #2E7D32; }
+    .title { font-size: 24px; font-weight: 800; color: var(--color-text-primary); margin-bottom: 32px; }
+    .disclaimer-list { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 340px; }
+    .disclaimer-item { display: flex; gap: 14px; align-items: flex-start; text-align: left; }
+    .disclaimer-icon { width: 40px; height: 40px; border-radius: 12px; background: #F3F4F6; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .disclaimer-icon i { font-size: 20px; color: var(--color-text-secondary); }
+    .disclaimer-text { font-size: 14px; color: var(--color-text-primary); line-height: 1.5; font-weight: 500; }
+    .disclaimer-text strong { font-weight: 700; }
+    .btn-go { width: 100%; height: 56px; border-radius: 16px; background: var(--color-primary-gradient); color: #FFF; font-size: 16px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(245,146,43,0.3); }
+    @media (max-width: 440px) {
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><div><i class="ph ph-wifi-high"></i> <i class="ph ph-battery-full"></i></div></div>
+
+    <div class="content">
+      <div class="shield-icon"><i class="ph ph-shield-check"></i></div>
+      <div class="title">Важно знать</div>
+
+      <div class="disclaimer-list">
+        <div class="disclaimer-item">
+          <div class="disclaimer-icon"><i class="ph ph-lock-simple"></i></div>
+          <div class="disclaimer-text"><strong>Твои данные хранятся только на этом устройстве.</strong> Мы не передаём их третьим лицам и не храним на сервере.</div>
+        </div>
+
+        <div class="disclaimer-item">
+          <div class="disclaimer-icon"><i class="ph ph-heartbeat"></i></div>
+          <div class="disclaimer-text"><strong>Health Code не является медицинским устройством.</strong> Приложение создано для информационных целей и помощи в организации питания.</div>
+        </div>
+
+        <div class="disclaimer-item">
+          <div class="disclaimer-icon"><i class="ph ph-stethoscope"></i></div>
+          <div class="disclaimer-text"><strong>Рекомендации носят информационный характер</strong> и не заменяют консультацию врача. При наличии заболеваний проконсультируйся со специалистом.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-cta">
+      <button class="btn-go" onclick="acceptDisclaimer()">Понятно, поехали! <i class="ph ph-rocket"></i></button>
+    </div>
+  </div>
+
+<script>
+  function acceptDisclaimer() {
+    if (window.AIDiet) {
+      window.AIDiet.saveField('disclaimer_accepted', 'true');
+      window.AIDiet.saveField('first_launch_at', new Date().toISOString());
+    }
+    window.location.href = 'h1-dashboard.html';
+  }
+</script>
+<script src="onboarding-state.js"></script>
+
+<script>
+// Универсальный фильтр фичей статуса
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const raw = localStorage.getItem('aidiet_profile');
+        if (!raw) return;
+        const p = JSON.parse(raw);
+        
+        const noMeds = (!p['takes_medications'] || p['takes_medications'] || p['takes_medication'] || p['takes_medications'] || p['takes_medications'] || p['takes_medication'] === 'Нет' || p['takes_medications'] || p['takes_medications'] || p['takes_medication'] === 'false');
+        const noSupps = (!p['currently_takes_supplements'] || p['currently_takes_supplements'] || p['takes_supplements'] || p['currently_takes_supplements'] || p['currently_takes_supplements'] || p['takes_supplements'] === 'Нет' || p['currently_takes_supplements'] || p['currently_takes_supplements'] || p['takes_supplements'] === 'false');
+        const actFreq = p['activity_frequency'];
+        const noTrain = (!actFreq || actFreq === 'Не готов(а) сейчас' || actFreq === 'Не готов сейчас');
+
+        const walkDOM = (node, func) => {
+            func(node);
+            node = node.firstChild;
+            while (node) {
+                walkDOM(node, func);
+                node = node.nextSibling;
+            }
+        };
+
+        walkDOM(document.body, (node) => {
+            if (node.nodeType === 3) { // Text node
+                const text = node.nodeValue.toLowerCase();
+                
+                // Лекарства -> заменяем
+                if (noMeds && text.includes('лекарств') && text.includes('совместимость')) {
+                    node.nodeValue = 'Интеграция с Health Connect и трекерами активности';
+                }
+                
+                // Витамины -> скрываем родителя
+                if (noSupps && (text.includes('витаминов') || text.includes('бадов')) && !node.parentElement.closest('#dynamicPlanBullet')) {
+                    // Ищем ближайший контейнер-строку (обычно div)
+                    const row = node.parentElement.closest('div');
+                    if (row && row.children.length > 0 && row.innerText.length < 100) {
+                        row.style.display = 'none';
+                    }
+                }
+                
+                // Тренировки -> скрываем родителя
+                if (noTrain && text.includes('тренировк') && !node.parentElement.closest('#dynamicPlanBullet')) {
+                    const row = node.parentElement.closest('div');
+                    if (row && row.children.length > 0 && row.innerText.length < 100) {
+                        row.style.display = 'none';
+                    }
+                }
+            }
+        });
+    } catch(e) {
+        console.warn('Error in status feature filter', e);
+    }
+});
+</script>
+</body>
+</html>

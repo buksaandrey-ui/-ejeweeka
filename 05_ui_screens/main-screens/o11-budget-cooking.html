@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-11 Бюджет и готовка</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .subtitle { font-size: 14px; font-weight: 700; color: var(--color-text-primary); margin: 24px 0 16px 0; text-transform: uppercase; letter-spacing: 0.8px; }
+    .choice-list { display: flex; flex-direction: column; gap: 12px; }
+    .choice-card { 
+      background: #FFFFFF; border: 1.5px solid var(--color-divider); border-radius: 18px; padding: 18px 20px; 
+      display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s;
+    }
+    .choice-card.active { border-color: var(--color-primary); background: #FFF7ED; }
+    .choice-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .choice-title { font-size: 15px; font-weight: 700; color: var(--color-text-primary); }
+    .choice-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.4; }
+    .choice-icon { font-size: 28px; margin-right: 14px; flex-shrink: 0; }
+    .radio-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--color-divider); position: relative; flex-shrink: 0; margin-left: 12px; }
+    .choice-card.active .radio-circle { border-color: var(--color-primary); }
+    .choice-card.active .radio-circle::after { content: ""; position: absolute; top: 4px; left: 4px; width: 10px; height: 10px; background: var(--color-primary); border-radius: 50%; }
+
+    /* Time sub-selector */
+    .time-sub {
+      display: none; flex-direction: column; gap: 8px;
+      margin-top: 16px; padding: 16px; background: #F9FAFB; border-radius: 16px;
+      border: 1px solid var(--color-divider);
+      animation: slideDown 0.25s ease-out;
+    }
+    .time-sub.visible { display: flex; }
+    .time-sub-label { font-size: 12px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .time-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .time-chip {
+      padding: 10px 16px; border-radius: 12px; border: 1.5px solid var(--color-divider);
+      background: #FFFFFF; font-size: 13px; font-weight: 600; color: var(--color-text-primary);
+      cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+      flex: 1; justify-content: center; min-width: 0; text-align: center;
+    }
+    .time-chip.active { border-color: var(--color-primary); background: #FFF7ED; color: var(--color-primary); }
+    .time-chip-icon { font-size: 16px; }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-hint {
+      0% { box-shadow: 0 0 0 0 rgba(245, 146, 43, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(245, 146, 43, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(245, 146, 43, 0); }
+    }
+    @media (max-width: 440px) {
+    }
+  </style>
+
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 10 из 14</div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+      <h1 class="question-title">Бюджет и готовка</h1>
+
+      <!-- БЛОК 1: Бюджет -->
+      <div class="subtitle">Твой бюджет</div>
+      <div class="choice-list" id="budgetList">
+        <div class="choice-card" data-val="economy">
+          <div class="choice-info">
+            <span class="choice-title">Экономный</span>
+            <span class="choice-desc">Акцент на базовых и доступных продуктах</span>
+          </div>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card" data-val="medium">
+          <div class="choice-info">
+            <span class="choice-title">Средний</span>
+            <span class="choice-desc">Больше разнообразия и качественных товаров</span>
+          </div>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card" data-val="premium">
+          <div class="choice-info">
+            <span class="choice-title">Готов(а) к качественным или премиальным продуктам</span>
+            <span class="choice-desc">Морепродукты, деликатесы, органик</span>
+          </div>
+          <div class="radio-circle"></div>
+        </div>
+      </div>
+
+      <!-- БЛОК 2: Как готовишь -->
+      <div class="subtitle">Как ты обычно готовишь?</div>
+      <div class="choice-list" id="cookingList">
+        <div class="choice-card" data-val="daily" data-show-time="true">
+          <span class="choice-icon">🍳</span>
+          <div class="choice-info">
+            <span class="choice-title">Готовлю каждый день</span>
+            <span class="choice-desc">Свежие блюда под каждый приём пищи</span>
+          </div>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card" data-val="mealprep" data-show-time="true">
+          <span class="choice-icon">📦</span>
+          <div class="choice-info">
+            <span class="choice-title">Готовлю заранее на 2–3 дня</span>
+            <span class="choice-desc">Батч-готовка, контейнеры, разогрев</span>
+          </div>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card" data-val="nocook" data-show-time="false">
+          <span class="choice-icon">🛒</span>
+          <div class="choice-info">
+            <span class="choice-title">Почти не готовлю</span>
+            <span class="choice-desc">Покупаю готовое, доставка, столовая</span>
+          </div>
+          <div class="radio-circle"></div>
+        </div>
+      </div>
+
+      <!-- Подвопрос: сколько времени -->
+      <div class="time-sub" id="timeSub">
+        <div class="time-sub-label">Сколько времени за одну готовку?</div>
+        <div class="time-chips" id="timeChips">
+          <div class="time-chip" data-val="15min">
+            <span class="time-chip-icon">⚡</span>
+            До 15 мин
+          </div>
+          <div class="time-chip" data-val="30min">
+            <span class="time-chip-icon">⏱</span>
+            20–40 мин
+          </div>
+          <div class="time-chip" data-val="60min">
+            <span class="time-chip-icon">👨‍🍳</span>
+            Больше часа
+          </div>
+        </div>
+      </div>
+
+      <!-- Motivation Block -->
+      <div class="onboarding-tip-card">
+        <div class="onboarding-tip-icon">💡</div>
+        <div class="onboarding-tip-text">
+          Здоровое питание — не значит дорогое. Гречка, яйца, сезонные овощи, куриное бедро, творог — основа отличного рациона за разумные деньги. «Нет времени готовить» — самая частая причина срывов. Если 15 минут — получишь блюда из 3–5 ингредиентов. Если час — разнообразное меню с интересными рецептами. Никакого осуждения — только реалистичный план.
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="location.href='o10-activity.html'">← Назад</button>
+      <button class="btn-primary disabled" id="btnNext" onclick="nextScreen()" disabled>Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+
+  </div>
+
+  <script src="onboarding-state.js"></script>
+  <script>
+    let selectedBudget = null;
+    let selectedCooking = null;
+    let selectedTime = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Budget cards
+      document.querySelectorAll('#budgetList .choice-card').forEach(card => {
+        card.addEventListener('click', () => {
+          document.querySelectorAll('#budgetList .choice-card').forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+          selectedBudget = card.dataset.val;
+          updateNextBtn();
+        });
+      });
+
+      // Cooking style cards
+      document.querySelectorAll('#cookingList .choice-card').forEach(card => {
+        card.addEventListener('click', () => {
+          document.querySelectorAll('#cookingList .choice-card').forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+          selectedCooking = card.dataset.val;
+
+          // Show/hide time sub-question
+          const timeSub = document.getElementById('timeSub');
+          if (card.dataset.showTime === 'true') {
+            timeSub.classList.add('visible');
+            // Auto-scroll to time sub-question so user notices it
+            setTimeout(() => {
+              timeSub.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              // Pulse animation to draw attention
+              timeSub.style.animation = 'none';
+              timeSub.offsetHeight; // reflow
+              timeSub.style.animation = 'pulse-hint 0.6s ease-out';
+            }, 300);
+          } else {
+            timeSub.classList.remove('visible');
+            // Reset time selection for "nocook"
+            document.querySelectorAll('#timeChips .time-chip').forEach(c => c.classList.remove('active'));
+            selectedTime = null;
+          }
+          updateNextBtn();
+        });
+      });
+
+      // Time chips
+      document.querySelectorAll('#timeChips .time-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('#timeChips .time-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          selectedTime = chip.dataset.val;
+          updateNextBtn();
+        });
+      });
+
+      // Hydrate from saved state
+      const state = window.AIDiet ? window.AIDiet.getProfile() : {};
+      if (state['_o11uiState']) {
+        try {
+          const st = JSON.parse(state['_o11uiState']);
+          if (st.budget) {
+            const budgetCard = document.querySelector(`#budgetList .choice-card[data-val="${st.budget}"]`);
+            if (budgetCard) { budgetCard.classList.add('active'); selectedBudget = st.budget; }
+          }
+          if (st.cooking) {
+            const cookCard = document.querySelector(`#cookingList .choice-card[data-val="${st.cooking}"]`);
+            if (cookCard) {
+              cookCard.classList.add('active');
+              selectedCooking = st.cooking;
+              if (cookCard.dataset.showTime === 'true') {
+                document.getElementById('timeSub').classList.add('visible');
+              }
+            }
+          }
+          if (st.time) {
+            const timeChip = document.querySelector(`#timeChips .time-chip[data-val="${st.time}"]`);
+            if (timeChip) { timeChip.classList.add('active'); selectedTime = st.time; }
+          }
+          updateNextBtn();
+        } catch(e) {}
+      }
+      window.__inlineHydrated = true;
+    });
+
+    function updateNextBtn() {
+      const btn = document.getElementById('btnNext');
+      // Budget must be selected
+      if (!selectedBudget || !selectedCooking) {
+        btn.disabled = true;
+        btn.classList.add('disabled');
+
+        return;
+      }
+      // If cooking style requires time — time must be selected
+      if (selectedCooking !== 'nocook' && !selectedTime) {
+        btn.disabled = true;
+        btn.classList.add('disabled');
+
+        return;
+      }
+      btn.disabled = false;
+      btn.classList.remove('disabled');
+
+      saveO11State();
+    }
+
+    // Russian label maps
+    const budgetLabels = { economy: 'Экономный', medium: 'Средний', premium: 'Премиальный' };
+    const cookingLabels = { daily: 'Готовлю каждый день', mealprep: 'Готовлю заранее на 2–3 дня', nocook: 'Почти не готовлю' };
+    const timeLabels = { '15min': 'До 15 мин', '30min': '20–40 мин', '60min': 'Больше часа' };
+
+    function saveO11State() {
+      if (!selectedBudget || !selectedCooking) return;
+
+      // Build cooking time string
+      let cookingText = cookingLabels[selectedCooking] || selectedCooking;
+      if (selectedTime) {
+        cookingText += ` (${timeLabels[selectedTime] || selectedTime})`;
+      }
+
+      window.AIDiet && window.AIDiet.saveField('budget', budgetLabels[selectedBudget] || selectedBudget);
+      window.AIDiet && window.AIDiet.saveField('cooking_time', cookingText);
+
+      // Save UI state for hydration
+      window.AIDiet && window.AIDiet.saveField('_o11uiState', JSON.stringify({
+        budget: selectedBudget,
+        cooking: selectedCooking,
+        time: selectedTime
+      }));
+    }
+
+    function nextScreen() {
+      if (!selectedBudget || !selectedCooking) return;
+      saveO11State();
+      window.AIDiet.goNext('o12-blood-tests.html');
+    }
+</script>
+</body>
+</html>

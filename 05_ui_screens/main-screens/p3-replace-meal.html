@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - P-3 Замена блюда</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header { padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+    .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid var(--color-divider); color: var(--color-text-primary); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; }
+    .header-title { font-size: 20px; font-weight: 700; color: var(--color-text-primary); }
+    .section-title { font-size: 14px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+    /* Current Meal Section */
+    .current-meal-card {
+      background: #F9FAFB;
+      border: 1px solid var(--color-divider);
+      border-radius: 18px;
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      opacity: 0.6;
+    }
+    .meal-img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
+    .meal-info { display: flex; flex-direction: column; justify-content: center; }
+    .meal-name { font-size: 15px; font-weight: 600; color: var(--color-text-primary); }
+    .meal-meta { font-size: 12px; color: var(--color-text-secondary); }
+    /* Alternatives */
+    .alt-list { display: flex; flex-direction: column; gap: 16px; }
+    .alt-card {
+      background: #FFFFFF;
+      border: 1px solid var(--color-divider);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .alt-card:active { transform: scale(0.98); }
+    .alt-header { display: flex; gap: 16px; }
+    .alt-img { width: 80px; height: 80px; border-radius: 14px; object-fit: cover; }
+    .alt-content { flex: 1; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid var(--color-divider); padding-right: 12px; }
+    .alt-name { font-size: 16px; font-weight: 700; color: var(--color-text-primary); line-height: 1.3; margin-bottom: 4px; }
+    .alt-stats { display: flex; gap: 12px; font-size: 13px; color: var(--color-text-secondary); font-weight: 500; }
+    .alt-selection { width: 44px; display: flex; justify-content: center; align-items: center; }
+    .btn-select-ring { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--color-divider); background: transparent; }
+    .alt-card.selected .btn-select-ring { border-color: var(--color-primary); background: var(--color-primary); display: flex; justify-content: center; align-items: center; }
+    .alt-card.selected .btn-select-ring::after { content: "\f00c"; font-family: "Phosphor"; color: #FFFFFF; font-weight: 700; font-size: 14px; }
+    .btn-confirm { width: 100%; height: 56px; border-radius: 16px; background: var(--color-primary-gradient); color: #FFFFFF; border: none; font-size: 16px; font-weight: 700; box-shadow: 0 4px 15px rgba(245,146,43,0.3); cursor: pointer; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <button class="back-btn" onclick="history.back()" aria-label="Назад"><i class="ph ph-arrow-left"></i></button>
+      <h1 class="header-title">Замена блюда</h1>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      
+      <div>
+        <div class="section-title">Текущий выбор</div>
+        <div class="current-meal-card">
+          <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=100&h=100&fit=crop" alt="Current" class="meal-img">
+          <div class="meal-info">
+            <div class="meal-name">Куриная грудка с киноа</div>
+            <div class="meal-meta">450 ккал • 25 мин</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Альтернативы для тебя</div>
+        <div class="alt-list">
+          
+          <div class="alt-card selected">
+            <div class="alt-header">
+              <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop" class="alt-img" alt="Alt 1">
+              <div class="alt-content">
+                <div class="alt-name">Салат с тунцом и фасолью</div>
+                <div class="alt-stats">
+                  <span>🔥 410 ккал</span>
+                  <span>🕒 15 мин</span>
+                </div>
+              </div>
+              <div class="alt-selection">
+                <div class="btn-select-ring"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alt-card">
+            <div class="alt-header">
+              <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=200&h=200&fit=crop" class="alt-img" alt="Alt 2">
+              <div class="alt-content">
+                <div class="alt-name">Лосось с овощами гриль</div>
+                <div class="alt-stats">
+                  <span>🔥 480 ккал</span>
+                  <span>🕒 20 мин</span>
+                </div>
+              </div>
+              <div class="alt-selection">
+                <div class="btn-select-ring"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alt-card">
+            <div class="alt-header">
+              <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=200&h=200&fit=crop" class="alt-img" alt="Alt 3">
+              <div class="alt-content">
+                <div class="alt-name">Чечевичный суп с беконом</div>
+                <div class="alt-stats">
+                  <span>🔥 390 ккал</span>
+                  <span>🕒 35 мин</span>
+                </div>
+              </div>
+              <div class="alt-selection">
+                <div class="btn-select-ring"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-cta">
+      <button class="btn-confirm">Подтвердить замену</button>
+    </div>
+
+  
+    <!-- Tab Bar -->
+    <nav class="tab-bar">
+      <a href="h1-dashboard.html" class="tab-item"><i class="ph ph-house"></i><span class="tab-label">Главная</span></a>
+      <a href="p1-weekly-plan.html" class="tab-item active"><i class="ph ph-calendar-blank"></i><span class="tab-label">План</span></a>
+      <a href="s1-shopping-list.html" class="tab-item"><i class="ph ph-shopping-cart"></i><span class="tab-label">Покупки</span></a>
+      <a href="pr1-progress.html" class="tab-item"><i class="ph ph-chart-line-up"></i><span class="tab-label">Прогресс</span></a>
+      <a href="u1-profile-main.html" class="tab-item"><i class="ph ph-user"></i><span class="tab-label">Профиль</span></a>
+    </nav>
+  </div>
+<script src="replace-meal-state.js"></script>
+</body>
+</html>

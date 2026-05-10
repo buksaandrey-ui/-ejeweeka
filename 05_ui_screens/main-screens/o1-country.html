@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - Страна и Город</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Phosphor Icons */
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <style>
+    /* Status bar */
+    .status-icons { display: flex; gap: 6px; align-items: center; }
+    /* Fixed search header */
+    .search-area {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-divider);
+      padding: 22px 20px 16px 20px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .screen-title { font-size: 24px; font-weight: 800; color: var(--color-text-primary); line-height: 1.3; }
+    .screen-sub { font-size: 13px; color: var(--color-muted); font-weight: 500; }
+    .search-wrap {
+      position: relative;
+    }
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      color: var(--color-muted);
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      height: 54px;
+      background: var(--color-bg-input);
+      border: 1.5px solid transparent;
+      border-radius: 14px;
+      padding: 0 16px 0 44px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--color-text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--color-primary); background: #FFFFFF; }
+    .search-input::placeholder { color: #9CA3AF; }
+    /* Scrollable country list */
+    .country-list {
+      flex: 1;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 0 0 120px 0;
+    }
+    .country-list::-webkit-scrollbar { display: none; }
+    .list-section-label {
+      padding: 10px 20px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      background: var(--color-bg);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .country-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 20px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--color-divider);
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .country-item:last-child { border-bottom: none; }
+    .country-item:active { background: #F3F4F6; }
+    .country-item.selected { background: #FFF7ED; }
+    .country-flag { font-size: 26px; line-height: 1; width: 32px; text-align: center; }
+    .country-name {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text);
+    }
+    .country-item.selected .country-name { color: var(--color-primary); font-weight: 700; }
+    .check-mark {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      color: #FFFFFF;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .country-item.selected .check-mark { display: flex; }
+    /* City input — inline inside search-area, shown after country selected */
+    .city-field {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+    .city-field.visible { display: flex; }
+    .city-field-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+    .city-field-wrap {
+      position: relative;
+    }
+    .city-field-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      pointer-events: none;
+    }
+    .city-field input {
+      width: 100%;
+      height: 48px;
+      border-radius: 14px;
+      border: 1.5px solid var(--color-divider);
+      background: var(--color-bg-input);
+      padding: 0 16px 0 42px;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      color: var(--color-text);
+    }
+    .city-field input:focus { border-color: var(--color-primary); background: #fff; }
+    /* City suggestions */
+    .city-suggestions {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: #fff;
+      border: 1px solid var(--color-divider);
+      border-radius: 12px;
+      margin-top: 4px;
+      max-height: 180px;
+      overflow-y: auto;
+      z-index: 50;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .city-suggestions.visible { display: block; }
+    .city-suggestion-item {
+      padding: 12px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #F3F4F6;
+    }
+    .city-suggestion-item:last-child { border-bottom: none; }
+    .city-suggestion-item:active { background: #FFF7ED; }
+    /* Bottom CTA */
+    .btn-primary.active {
+      background: var(--color-primary-gradient);
+      color: #FFFFFF;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(245,146,43,0.35);
+    }
+    /* Hide bottom CTA when keyboard is open */
+    .bottom-cta.keyboard-hidden { display: none !important; }
+    /* No results */
+    .no-results {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 20px;
+      gap: 12px;
+      color: var(--color-muted);
+    }
+    .no-results .emoji { font-size: 36px; }
+    .no-results p { font-size: 14px; text-align: center; }
+    @media (max-width: 440px) {
+      .search-area {
+        padding-top: max(16px, env(safe-area-inset-top, 16px));
+      }
+    }
+</style>
+  <script src="app-utils.js"></script>
+  <link rel="stylesheet" href="global.css">
+</head>
+<body>
+  <div class="phone" style="display:flex;flex-direction:column;">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-icons">
+        <svg width="17" height="12" viewBox="0 0 18 12" fill="currentColor"><rect y="8" width="4" height="4" rx="1"/><rect x="5" y="5" width="4" height="7" rx="1"/><rect x="10" y="2" width="4" height="10" rx="1"/><rect x="15" width="4" height="12" rx="1" fill-opacity="0.3"/></svg>
+        <svg width="16" height="12" viewBox="0 0 17 12" fill="currentColor"><path d="M8.5 2C11.5 2 14.4 3.01 16.6 4.71C16.9 4.94 16.96 5.37 16.73 5.67C16.5 5.97 16.07 6.03 15.77 5.8C13.84 4.33 11.31 3.5 8.5 3.5C5.69 3.5 3.16 4.33 1.23 5.8C0.93 6.03 0.5 5.97 0.27 5.67C0.04 5.37 0.1 4.94 0.4 4.71C2.63 3.01 5.46 2 8.5 2ZM8.5 5.5C10.3 5.5 11.97 6 13.33 6.85C13.61 7.02 13.69 7.39 13.52 7.66C13.35 7.93 12.99 8.02 12.71 7.85C11.54 7.11 10.08 6.75 8.5 6.75C6.92 6.75 5.46 7.11 4.29 7.85C4.01 8.02 3.65 7.93 3.48 7.66C3.31 7.39 3.39 7.02 3.67 6.85C5.03 6 6.7 5.5 8.5 5.5ZM8.5 8.5C9.33 8.5 10 9.17 10 10C10 10.83 9.33 11.5 8.5 11.5C7.67 11.5 7 10.83 7 10C7 9.17 7.67 8.5 8.5 8.5Z"/></svg>
+        <svg width="24" height="12" viewBox="0 0 25 12" fill="currentColor"><rect x="1" y="1" width="20" height="10" rx="3.33" stroke="currentColor" stroke-width="1" fill="none"/><rect x="2" y="2" width="14" height="8" rx="2.33"/><path d="M22 4H23C23.55 4 24 4.45 24 5V7C24 7.55 23.55 8 23 8H22V4Z"/></svg>
+      </div>
+    </div>
+
+    <!-- Fixed Search Area -->
+    <div class="search-area">
+      <div>
+        <div class="screen-title">Где ты живёшь?</div>
+        <div class="screen-sub" style="margin-top:8px;">Для подбора доступных продуктов, привычных рецептов и витаминов по климату</div>
+      </div>
+      <div class="search-wrap">
+        <i class="ph ph-magnifying-glass search-icon"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Поиск страны..." autocomplete="off" inputmode="text">
+      </div>
+      <!-- City Field — appears inline in header after country selected -->
+      <div class="city-field" id="cityField">
+        <div class="city-field-label">Город</div>
+        <div class="city-field-wrap">
+          <i class="ph ph-map-pin city-field-icon"></i>
+          <input type="text" id="cityInput" placeholder="Начни вводить название..." autocomplete="off" inputmode="text">
+        </div>
+        <div class="city-suggestions" id="citySuggestions"></div>
+      </div>
+    </div>
+
+    <!-- Scrollable Country List -->
+    <div class="country-list" id="countryList" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+      <div class="no-results" id="noResults">
+        <div class="emoji">🌍</div>
+        <p>Страна не найдена. Попробуй другое написание.</p>
+      </div>
+
+      <!-- Motivation Block (inside scroll container) -->
+      <div class="country-list-tip" style="padding: 20px 20px 120px;">
+        <div style="background-color: #E8F5E9; border-radius: 16px; padding: 16px; display: flex; gap: 12px; border: 1px solid #C8E6C9;">
+          <div style="font-size: 20px; flex-shrink: 0;">💡</div>
+          <div style="font-size: 13px; color: #2E7D32; line-height: 1.5; font-weight: 500;">Знаешь ли ты, что в Финляндии молочные продукты обогащают витамином D по закону, а в Средней Азии дефицит витамина D — редкость благодаря солнцу? Твой регион напрямую влияет на то, что должно быть в рационе. Мы учтём это — и подберём продукты, которые реально купить в твоём городе — по местным ценам и сезонам.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom CTA -->
+    <div class="bottom-cta">
+      <button class="btn-primary disabled" id="btnNext" disabled>Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <script>
+    // ──────────────────────────────────────────────
+    // ДАННЫЕ: MVП — русскоязычная аудитория + популярные страны эмиграции
+    // ──────────────────────────────────────────────
+    // city:true — крупные страны с разными климатическими зонами (влияет на продукты, цены, солнце)
+    // city:false — небольшие государства с однородным климатом
+    const COUNTRIES = [
+      { flag: '🇦🇿', name: 'Азербайджан', code: 'AZ', city: false },
+      { flag: '🇦🇷', name: 'Аргентина', code: 'AR', city: true },
+      { flag: '🇦🇲', name: 'Армения', code: 'AM', city: false },
+      { flag: '🇦🇺', name: 'Австралия', code: 'AU', city: true },
+      { flag: '🇦🇹', name: 'Австрия', code: 'AT', city: false },
+      { flag: '🇧🇾', name: 'Беларусь', code: 'BY', city: false },
+      { flag: '🇧🇬', name: 'Болгария', code: 'BG', city: false },
+      { flag: '🇧🇴', name: 'Боливия', code: 'BO', city: true },
+      { flag: '🇧🇷', name: 'Бразилия', code: 'BR', city: true },
+      { flag: '🇬🇧', name: 'Великобритания', code: 'GB', city: true },
+      { flag: '🇻🇪', name: 'Венесуэла', code: 'VE', city: false },
+      { flag: '🇭🇺', name: 'Венгрия', code: 'HU', city: false },
+      { flag: '🇩🇪', name: 'Германия', code: 'DE', city: true },
+      { flag: '🇬🇷', name: 'Греция', code: 'GR', city: false },
+      { flag: '🇬🇪', name: 'Грузия', code: 'GE', city: false },
+      { flag: '🇩🇰', name: 'Дания', code: 'DK', city: false },
+      { flag: '🇮🇱', name: 'Израиль', code: 'IL', city: true },
+      { flag: '🇮🇳', name: 'Индия', code: 'IN', city: true },
+      { flag: '🇮🇩', name: 'Индонезия', code: 'ID', city: true },
+      { flag: '🇮🇪', name: 'Ирландия', code: 'IE', city: false },
+      { flag: '🇪🇸', name: 'Испания', code: 'ES', city: true },
+      { flag: '🇮🇹', name: 'Италия', code: 'IT', city: true },
+      { flag: '🇰🇿', name: 'Казахстан', code: 'KZ', city: true },
+      { flag: '🇨🇦', name: 'Канада', code: 'CA', city: true },
+      { flag: '🇶🇦', name: 'Катар', code: 'QA', city: false },
+      { flag: '🇨🇾', name: 'Кипр', code: 'CY', city: false },
+      { flag: '🇨🇳', name: 'Китай', code: 'CN', city: true },
+      { flag: '🇨🇴', name: 'Колумбия', code: 'CO', city: true },
+      { flag: '🇨🇺', name: 'Куба', code: 'CU', city: false },
+      { flag: '🇰🇬', name: 'Кыргызстан', code: 'KG', city: false },
+      { flag: '🇱🇻', name: 'Латвия', code: 'LV', city: false },
+      { flag: '🇱🇹', name: 'Литва', code: 'LT', city: false },
+      { flag: '🇲🇽', name: 'Мексика', code: 'MX', city: true },
+      { flag: '🇲🇩', name: 'Молдова', code: 'MD', city: false },
+      { flag: '🇳🇱', name: 'Нидерланды', code: 'NL', city: false },
+      { flag: '🇳🇿', name: 'Новая Зеландия', code: 'NZ', city: false },
+      { flag: '🇳🇴', name: 'Норвегия', code: 'NO', city: true },
+      { flag: '🇦🇪', name: 'ОАЭ', code: 'AE', city: false },
+      { flag: '🇵🇦', name: 'Панама', code: 'PA', city: false },
+      { flag: '🇵🇾', name: 'Парагвай', code: 'PY', city: false },
+      { flag: '🇵🇪', name: 'Перу', code: 'PE', city: true },
+      { flag: '🇵🇱', name: 'Польша', code: 'PL', city: true },
+      { flag: '🇵🇹', name: 'Португалия', code: 'PT', city: false },
+      { flag: '🇷🇺', name: 'Россия', code: 'RU', city: true },
+      { flag: '🇸🇦', name: 'Саудовская Аравия', code: 'SA', city: false },
+      { flag: '🇷🇸', name: 'Сербия', code: 'RS', city: false },
+      { flag: '🇸🇬', name: 'Сингапур', code: 'SG', city: false },
+      { flag: '🇺🇸', name: 'США', code: 'US', city: true },
+      { flag: '🇹🇯', name: 'Таджикистан', code: 'TJ', city: false },
+      { flag: '🇹🇭', name: 'Таиланд', code: 'TH', city: true },
+      { flag: '🇹🇲', name: 'Туркменистан', code: 'TM', city: false },
+      { flag: '🇹🇷', name: 'Турция', code: 'TR', city: true },
+      { flag: '🇺🇿', name: 'Узбекистан', code: 'UZ', city: true },
+      { flag: '🇺🇦', name: 'Украина', code: 'UA', city: true },
+      { flag: '🇺🇾', name: 'Уругвай', code: 'UY', city: false },
+      { flag: '🇫🇮', name: 'Финляндия', code: 'FI', city: false },
+      { flag: '🇫🇷', name: 'Франция', code: 'FR', city: true },
+      { flag: '🇨🇿', name: 'Чехия', code: 'CZ', city: false },
+      { flag: '🇨🇱', name: 'Чили', code: 'CL', city: true },
+      { flag: '🇨🇭', name: 'Швейцария', code: 'CH', city: false },
+      { flag: '🇸🇪', name: 'Швеция', code: 'SE', city: true },
+      { flag: '🇪🇨', name: 'Эквадор', code: 'EC', city: true },
+      { flag: '🇪🇪', name: 'Эстония', code: 'EE', city: false },
+      { flag: '🇿🇦', name: 'ЮАР', code: 'ZA', city: true },
+      { flag: '🇰🇷', name: 'Южная Корея', code: 'KR', city: false },
+      { flag: '🇯🇵', name: 'Япония', code: 'JP', city: true },
+    ];
+
+    // ──────────────────────────────────────────────
+    // RENDER
+    // ──────────────────────────────────────────────
+    const listEl = document.getElementById('countryList');
+    const searchEl = document.getElementById('searchInput');
+    const btnNext = document.getElementById('btnNext');
+    const cityField = document.getElementById('cityField');
+    const cityInput = document.getElementById('cityInput');
+    const noResults = document.getElementById('noResults');
+
+    let selectedCountry = null;
+    let renderedItems = []; // { el, country }
+
+    function groupBy(arr, key) {
+      return arr.reduce((acc, item) => {
+        (acc[item[key]] = acc[item[key]] || []).push(item);
+        return acc;
+      }, {});
+    }
+
+    function renderList(filtered) {
+      // Remove existing items and section labels (not noResults or tip)
+      listEl.querySelectorAll('.country-item, .list-section-label').forEach(e => e.remove());
+      renderedItems = [];
+
+      const tipEl = listEl.querySelector('.country-list-tip');
+
+      if (filtered.length === 0) {
+        noResults.style.display = 'flex';
+        return;
+      }
+      noResults.style.display = 'none';
+
+      // Единый список по алфавиту (без разделения на группы)
+      const sorted = filtered.slice().sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+
+      sorted.forEach(c => {
+        const el = document.createElement('div');
+        el.className = 'country-item' + (selectedCountry?.code === c.code ? ' selected' : '');
+        el.innerHTML = `
+            <span class="country-flag">${c.flag}</span>
+            <span class="country-name">${c.name}</span>
+            <span class="check-mark">✓</span>
+          `;
+        el.addEventListener('click', () => selectCountry(c, el));
+        listEl.insertBefore(el, tipEl);
+        renderedItems.push({ el, country: c });
+      });
+    }
+
+    function selectCountry(c, el) {
+      renderedItems.forEach(r => r.el.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedCountry = c;
+      searchEl.value = '';
+      renderList(COUNTRIES);
+
+      // City field: only for large countries (city:true)
+      if (c.city) {
+        cityField.classList.add('visible');
+        cityInput.focus();
+      } else {
+        cityField.classList.remove('visible');
+        cityInput.value = '';
+      }
+
+      btnNext.classList.add('active');
+      btnNext.classList.remove('disabled');
+      btnNext.disabled = false;
+    }
+
+    function filterCountries(query) {
+      if (!query) return COUNTRIES;
+      const q = query.toLowerCase();
+      return COUNTRIES.filter(c =>
+        c.name.toLowerCase().includes(q) ||
+        c.code.toLowerCase().includes(q)
+      );
+    }
+
+    searchEl.addEventListener('input', e => {
+      const filtered = filterCountries(e.target.value.trim());
+      renderList(filtered);
+    });
+
+    btnNext.addEventListener('click', () => {
+      if (btnNext.disabled) return;
+      const countryName = selectedCountry?.name || searchEl.value.trim();
+      const countryCode = selectedCountry?.code || 'CUSTOM';
+      const city = cityInput.value.trim();
+      window.AIDiet && window.AIDiet.saveField('country', countryName);
+      window.AIDiet && window.AIDiet.saveField('country_code', countryCode);
+      if (city) window.AIDiet && window.AIDiet.saveField('city', city);
+      window.AIDiet.goNext('o2-goal.html');
+    });
+
+    // Initial render
+    renderList(COUNTRIES);
+
+    // ── ГИДРАТАЦИЯ: восстанавливаем выбор из профиля (при возврате назад) ──
+    try {
+      const saved = JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+      const savedCode = saved['Страна_код'];
+      const savedCity = saved['Город'] || '';
+
+      if (savedCode) {
+        const country = COUNTRIES.find(c => c.code === savedCode);
+        if (country) {
+          // Находим элемент в списке и выделяем его
+          const match = renderedItems.find(r => r.country.code === savedCode);
+          if (match) {
+            selectedCountry = country;
+            match.el.classList.add('selected');
+
+            // Восстанавливаем поле города
+            if (country.city && savedCity) {
+              cityField.classList.add('visible');
+              cityInput.value = savedCity;
+              cityInput.dataset.hydrated = 'true';
+            }
+
+            // Активируем кнопку Далее
+            btnNext.classList.add('active');
+            btnNext.classList.remove('disabled');
+            btnNext.disabled = false;
+          }
+        }
+      }
+    } catch(e) { console.warn('hydration error', e); }
+
+    // ── ГОРОДА: подсказки при вводе ──
+    const CITIES = {
+      RU: ['Москва','Санкт-Петербург','Новосибирск','Екатеринбург','Казань','Нижний Новгород','Самара','Омск','Челябинск','Ростов-на-Дону','Уфа','Красноярск','Воронеж','Пермь','Волгоград','Краснодар','Сочи','Тюмень','Иркутск','Владивосток','Калининград','Мурманск','Хабаровск','Якутск','Махачкала'],
+      KZ: ['Алматы','Астана','Шымкент','Караганда','Актобе','Тараз','Павлодар','Атырау','Семей','Костанай','Актау'],
+      UA: ['Киев','Харьков','Одесса','Днепр','Запорожье','Львов','Кривой Рог','Николаев','Винница','Полтава'],
+      UZ: ['Ташкент','Самарканд','Бухара','Наманган','Андижан','Фергана','Нукус'],
+      DE: ['Берлин','Мюнхен','Гамбург','Кёльн','Франкфурт','Дюссельдорф','Штутгарт','Дрезден','Лейпциг','Ганновер'],
+      US: ['Нью-Йорк','Лос-Анджелес','Чикаго','Хьюстон','Майами','Сан-Франциско','Бостон','Сиэтл','Денвер','Даллас','Вашингтон','Филадельфия','Атланта','Финикс'],
+      TR: ['Стамбул','Анталья','Анкара','Измир','Бодрум','Аланья','Мерсин','Бурса','Трабзон'],
+      IL: ['Тель-Авив','Иерусалим','Хайфа','Ашдод','Беэр-Шева','Нетания','Эйлат'],
+      AE: ['Дубай','Абу-Даби','Шарджа','Аджман'],
+      GE: ['Тбилиси','Батуми','Кутаиси'],
+      AM: ['Ереван','Гюмри','Ванадзор'],
+      TH: ['Бангкок','Паттайя','Пхукет','Чиангмай','Самуи','Краби'],
+      ES: ['Мадрид','Барселона','Валенсия','Малага','Севилья','Аликанте','Бильбао','Пальма-де-Майорка'],
+      FR: ['Париж','Марсель','Лион','Тулуза','Ницца','Страсбург','Бордо','Нант'],
+      IT: ['Рим','Милан','Неаполь','Турин','Флоренция','Венеция','Болонья','Палермо'],
+      CN: ['Пекин','Шанхай','Гуанчжоу','Шэньчжэнь','Ханчжоу','Чэнду','Ухань','Харбин','Сиань','Далянь'],
+      PL: ['Варшава','Краков','Вроцлав','Гданьск','Познань','Лодзь','Катовице'],
+      CZ: ['Прага','Брно','Острава','Карловы Вары'],
+      AU: ['Сидней','Мельбурн','Брисбен','Перт','Аделаида','Канберра','Дарвин','Голд-Кост'],
+      CA: ['Торонто','Ванкувер','Монреаль','Оттава','Калгари','Эдмонтон','Виннипег','Галифакс'],
+      GB: ['Лондон','Манчестер','Бирмингем','Эдинбург','Глазго','Ливерпуль','Бристоль','Лидс'],
+      IN: ['Дели','Мумбаи','Бангалор','Ченнаи','Калькутта','Хайдерабад','Пуна','Гоа'],
+      ID: ['Джакарта','Бали','Сурабая','Бандунг','Йогьякарта','Медан'],
+      JP: ['Токио','Осака','Киото','Нагоя','Саппоро','Фукуока','Хиросима','Окинава'],
+      SE: ['Стокгольм','Гётеборг','Мальмё','Уппсала','Лулео','Кируна'],
+      NO: ['Осло','Берген','Тронхейм','Тромсё','Ставангер','Будё'],
+      MX: ['Мехико','Канкун','Гвадалахара','Монтеррей','Плая-дель-Кармен','Пуэрто-Вальярта','Тихуана'],
+      BR: ['Сан-Паулу','Рио-де-Жанейро','Бразилиа','Сальвадор','Куритиба','Белу-Оризонти','Манаус','Порту-Алегри','Флорианополис'],
+      AR: ['Буэнос-Айрес','Кордова','Росарио','Мендоса','Барилоче','Ушуайя','Сальта'],
+      CL: ['Сантьяго','Вальпараисо','Консепсьон','Антофагаста','Пунта-Аренас','Темуко'],
+      CO: ['Богота','Медельин','Кали','Картахена','Барранкилья'],
+      PE: ['Лима','Куско','Арекипа','Трухильо','Икитос'],
+      BO: ['Ла-Пас','Санта-Крус','Кочабамба','Сукре'],
+      EC: ['Кито','Гуаякиль','Куэнка','Манта'],
+      ZA: ['Кейптаун','Йоханнесбург','Претория','Дурбан','Порт-Элизабет'],
+      BY: ['Минск','Гомель','Могилёв','Витебск','Гродно','Брест'],
+    };
+
+    const suggestionsEl = document.getElementById('citySuggestions');
+    const bottomCta = document.querySelector('.bottom-cta');
+
+    cityInput.addEventListener('input', () => {
+      const q = cityInput.value.trim().toLowerCase();
+      const code = selectedCountry?.code;
+      const cities = CITIES[code] || [];
+
+      if (q.length < 1 || cities.length === 0) {
+        suggestionsEl.classList.remove('visible');
+        return;
+      }
+
+      const matches = cities.filter(c => c.toLowerCase().startsWith(q)).slice(0, 5);
+      if (matches.length === 0) {
+        suggestionsEl.classList.remove('visible');
+        return;
+      }
+
+      suggestionsEl.innerHTML = matches.map(c =>
+        `<div class="city-suggestion-item" data-city="${c}">${c}</div>`
+      ).join('');
+      suggestionsEl.classList.add('visible');
+
+      suggestionsEl.querySelectorAll('.city-suggestion-item').forEach(item => {
+        item.addEventListener('click', () => {
+          cityInput.value = item.dataset.city;
+          suggestionsEl.classList.remove('visible');
+          cityInput.blur();
+        });
+      });
+    });
+
+    // Закрыть подсказки при клике вне
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.city-field')) {
+        suggestionsEl.classList.remove('visible');
+      }
+    });
+
+    // ── КЛАВИАТУРА: скрываем/показываем кнопку «Далее» ──
+    const allInputs = document.querySelectorAll('input');
+    allInputs.forEach(inp => {
+      inp.addEventListener('focus', () => {
+        bottomCta.classList.add('keyboard-hidden');
+      });
+      inp.addEventListener('blur', () => {
+        setTimeout(() => {
+          if (!document.activeElement || document.activeElement.tagName !== 'INPUT') {
+            bottomCta.classList.remove('keyboard-hidden');
+          }
+        }, 150);
+      });
+    });
+</script>
+<script src="onboarding-state.js"></script>
+</body>
+</html>

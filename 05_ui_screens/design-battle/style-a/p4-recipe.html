@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIDiet - P-4 Полный рецепт (Style A)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --color-primary: #F5922B;
+      --color-primary-gradient: linear-gradient(135deg, #F59520, #E07018);
+      --color-gold-gradient: linear-gradient(135deg, #FFD700, #C8A96E);
+      --color-bg-main: #FAFAFA;
+      --color-surface: #FFFFFF;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B7280;
+      --color-text-tertiary: #9E9E9E;
+      --color-divider: #E0E0E0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: #E5E7EB;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+    }
+    
+    /* Phone frame */
+    .phone {
+      width: 390px;
+      height: 844px;
+      background-color: var(--color-bg-main);
+      border-radius: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 47px;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: #FFFFFF;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+      z-index: 20;
+    }
+    .status-bar-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    /* Scrollable Content */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 100px 0; /* extra padding for sticky CTA */
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .content::-webkit-scrollbar { display: none; }
+
+    /* Hero Image Background Header */
+    .recipe-hero {
+      height: 340px;
+      background-image: url('../assets/images/greek_salad.png');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      padding-top: 47px; /* For status bar */
+      display: flex;
+      flex-direction: column;
+    }
+    .recipe-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0) 80%, var(--color-bg-main) 100%);
+      z-index: 1;
+    }
+
+    /* Header Navigation */
+    .nav-header {
+      position: relative;
+      z-index: 10;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: #FFFFFF;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .icon-btn:active {
+      background-color: rgba(255,255,255,0.2);
+    }
+    .header-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #FFFFFF;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    /* Meta Info */
+    .meta-card {
+      margin: 0 20px;
+      background-color: var(--color-surface);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .meta-stats {
+      display: flex;
+      gap: 16px;
+    }
+    .meta-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .meta-icon {
+      color: var(--color-primary);
+    }
+    .badge-black {
+      background: #1A1A1A;
+      color: #FFFFFF;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-gold {
+      background: var(--color-gold-gradient);
+      color: #FFFFFF;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Standard Card */
+    .card {
+      margin: 0 20px;
+      background-color: var(--color-surface);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    /* Ingredients list */
+    .ingredient-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .ingredient-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      color: var(--color-text-primary);
+      cursor: pointer;
+    }
+    .ingredient-item.checked {
+      color: var(--color-text-tertiary);
+      text-decoration: line-through;
+    }
+    
+    .checkbox {
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border: 1.5px solid var(--color-divider);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background-color: transparent;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .ingredient-item.checked .checkbox {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+    .ingredient-item.checked .checkbox::after {
+      content: '';
+      position: absolute;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-top: -2px;
+    }
+
+    /* Steps list */
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .step-item {
+      display: flex;
+      gap: 16px;
+    }
+    .step-number {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: 50%;
+      background-color: #F3F4F6;
+      color: var(--color-text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .step-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 6px; 
+    }
+    .step-text {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--color-text-primary);
+    }
+    .timer-btn {
+      align-self: flex-start;
+      height: 36px;
+      padding: 0 16px;
+      border-radius: 9999px;
+      background: transparent;
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .timer-btn:active {
+      background-color: rgba(245,146,43,0.1);
+    }
+
+    /* Fixed Bottom CTA */
+    .bottom-cta {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 24px 34px 24px;
+      background: linear-gradient(180deg, rgba(250,250,250,0) 0%, rgba(250,250,250,0.9) 30%, rgba(250,250,250,1) 100%);
+      z-index: 10;
+      pointer-events: none;
+    }
+    .btn-primary {
+      pointer-events: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      height: 52px;
+      border-radius: 9999px;
+      background: var(--color-primary-gradient);
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(245,146,43,0.3);
+      transition: opacity 0.2s;
+    }
+    .btn-primary:active {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar Mock -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i data-lucide="bar-chart-2" style="width: 16px; height: 16px; stroke-width: 2.5;"></i>
+        <i data-lucide="wifi" style="width: 16px; height: 16px; stroke-width: 2.5;"></i>
+        <i data-lucide="battery-full" style="width: 20px; height: 20px; stroke-width: 2; transform: rotate(90deg) scale(0.9);"></i>
+      </div>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+      
+      <!-- Hero Image Header -->
+      <div class="recipe-hero">
+        <div class="nav-header">
+          <button class="icon-btn">
+            <i data-lucide="arrow-left" style="width: 24px; height: 24px;"></i>
+          </button>
+          <span class="header-title">Греческий салат</span>
+          <button class="icon-btn">
+            <i data-lucide="share" style="width: 24px; height: 24px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Meta Info Row -->
+      <div class="meta-card">
+        <div class="meta-stats">
+          <div class="meta-stat">
+            <i data-lucide="flame" class="meta-icon" style="width: 18px; height: 18px;"></i>
+            320 kcal
+          </div>
+          <div class="meta-stat">
+            <i data-lucide="clock" class="meta-icon" style="width: 18px; height: 18px;"></i>
+            15 мин
+          </div>
+          <div class="meta-stat" style="color: var(--color-text-secondary);">
+            Легко
+          </div>
+        </div>
+        <div class="badge-black">Black</div>
+      </div>
+
+      <!-- Ingredients Section -->
+      <div class="card">
+        <div class="section-title">Ингредиенты</div>
+        <div class="ingredient-list">
+          
+          <label class="ingredient-item checked">
+            <div class="checkbox"></div>
+            Помидоры — 2 шт
+          </label>
+          
+          <label class="ingredient-item checked">
+            <div class="checkbox"></div>
+            Огурцы — 1 шт
+          </label>
+          
+          <label class="ingredient-item">
+            <div class="checkbox"></div>
+            Перец болгарский — 1 шт
+          </label>
+          
+          <label class="ingredient-item">
+            <div class="checkbox"></div>
+            Маслины — 50 г
+          </label>
+          
+          <label class="ingredient-item">
+            <div class="checkbox"></div>
+            Сыр фета — 80 г
+          </label>
+          
+          <label class="ingredient-item">
+            <div class="checkbox"></div>
+            Оливковое масло — 1 ст.л.
+          </label>
+
+        </div>
+      </div>
+
+      <!-- Preparation Steps Section -->
+      <div class="card">
+        <div class="section-title">Приготовление</div>
+        <div class="step-list">
+          
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <div class="step-text">Нарежь овощи крупными кубиками</div>
+            </div>
+          </div>
+          
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <div class="step-text">Добавь маслины и сыр, перемешай</div>
+            </div>
+          </div>
+          
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <div class="step-text">Заправь оливковым маслом. Дай настояться 5 минут.</div>
+              <button class="timer-btn">
+                <i data-lucide="play" style="width: 16px; height: 16px;"></i>
+                5:00 — Старт
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Fixed Bottom CTA -->
+    <div class="bottom-cta">
+      <button class="btn-primary">
+        Готово
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 3: Landing Variant 1 (Tech & Wellness)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #1E1B4B; color: white; }
+        :root {
+            --primary: #7C3AED;
+            --primary-dark: #6D28D9;
+            --dark-bg: #1E1B4B;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-[#7C3AED] selection:text-white overflow-x-hidden">
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-[#1E1B4B]/80 backdrop-blur-xl border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-2 font-black tracking-[0.2em] uppercase text-xl">
+                <i class="ph-fill ph-circles-three text-[var(--primary)] text-2xl"></i> ezheWEEKa
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-bold text-gray-300">
+                <a href="#" class="hover:text-white transition">Возможности</a>
+                <a href="#" class="hover:text-white transition">Метод</a>
+                <a href="#" class="hover:text-white transition">Отзывы</a>
+            </div>
+            <button class="px-6 py-2.5 bg-[var(--primary)] rounded-full font-bold shadow-[0_0_20px_rgba(124,58,237,0.4)] hover:scale-105 transition">Начать</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-40 pb-32 px-6 flex flex-col items-center text-center overflow-hidden">
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--primary)] rounded-full blur-[150px] opacity-20 pointer-events-none"></div>
+        
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur text-sm font-bold text-gray-300">
+            <span class="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse"></span> ИИ-анализ меню обновлен
+        </div>
+        
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-tight tracking-tight max-w-5xl">
+            Твой умный <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary)] to-[#A78BFA]">wellness-наставник</span>
+        </h1>
+        
+        <p class="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl leading-relaxed font-medium">
+            Город, бюджет, тренировки и сон — всё влияет на план. Система учитывает 60+ параметров для идеальной недели.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-4">
+            <button class="px-10 py-5 bg-[var(--primary)] rounded-full font-bold text-xl shadow-[0_0_30px_rgba(124,58,237,0.5)] hover:-translate-y-1 transition-transform">
+                Составить план
+            </button>
+            <button class="px-10 py-5 bg-white/5 border border-white/10 rounded-full font-bold text-xl backdrop-blur hover:bg-white/10 transition-colors">
+                Как это работает
+            </button>
+        </div>
+    </section>
+
+    <!-- Features Bento Grid -->
+    <section class="py-24 px-6 bg-[#171439]">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-5xl font-black text-center mb-16 tracking-tight">Технологии здоровья</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Large Card 1 -->
+                <div class="md:col-span-2 lg:col-span-2 bg-[#1E1B4B] rounded-[32px] p-10 border border-white/5 relative overflow-hidden group hover:border-[var(--primary)]/50 transition-colors">
+                    <div class="absolute -right-20 -top-20 w-64 h-64 bg-[var(--primary)] opacity-10 rounded-full blur-3xl group-hover:opacity-20 transition-opacity"></div>
+                    <i class="ph-fill ph-camera text-5xl text-[var(--primary)] mb-6"></i>
+                    <h3 class="text-2xl font-black mb-4">AI-фото анализ еды</h3>
+                    <p class="text-gray-400 text-lg">Сфотографируй тарелку — нейросеть распознает блюдо, граммовку и пересчитает КБЖУ за секунду.</p>
+                </div>
+                
+                <!-- Large Card 2 -->
+                <div class="md:col-span-2 lg:col-span-2 bg-[#1E1B4B] rounded-[32px] p-10 border border-white/5 relative overflow-hidden group hover:border-[var(--primary)]/50 transition-colors">
+                    <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-[#A78BFA] opacity-10 rounded-full blur-3xl group-hover:opacity-20 transition-opacity"></div>
+                    <i class="ph-fill ph-sliders text-5xl text-[var(--primary)] mb-6"></i>
+                    <h3 class="text-2xl font-black mb-4">60+ параметров</h3>
+                    <p class="text-gray-400 text-lg">Бюджет, аллергии, тренировки, голодание, микробиом — план адаптируется под твою реальную жизнь.</p>
+                </div>
+
+                <!-- Small Cards -->
+                <div class="bg-[#1E1B4B] rounded-[32px] p-8 border border-white/5 hover:-translate-y-2 transition-transform">
+                    <i class="ph-fill ph-pill text-4xl text-[var(--primary)] mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Витамины</h3>
+                    <p class="text-gray-400 text-sm">Умная совместимость и напоминания.</p>
+                </div>
+                <div class="bg-[#1E1B4B] rounded-[32px] p-8 border border-white/5 hover:-translate-y-2 transition-transform">
+                    <i class="ph-fill ph-map-pin text-4xl text-[var(--primary)] mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Гео-рацион</h3>
+                    <p class="text-gray-400 text-sm">План под продукты в твоей стране.</p>
+                </div>
+                <div class="bg-[#1E1B4B] rounded-[32px] p-8 border border-white/5 hover:-translate-y-2 transition-transform">
+                    <i class="ph-fill ph-arrows-clockwise text-4xl text-[var(--primary)] mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Коррекция</h3>
+                    <p class="text-gray-400 text-sm">Мгновенный пересчет при срывах.</p>
+                </div>
+                <div class="bg-[#1E1B4B] rounded-[32px] p-8 border border-white/5 hover:-translate-y-2 transition-transform">
+                    <i class="ph-fill ph-shopping-cart text-4xl text-[var(--primary)] mb-4"></i>
+                    <h3 class="text-xl font-bold mb-2">Список</h3>
+                    <p class="text-gray-400 text-sm">Автоматическая корзина покупок.</p>
+                </div>
+                <div class="md:col-span-1 lg:col-span-2 bg-[#1E1B4B] rounded-[32px] p-8 border border-white/5 flex items-center gap-6">
+                    <i class="ph-fill ph-shield-check text-5xl text-[var(--primary)]"></i>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Zero-Knowledge Privacy</h3>
+                        <p class="text-gray-400 text-sm">Чувствительные данные здоровья не покидают ваше устройство.</p>
+                    </div>
+                </div>
+                <div class="md:col-span-2 lg:col-span-2 bg-[#1E1B4B] rounded-[32px] p-8 border border-white/5 flex items-center gap-6">
+                    <i class="ph-fill ph-moon-stars text-5xl text-[var(--primary)]"></i>
+                    <div>
+                        <h3 class="text-xl font-bold mb-2">Синхронизация со сном</h3>
+                        <p class="text-gray-400 text-sm">Интервальное голодание и первый прием пищи подстраиваются под фазы сна.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer CTA -->
+    <section class="py-32 px-6 text-center">
+        <h2 class="text-4xl md:text-5xl font-black mb-8">Готов к трансформации?</h2>
+        <button class="px-12 py-6 bg-white text-[#1E1B4B] rounded-full font-black text-xl hover:scale-105 transition-transform shadow-[0_0_40px_rgba(255,255,255,0.2)]">
+            Попробовать бесплатно
+        </button>
+    </section>
+</body>
+</html>

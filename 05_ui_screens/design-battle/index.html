@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>AIDiet - Design Battle</title>
+  <style>
+    body {
+      background-color: #F5F5F5;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 40px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin: 0;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #111;
+    }
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      background: #FFFFFF;
+      margin-bottom: 40px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .header-logo {
+      height: 40px;
+      margin-bottom: 12px;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 60px;
+      position: sticky;
+      top: 20px;
+      z-index: 100;
+    }
+    .tab {
+      padding: 12px 28px;
+      background: #FFFFFF;
+      border: 1px solid #D1D5DB;
+      border-radius: 99px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      color: #4B5563;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .tab:hover {
+      background: #F9FAFB;
+    }
+    .tab.active {
+      background: #1A1A1A;
+      color: #FFFFFF;
+      border-color: #1A1A1A;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 100px;
+    }
+    .screen-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .screen-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 40px;
+      color: #111;
+      padding: 8px 32px;
+      background: #FFFFFF;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .columns {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+    }
+    .col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .col-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #555;
+      text-align: center;
+      height: 48px;
+      display: flex;
+      align-items: center;
+    }
+    .device-outline {
+      width: 390px;
+      height: 844px;
+      border: 12px solid #222;
+      border-radius: 52px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.15);
+      background: #111;
+      position: relative;
+    }
+    .device-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 30px;
+      background: #222;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 50;
+    }
+    iframe {
+      width: 390px;
+      height: 844px;
+      border: none;
+      display: block;
+      border-radius: 40px; 
+      background: #F5F5F5;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="../logos/app/AIDiet_primary_dark.png" alt="AIDiet Logo" class="header-logo">
+    <h1>Design Battle</h1>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="show(event, 'all')">Все экраны</button>
+    <button class="tab" onclick="show(event, 'welcome')">O-1 Welcome</button>
+    <button class="tab" onclick="show(event, 'profile')">O-3 Профиль</button>
+    <button class="tab" onclick="show(event, 'dashboard')">H-1 Дашборд</button>
+    <button class="tab" onclick="show(event, 'recipe')">P-4 Рецепт</button>
+    <button class="tab" onclick="show(event, 'vitamin')">P-5 Витамины</button>
+    <button class="tab" onclick="show(event, 'progress')">PR-1 Прогресс</button>
+  </div>
+
+  <div class="grid">
+    <!-- Row: Welcome -->
+    <div class="screen-row" id="row-welcome">
+      <div class="screen-title">O-1 Welcome</div>
+      <div class="columns">
+        <div class="col">
+          <div class="col-title">Style A<br><span style="font-size:14px; font-weight:400">Apple Health Clean</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-a/o1-welcome.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style B<br><span style="font-size:14px; font-weight:400">Material Premium</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-b/o1-welcome.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style C<br><span style="font-size:14px; font-weight:400">Glass Calm</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-c/o1-welcome.html"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: Profile -->
+    <div class="screen-row" id="row-profile">
+      <div class="screen-title">O-3 Базовый профиль</div>
+      <div class="columns">
+        <div class="col">
+          <div class="col-title">Style A<br><span style="font-size:14px; font-weight:400">Apple Health Clean</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-a/o3-profile.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style B<br><span style="font-size:14px; font-weight:400">Material Premium</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-b/o3-profile.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style C<br><span style="font-size:14px; font-weight:400">Glass Calm</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-c/o3-profile.html"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: Dashboard -->
+    <div class="screen-row" id="row-dashboard">
+      <div class="screen-title">H-1 Дашборд</div>
+      <div class="columns">
+        <div class="col">
+          <div class="col-title">Style A<br><span style="font-size:14px; font-weight:400">Apple Health Clean</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-a/h1-dashboard.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style B<br><span style="font-size:14px; font-weight:400">Material Premium</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-b/h1-dashboard.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style C<br><span style="font-size:14px; font-weight:400">Glass Calm</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-c/h1-dashboard.html"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: Recipe -->
+    <div class="screen-row" id="row-recipe">
+      <div class="screen-title">P-4 Полный рецепт</div>
+      <div class="columns">
+        <div class="col">
+          <div class="col-title">Style A<br><span style="font-size:14px; font-weight:400">Apple Health Clean</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-a/p4-recipe.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style B<br><span style="font-size:14px; font-weight:400">Material Premium</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-b/p4-recipe.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style C<br><span style="font-size:14px; font-weight:400">Glass Calm</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-c/p4-recipe.html"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: Vitamin -->
+    <div class="screen-row" id="row-vitamin">
+      <div class="screen-title">P-5 Витамины</div>
+      <div class="columns">
+        <div class="col">
+          <div class="col-title">Style A<br><span style="font-size:14px; font-weight:400">Apple Health Clean</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-a/p5-vitamins.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style B<br><span style="font-size:14px; font-weight:400">Material Premium</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-b/p5-vitamins.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style C<br><span style="font-size:14px; font-weight:400">Glass Calm</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-c/p5-vitamins.html"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: Progress -->
+    <div class="screen-row" id="row-progress">
+      <div class="screen-title">PR-1 Прогресс</div>
+      <div class="columns">
+        <div class="col">
+          <div class="col-title">Style A<br><span style="font-size:14px; font-weight:400">Apple Health Clean</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-a/pr1-progress.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style B<br><span style="font-size:14px; font-weight:400">Material Premium</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-b/pr1-progress.html"></iframe>
+          </div>
+        </div>
+        <div class="col">
+          <div class="col-title">Style C<br><span style="font-size:14px; font-weight:400">Glass Calm</span></div>
+          <div class="device-outline">
+            <div class="device-notch"></div>
+            <iframe src="style-c/pr1-progress.html"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function show(e, screen) {
+      // update buttons
+      document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+      if(e) e.target.classList.add('active');
+
+      // hide/show rows
+      const rows = ['welcome', 'profile', 'dashboard', 'recipe', 'vitamin', 'progress'];
+      rows.forEach(r => {
+        const el = document.getElementById('row-' + r);
+        if (screen === 'all' || screen === r) {
+          el.style.display = 'flex';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+      
+      // scroll to top smoothly
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

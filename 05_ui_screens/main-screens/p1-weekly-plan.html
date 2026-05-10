@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - P-1 План на неделю</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header-title { font-size: 20px; font-weight: 700; color: var(--color-text-primary); }
+    .header-action { font-size: 24px; color: var(--color-text-primary); }
+    /* Day Selector */
+    .day-selector {
+      padding: 0 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .day-item {
+      width: 44px;
+      height: 54px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      background: var(--color-surface);
+      border: 1px solid var(--color-divider);
+      gap: 4px;
+      cursor: pointer;
+    }
+    .day-item.active {
+      background: var(--color-primary);
+      color: #FFFFFF;
+      border-color: var(--color-primary);
+      box-shadow: 0 4px 12px rgba(245,146,43,0.25);
+    }
+    .day-item span { font-size: 15px; font-weight: 700; }
+    /* Meal Sections */
+    .meal-section {
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 4px;
+    }
+    .section-name { font-size: 16px; font-weight: 700; color: var(--color-text-primary); display: flex; align-items: center; gap: 8px; }
+    .section-time { font-size: 12px; color: var(--color-text-secondary); font-weight: 500; }
+    .meal-card {
+      background: var(--color-surface);
+      border-radius: 18px;
+      padding: 12px;
+      border: 1px solid var(--color-divider);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+      display: flex;
+      gap: 12px;
+      position: relative;
+    }
+    .meal-card.eaten { opacity: 0.7; }
+    .meal-img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; }
+    .meal-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .meal-name { font-size: 15px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
+    .meal-stats { display: flex; gap: 8px; font-size: 12px; color: var(--color-text-secondary); font-weight: 500; }
+    .meal-actions { display: flex; align-items: center; gap: 8px; }
+    .btn-check { width: 36px; height: 36px; border-radius: 10px; background: #F3F4F6; color: #9CA3AF; border: none; display: flex; justify-content: center; align-items: center; font-size: 18px; }
+    .btn-check.active { background: var(--color-success-bg); color: var(--color-protein); }
+    .vitamin-link {
+      margin: 0 16px;
+      background: #F0FDF4;
+      border: 1px solid #DCFCE7;
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-decoration: none;
+    }
+    .vitamin-link-text { font-size: 14px; font-weight: 600; color: #166534; display: flex; align-items: center; gap: 8px; }
+    /* Tab Bar */
+    .tab-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 84px;
+      background-color: #FFFFFF;
+      border-top: 1px solid var(--color-divider);
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 12px 30px 12px; 
+      z-index: 100;
+    }
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--color-text-tertiary);
+      text-decoration: none;
+      flex: 1;
+    }
+    .tab-item.active, .tab-item:active { color: var(--color-primary); }
+    .tab-item i { font-size: 24px; }
+    .tab-label { font-size: 10px; font-weight: 600; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <h1 class="header-title">План питания</h1>
+      <div class="header-action"><i class="ph ph-calendar-check"></i></div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      
+      <!-- Day Selector -->
+      <section class="day-selector" id="daySelector">
+        <!-- Dynamic: filled by weekly-plan-state.js -->
+      </section>
+
+      <!-- Vitamin Link -->
+      <a href="p5-vitamins.html" class="vitamin-link" id="vitaminLink">
+        <span class="vitamin-link-text"><i class="ph ph-pill"></i> Витамины на сегодня</span>
+        <i class="ph ph-caret-right" style="color: #166534;"></i>
+      </a>
+
+      <!-- Breakfast -->
+      <section class="meal-section">
+        <div class="section-header">
+          <span class="section-name">🍳 Завтрак</span>
+          <span class="section-time">08:00</span>
+        </div>
+        <div class="meal-card eaten">
+          <img src="https://images.unsplash.com/photo-1525351484163-7529414344d8?w=200&h=200&fit=crop" class="meal-img" alt="Breakfast">
+          <div class="meal-info">
+            <div class="meal-name">Овсянка с ягодами</div>
+            <div class="meal-stats"><span>310 ккал</span><span>•</span><span>10 мин</span></div>
+          </div>
+          <div class="meal-actions">
+            <button class="btn-check active"><i class="ph ph-check"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Lunch -->
+      <section class="meal-section">
+        <div class="section-header">
+          <span class="section-name">🍲 Обед</span>
+          <span class="section-time">13:30</span>
+        </div>
+        <div class="meal-card" style="flex-direction: column; gap: 12px; padding-bottom: 12px; cursor: default;">
+          <div style="display: flex; gap: 12px;" onclick="location.href='p2-recipe-detail.html'">
+            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop" class="meal-img" style="cursor: pointer;" alt="Lunch">
+            <div class="meal-info" style="cursor: pointer;">
+              <div class="meal-name">Куриная грудка с киноа</div>
+              <div class="meal-stats"><span>450 ккал</span><span>•</span><span>25 мин</span></div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button style="flex: 1; padding: 10px; border-radius: 12px; background: #E8F5E2; color: #52B044; font-weight: 700; border: none; font-size: 13px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px;"><i class="ph ph-check" style="font-size: 16px;"></i> Съел план</button>
+            <button onclick="document.getElementById('mealSwapSheet').style.transform='translateY(0)'" style="flex: 1; padding: 10px; border-radius: 12px; background: #F3F4F6; color: #6B7280; font-weight: 700; border: none; font-size: 13px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px;"><i class="ph ph-swap" style="font-size: 16px;"></i> Съел другое</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dinner -->
+      <section class="meal-section">
+        <div class="section-header">
+          <span class="section-name">🥗 Ужин</span>
+          <span class="section-time">19:00</span>
+        </div>
+        <div class="meal-card" style="flex-direction: column; gap: 12px; padding-bottom: 12px;">
+          <div style="display: flex; gap: 12px;">
+            <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop" class="meal-img" alt="Dinner">
+            <div class="meal-info">
+              <div class="meal-name">Салат с тунцом и авокадо</div>
+              <div class="meal-stats"><span>380 ккал</span><span>•</span><span>15 мин</span></div>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button style="flex: 1; padding: 10px; border-radius: 12px; background: #E8F5E2; color: #52B044; font-weight: 700; border: none; font-size: 13px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px;"><i class="ph ph-check" style="font-size: 16px;"></i> Съел план</button>
+            <button onclick="document.getElementById('mealSwapSheet').style.transform='translateY(0)'" style="flex: 1; padding: 10px; border-radius: 12px; background: #F3F4F6; color: #6B7280; font-weight: 700; border: none; font-size: 13px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px;"><i class="ph ph-swap" style="font-size: 16px;"></i> Съел другое</button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- Meal Swap Bottom Sheet (For Tracking) -->
+      <div id="mealSwapSheet" style="position: absolute; bottom: 0; left: 0; right: 0; background: #FFFFFF; border-radius: 24px 24px 0 0; padding: 24px 20px; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); transform: translateY(100%); transition: transform 0.3s ease; z-index: 200; display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="font-size: 18px; font-weight: 700; color: #1A1A1A;">Внести изменения</h3>
+          <button onclick="document.getElementById('mealSwapSheet').style.transform='translateY(100%)'" style="background: none; border: none; font-size: 24px; color: #6B7280; cursor: pointer;"><i class="ph ph-x"></i></button>
+        </div>
+        
+        <button style="width: 100%; padding: 16px; background: #FAFAFA; border: 1px solid #E5E7EB; border-radius: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; text-align: left;">
+          <div style="width: 40px; height: 40px; border-radius: 10px; background: #E5E7EB; color: #1A1A1A; display: flex; justify-content: center; align-items: center; font-size: 20px;"><i class="ph ph-pencil-simple"></i></div>
+          <div style="flex: 1;">
+            <div style="font-size: 15px; font-weight: 600; color: #1A1A1A;">Ввести вручную</div>
+            <div style="font-size: 13px; color: #6B7280; font-weight: 500;">Указать граммовку продуктов (Base/Black)</div>
+          </div>
+        </button>
+
+        <button onclick="location.href='ph1-photo-analysis.html'" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #FFF9F3 0%, #FFF1E5 100%); border: 1px solid #FFE4CC; border-radius: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; text-align: left;">
+          <div style="width: 40px; height: 40px; border-radius: 10px; background: #FFFFFF; color: #F5922B; display: flex; justify-content: center; align-items: center; font-size: 20px;"><i class="ph ph-camera-plus"></i></div>
+          <div style="flex: 1;">
+            <div style="font-size: 15px; font-weight: 600; color: #995400;">Сфотографировать еду</div>
+            <div style="font-size: 13px; color: #B36200; font-weight: 500;">AI сам посчитает КБЖУ</div>
+          </div>
+          <div style="padding: 2px 8px; border-radius: 6px; background: linear-gradient(135deg, #FFD700, #C8A96E); color: #FFF; font-size: 10px; font-weight: 800; text-transform: uppercase;">Gold</div>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Tab Bar -->
+    <nav class="tab-bar">
+      <a href="h1-dashboard.html" class="tab-item">
+        <i class="ph ph-house"></i>
+        <span class="tab-label">Главная</span>
+      </a>
+      <a href="p1-weekly-plan.html" class="tab-item active">
+        <i class="ph ph-calendar-blank-fill"></i>
+        <span class="tab-label">План</span>
+      </a>
+      <a href="s1-shopping-list.html" class="tab-item">
+        <i class="ph ph-shopping-cart"></i>
+        <span class="tab-label">Покупки</span>
+      </a>
+      <a href="pr1-progress.html" class="tab-item">
+        <i class="ph ph-chart-line-up"></i>
+        <span class="tab-label">Прогресс</span>
+      </a>
+      <a href="u1-profile-main.html" class="tab-item">
+        <i class="ph ph-user"></i>
+        <span class="tab-label">Профиль</span>
+      </a>
+    </nav>
+  </div>
+  <script src="weekly-plan-state.js"></script>
+</body>
+</html>

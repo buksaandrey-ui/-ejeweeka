@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-6 Здоровье и симптомы</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .subtitle { font-size: 14px; font-weight: 700; color: var(--color-text-primary); margin: 24px 0 16px 0; text-transform: uppercase; letter-spacing: 0.8px; }
+    .check-list { display: flex; flex-direction: column; gap: 10px; }
+    .check-item { 
+      background: #FFFFFF; border: 1.5px solid var(--color-divider); border-radius: 16px; padding: 16px; 
+      display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s;
+    }
+    .check-item.active { border-color: var(--color-primary); background: #FFF7ED; }
+    .check-box { min-width: 24px; min-height: 24px; min-width: 24px; min-height: 24px; min-width: 24px; min-height: 24px; width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--color-divider); display: flex; justify-content: center; align-items: center; color: transparent; font-size: 14px; }
+    .check-item.active .check-box { background: var(--color-primary); border-color: var(--color-primary); color: #FFFFFF; }
+    .check-label { font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+    .nested-options { margin-top: 8px; padding: 0 0 0 34px; display: flex; flex-direction: column; gap: 8px; }
+    .mini-chip { padding: 8px 14px; border-radius: 10px; background: #F3F4F6; font-size: 12px; font-weight: 600; color: var(--color-text-secondary); cursor: pointer; border: 1px solid transparent; }
+    .mini-chip.active { background: #FFF7ED; border-color: var(--color-primary); color: var(--color-primary); }
+    .onboarding-tip-card {
+      background-color: #E8F5E9;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+      border: 1px solid #C8E6C9;
+    }
+    .onboarding-tip-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .onboarding-tip-text {
+      font-size: 13px;
+      color: #2E7D32;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+    /* Toggle Switch & Input Styles */
+    .toggle-section { 
+      background: #FFFFFF; border: 1px solid var(--color-divider); border-radius: 16px; padding: 18px 20px; 
+      display: flex; justify-content: space-between; align-items: center; margin-top: 24px;
+    }
+    .toggle-info { display: flex; flex-direction: column; gap: 4px; }
+    .toggle-title { font-size: 15px; font-weight: 700; color: var(--color-text-primary); }
+    .toggle-desc { font-size: 12px; color: var(--color-text-secondary); }
+    .toggle-switch { width: 52px; height: 28px; background: #E5E7EB; border-radius: 14px; position: relative; cursor: pointer; flex-shrink: 0; }
+    .toggle-switch.active { background: #52B044; }
+    .toggle-circle { width: 22px; height: 22px; background: #FFFFFF; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: transform 0.2s; }
+    .toggle-switch.active .toggle-circle { transform: translateX(24px); }
+    @media (max-width: 440px) {
+    }
+  </style>
+
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 5 из 14</div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+      <h1 class="question-title">Самочувствие и особенности</h1>
+      <p class="question-desc">Это абсолютно конфиденциально. Данные нужны для персонализации плана.</p>
+
+      <div class="subtitle">Есть ли симптомы, которые важно учитывать?</div>
+      <div class="check-list" id="symptomsList">
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Вздутие</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Изжога</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Повышенная кислотность</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Тяжесть после еды</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Запоры</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Нестабильный стул</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Боли или спазмы в животе</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Тяга к сладкому</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Сильный голод или переедание</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Отёки</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Хроническая усталость или упадок сил</span>
+        </div>
+        <div class="check-item" id="noSymptomsItem">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Нет выраженных жалоб</span>
+        </div>
+      </div>
+
+      <div class="subtitle">Есть ли хронические состояния или особенности здоровья?</div>
+      <div class="check-list" id="conditionsList">
+        <div class="check-item" id="diabetesOption">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Диабет (1 тип)</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Диабет (2 тип)</span>
+        </div>
+        <!-- Nested logic simulation -->
+        <div class="nested-options" id="diabetesNested" style="display: none;">
+          <span style="font-size: 12px; font-weight: 700; color: var(--color-text-secondary);">Терапия:</span>
+          <div class="chip-grid">
+            <div class="mini-chip">Инсулин</div>
+            <div class="mini-chip">Таблетки</div>
+            <div class="mini-chip">Диета</div>
+            <div class="mini-chip">Комбинация</div>
+            <div class="mini-chip">Не знаю</div>
+          </div>
+          <span style="font-size: 12px; font-weight: 700; color: var(--color-text-secondary); margin-top: 8px;">Давность:</span>
+          <div class="chip-grid" id="diabetesDuration">
+            <div class="mini-chip">Менее года</div>
+            <div class="mini-chip">1–3 года</div>
+            <div class="mini-chip">3–5 лет</div>
+            <div class="mini-chip">Более 5 лет</div>
+          </div>
+        </div>
+
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Преддиабет или повышенный сахар</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Инсулинорезистентность</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Повышенный холестерин</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Гипертония</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Гипотония</span>
+        </div>
+        <div class="check-item" id="thyroidOption">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Особенности щитовидной железы</span>
+        </div>
+        <div class="nested-options" id="thyroidNested" style="display: none;">
+          <span style="font-size: 12px; font-weight: 700; color: var(--color-text-secondary);">Состояние:</span>
+          <div class="chip-grid">
+            <div class="mini-chip">Гипотиреоз</div>
+            <div class="mini-chip">Гипертиреоз</div>
+            <div class="mini-chip">АИТ</div>
+            <div class="mini-chip">Узлы</div>
+            <div class="mini-chip">Не знаю</div>
+            <div class="mini-chip">Другое</div>
+          </div>
+        </div>
+        <div class="check-item" id="giOption">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Особенности ЖКТ</span>
+        </div>
+        <div class="nested-options" id="giNested" style="display: none;">
+          <span style="font-size: 12px; font-weight: 700; color: var(--color-text-secondary);">Состояние:</span>
+          <div class="chip-grid">
+            <div class="mini-chip">Гастрит</div>
+            <div class="mini-chip">Язва</div>
+            <div class="mini-chip">ГЭРБ</div>
+            <div class="mini-chip">СРК</div>
+            <div class="mini-chip">Болезнь Крона</div>
+            <div class="mini-chip">Не знаю</div>
+            <div class="mini-chip">Другое</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Особенности работы почек</span>
+        </div>
+        <div class="check-item">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Подагра</span>
+        </div>
+        <div class="check-item" id="noConditionsItem">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Нет или не знаю</span>
+        </div>
+        <!-- Поле "Другое" -->
+        <div class="check-item" id="otherConditionItem">
+          <div class="check-box"><i class="ph ph-check"></i></div>
+          <span class="check-label">Другое</span>
+        </div>
+        <div class="input-wrapper" id="otherConditionWrap" style="display:none; margin-top: 4px;">
+          <input type="text" class="input-field" id="otherConditionText" placeholder="Напиши своё состояние...">
+        </div>
+      </div>
+
+      <div class="toggle-section" id="medsToggleSection" style="display: none;">
+        <div class="toggle-info">
+          <span class="toggle-title">Принимаешь ли терапию или добавки на постоянной основе?</span>
+          <span class="toggle-desc">Некоторые продукты могут влиять на их действие</span>
+        </div>
+        <div class="toggle-switch" id="medsToggle"><div class="toggle-circle"></div></div>
+      </div>
+      <div class="input-wrapper" id="medsInputWrap" style="display: none;">
+        <input type="text" class="input-field" id="medsInput" placeholder="Укажи названия препаратов...">
+      </div>
+
+          <!-- Motivation Block -->
+      <div class="onboarding-tip-card" style="margin-top: 24px;">
+        <div class="onboarding-tip-icon">💡</div>
+        <div class="onboarding-tip-text">
+          Вздутие, усталость, тяга к сладкому — часто это не характер, а сигналы организма. Хроническая тяга к шоколаду может говорить о дефиците магния. Вздутие — о дисбалансе микрофлоры. Выпадение волос — о нехватке железа или цинка. При гипотиреозе важен особый режим приёма йода и селена. При подагре — полный исключённый список продуктов. Чем точнее ты опишешь симптомы, тем точнее будет план.
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="location.href='o5-restrictions.html'">← Назад</button>
+      <button class="btn-primary" id="nextBtn">Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+
+  </div>
+
+  <script>
+    // Logic for checkbox toggling
+    document.querySelectorAll('.check-item').forEach(item => {
+      item.addEventListener('click', () => {
+         item.classList.toggle('active');
+         
+         const parentList = item.closest('.check-list');
+         const isInSymptomsList = parentList && !parentList.id; // First .check-list (symptoms) has no id
+         const isInConditionsList = parentList && parentList.id === 'conditionsList';
+
+         // === СИМПТОМЫ: взаимоисключение «Нет выраженных жалоб» ===
+         if (isInSymptomsList) {
+           if (item.id === 'noSymptomsItem' && item.classList.contains('active')) {
+             // «Нет» выбран → снять все остальные
+             parentList.querySelectorAll('.check-item:not(#noSymptomsItem)').forEach(i => i.classList.remove('active'));
+           } else if (item.id !== 'noSymptomsItem' && item.classList.contains('active')) {
+             // Выбрана реальная жалоба → снять «Нет»
+             const noItem = document.getElementById('noSymptomsItem');
+             if (noItem) noItem.classList.remove('active');
+           }
+         }
+
+         // === ХРОНИЧЕСКИЕ СОСТОЯНИЯ: взаимоисключение «Нет или не знаю» ===
+         if (isInConditionsList) {
+           if (item.id === 'noConditionsItem' && item.classList.contains('active')) {
+             // «Нет» выбран → снять все остальные + скрыть nested
+             parentList.querySelectorAll('.check-item:not(#noConditionsItem)').forEach(i => i.classList.remove('active'));
+             document.getElementById('diabetesNested').style.display = 'none';
+             document.getElementById('thyroidNested').style.display = 'none';
+             document.getElementById('giNested').style.display = 'none';
+             document.getElementById('otherConditionWrap').style.display = 'none';
+           } else if (item.id !== 'noConditionsItem' && item.classList.contains('active')) {
+             // Выбрана реальная болезнь → снять «Нет или не знаю»
+             const noItem = document.getElementById('noConditionsItem');
+             if (noItem) noItem.classList.remove('active');
+           }
+         }
+
+         // Диабет — показать вложенные опции
+         if (item.id === 'diabetesOption') {
+             const nested = document.getElementById('diabetesNested');
+             nested.style.display = item.classList.contains('active') ? 'block' : 'none';
+         }
+
+         // Щитовидка — показать вложенные опции
+         if (item.id === 'thyroidOption') {
+             const nested = document.getElementById('thyroidNested');
+             nested.style.display = item.classList.contains('active') ? 'block' : 'none';
+         }
+
+         // ЖКТ — показать вложенные опции
+         if (item.id === 'giOption') {
+             const nested = document.getElementById('giNested');
+             nested.style.display = item.classList.contains('active') ? 'block' : 'none';
+         }
+
+         if (item.id === 'otherConditionItem') {
+             const wrap = document.getElementById('otherConditionWrap');
+             wrap.style.display = item.classList.contains('active') ? 'flex' : 'none';
+             if (!item.classList.contains('active')) document.getElementById('otherConditionText').value = '';
+         }
+         
+         saveO6State();
+      });
+    });
+
+    // Logic for nested mini-chips
+    // Диабет терапия и Щитовидка — single select (один диагноз)
+    document.querySelectorAll('#diabetesNested .chip-grid:first-of-type .mini-chip, #thyroidNested .mini-chip').forEach(chip => {
+       chip.addEventListener('click', () => {
+          chip.parentElement.querySelectorAll('.mini-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          saveO6State();
+       });
+    });
+    // Диабет давность — single select (O6-02)
+    document.querySelectorAll('#diabetesDuration .mini-chip').forEach(chip => {
+       chip.addEventListener('click', () => {
+          document.querySelectorAll('#diabetesDuration .mini-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          saveO6State();
+       });
+    });
+    // ЖКТ — multi select (может быть Гастрит + ГЭРБ одновременно)
+    document.querySelectorAll('#giNested .mini-chip').forEach(chip => {
+       chip.addEventListener('click', () => {
+          chip.classList.toggle('active');
+          saveO6State();
+       });
+    });
+    
+    document.getElementById('otherConditionText').addEventListener('input', () => {
+        saveO6State();
+    });
+
+    // FIX: Читаем пол из единого профиля, а не из фантомного localStorage ключа
+    const prof = window.AIDiet ? window.AIDiet.getProfile() : {};
+    const sexStr = prof['sex'] || prof['Пол'] || '';
+    if (sexStr === 'Мужской' || sexStr === 'Мужчина' || sexStr === 'male') {
+       document.getElementById('medsToggleSection').style.display = 'flex';
+    }
+
+    const medsToggle = document.getElementById('medsToggle');
+    const medsInputWrap = document.getElementById('medsInputWrap');
+    let hasMeds = false;
+    
+    medsToggle.addEventListener('click', () => {
+       medsToggle.classList.toggle('active');
+       hasMeds = medsToggle.classList.contains('active');
+       medsInputWrap.style.display = hasMeds ? 'flex' : 'none';
+       if (!hasMeds) document.getElementById('medsInput').value = '';
+       saveO6State();
+    });
+
+    document.getElementById('medsInput').addEventListener('input', () => {
+        saveO6State();
+    });
+
+    function saveO6State() {
+       // Сбор активных диагнозов
+       const activeConditions = [];
+       document.querySelectorAll('#conditionsList .check-item.active .check-label').forEach(el => {
+           activeConditions.push(el.innerText.trim());
+       });
+       
+       // Сбор и автосохранение Симптомов и Заболеваний
+       const symptomsArr = [];
+       document.querySelectorAll('#symptomsList .check-item.active .check-label').forEach(el => symptomsArr.push(el.innerText.trim()));
+       window.AIDiet && window.AIDiet.saveField('symptoms', symptomsArr.length ? symptomsArr.join(', ') : 'Нет');
+
+       const conditionsArr = [];
+       document.querySelectorAll('#conditionsList .check-item.active .check-label').forEach(el => conditionsArr.push(el.innerText.trim()));
+       // Добавляем специфичные данные из 'Другое'
+       if(document.getElementById('otherConditionItem').classList.contains('active')) {
+           const custom = document.getElementById('otherConditionText').value.trim();
+           if(custom && custom !== 'Другое') conditionsArr.push(custom);
+           // удаляем слово 'Другое', чтобы не мусорить
+           const idx = conditionsArr.indexOf('Другое');
+           if (idx > -1) conditionsArr.splice(idx, 1);
+       }
+        window.AIDiet && window.AIDiet.saveField('diseases', conditionsArr.length ? conditionsArr.join(', ') : 'Нет');
+
+       // O6-03: Сохранение nested данных (терапия, давность, диагнозы)
+       const diabTherapy = document.querySelector('#diabetesNested .chip-grid:first-of-type .mini-chip.active');
+       if (diabTherapy) window.AIDiet && window.AIDiet.saveField('diabetes_therapy', diabTherapy.innerText.trim());
+       const diabDuration = document.querySelector('#diabetesDuration .mini-chip.active');
+       if (diabDuration) window.AIDiet && window.AIDiet.saveField('diabetes_duration', diabDuration.innerText.trim());
+       const thyroidDiag = document.querySelector('#thyroidNested .mini-chip.active');
+       if (thyroidDiag) window.AIDiet && window.AIDiet.saveField('thyroid_diagnosis', thyroidDiag.innerText.trim());
+       const giDiags = Array.from(document.querySelectorAll('#giNested .mini-chip.active')).map(c => c.innerText.trim());
+       if (giDiags.length) window.AIDiet && window.AIDiet.saveField('gi_diagnoses', giDiags.join(', '));
+
+       // Флаг: O-6 пройден — при возврате назад данные будут корректно восстановлены
+       window.AIDiet && window.AIDiet.saveField('o6_visited', 'true');
+
+       // Сохранение лекарств (для мужчин)
+        if (hasMeds) {
+            window.AIDiet && window.AIDiet.saveField('medications', document.getElementById('medsInput').value || 'Да (не указано)');
+        } else {
+            window.AIDiet && window.AIDiet.saveField('medications', 'Нет');
+        }
+    }
+
+    // Navigation logic based on sex and medical safety
+    document.getElementById('nextBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      saveO6State();
+       // Проверка безопасности через подключаемый внешний модуль
+       if (window.validateMedicalSafety) {
+           const activeConditions = [];
+           document.querySelectorAll('#conditionsList .check-item.active .check-label').forEach(el => {
+               activeConditions.push(el.innerText.trim());
+           });
+           window.validateMedicalSafety(activeConditions);
+       }
+
+       // FIX: Читаем пол из единого профиля
+       const prof2 = window.AIDiet ? window.AIDiet.getProfile() : {};
+        const sex = prof2['gender'] || prof2['sex'] || prof2['Пол'] || '';
+        if (sex === 'Мужчина' || sex === 'Мужской' || sex === 'male') {
+           window.AIDiet.goNext('o8-habits.html'); // Пропускаем O-7
+       } else {
+           window.AIDiet.goNext('o7-health-women.html'); // По умолчанию на следующий
+       }
+    });
+
+    // === O6-01: HYDRATION при возврате назад ===
+    // Flag MUST be set before setTimeout so global hydrateUI() respects it
+    window.__inlineHydrated = true;
+    setTimeout(() => {
+      const prof = window.AIDiet ? window.AIDiet.getProfile() : {};
+      if (prof['o6_visited'] !== 'true') return; // Ещё не проходил O-6
+
+      // 1. Симптомы
+      const savedSymptoms = (prof['symptoms'] || prof['Симптомы'] || '').split(',').map(s => s.trim()).filter(Boolean);
+      if (savedSymptoms.length && savedSymptoms[0] !== 'Нет') {
+        document.querySelectorAll('#symptomsList .check-item').forEach(item => {
+          const label = item.querySelector('.check-label')?.innerText.trim();
+          if (savedSymptoms.includes(label)) item.classList.add('active');
+        });
+      } else if (savedSymptoms[0] === 'Нет' || prof['Симптомы'] === 'Нет') {
+        const noItem = document.getElementById('noSymptomsItem');
+        if (noItem) noItem.classList.add('active');
+      }
+
+       // 2. Хронические заболевания (diseases)
+       const savedConds = (prof['diseases'] || prof['chronic_conditions'] || prof['Хронические заболевания'] || '').split(',').map(s => s.trim()).filter(Boolean);
+      if (savedConds.length && savedConds[0] !== 'Нет') {
+        document.querySelectorAll('#conditionsList .check-item').forEach(item => {
+          const label = item.querySelector('.check-label')?.innerText.trim();
+          if (savedConds.includes(label)) {
+            item.classList.add('active');
+            // Показать nested блоки
+            if (item.id === 'diabetesOption') document.getElementById('diabetesNested').style.display = 'block';
+            if (item.id === 'thyroidOption') document.getElementById('thyroidNested').style.display = 'block';
+            if (item.id === 'giOption') document.getElementById('giNested').style.display = 'block';
+          }
+        });
+        // Другое
+        if (document.getElementById('otherConditionItem').classList.contains('active')) {
+          document.getElementById('otherConditionWrap').style.display = 'flex';
+          // Восстанавливаем текст «другого» из сохранённых данных (последний несовпадающий элемент)
+        }
+      } else if (prof['chronic_conditions'] === 'Нет' || prof['Хронические заболевания'] === 'Нет') {
+        const noItem = document.getElementById('noConditionsItem');
+        if (noItem) noItem.classList.add('active');
+      }
+
+      // 3. Nested: диабет терапия
+      if (prof['diabetes_therapy'] || prof['Диабет_терапия']) {
+        const dt = prof['diabetes_therapy'] || prof['Диабет_терапия'];
+        document.querySelectorAll('#diabetesNested .chip-grid:first-of-type .mini-chip').forEach(chip => {
+          if (chip.innerText.trim() === dt) chip.classList.add('active');
+        });
+      }
+      // 4. Nested: диабет давность
+      if (prof['diabetes_duration'] || prof['Диабет_давность']) {
+        const dd = prof['diabetes_duration'] || prof['Диабет_давность'];
+        document.querySelectorAll('#diabetesDuration .mini-chip').forEach(chip => {
+          if (chip.innerText.trim() === dd) chip.classList.add('active');
+        });
+      }
+      // 5. Nested: щитовидка
+      if (prof['thyroid_diagnosis'] || prof['Щитовидка_диагноз']) {
+        const td = prof['thyroid_diagnosis'] || prof['Щитовидка_диагноз'];
+        document.querySelectorAll('#thyroidNested .mini-chip').forEach(chip => {
+          if (chip.innerText.trim() === td) chip.classList.add('active');
+        });
+      }
+      // 6. Nested: ЖКТ
+      if (prof['gi_diagnoses'] || prof['ЖКТ_диагнозы']) {
+        const giSet = (prof['gi_diagnoses'] || prof['ЖКТ_диагнозы']).split(',').map(s => s.trim());
+        document.querySelectorAll('#giNested .mini-chip').forEach(chip => {
+          if (giSet.includes(chip.innerText.trim())) chip.classList.add('active');
+        });
+      }
+
+       // 7. Лекарства toggle + input (medications)
+       if ((prof['medications'] || prof['takes_medications'] || prof['Принимает лекарства']) && (prof['medications'] || prof['takes_medications'] || prof['Принимает лекарства']) !== 'Нет') {
+         const medsVal = prof['medications'] || prof['takes_medications'] || prof['Принимает лекарства'];
+        hasMeds = true;
+        medsToggle.classList.add('active');
+        medsInputWrap.style.display = 'flex';
+        if (medsVal !== 'Да (не указано)') {
+          document.getElementById('medsInput').value = medsVal;
+        }
+      }
+    }, 150);
+  </script>
+
+  <script src="medical-safety.js"></script>
+  <script src="onboarding-state.js"></script>
+</body>
+</html>

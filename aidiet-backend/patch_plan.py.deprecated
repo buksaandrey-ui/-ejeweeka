@@ -1,0 +1,183 @@
+import re
+
+with open('app/api/plan.py', 'r') as f:
+    content = f.read()
+
+new_func = """@router.post("/generate")
+@limiter.limit("10/minute")
+async def generate_plan(request: Request, profile: UserProfilePayload, background_tasks: BackgroundTasks, db: Session = Depends(get_db), user_id: str = Depends(get_current_user)):
+    # 1. Формируем "Поисковый запрос" для векторной БД на основе болезней/целей
+    search_query = f"Диета, питание и ограничения для цели: {profile.goal}."
+    if profile.diseases:
+        search_query += f" Болезни: {', '.join(profile.diseases)}."
+    if profile.symptoms:
+        search_query += f" Симптомы: {', '.join(profile.symptoms)}."
+    if profile.womens_health:
+        search_query += f" Женское здоровье: {profile.womens_health}."
+        
+    print(f"🔍 Ищем медицинский контекст для: {search_query}")
+    contexts = search_knowledge(db, search_query, limit=5)
+    context_text = "\\n\\n".join([f"Совет от {c.doctor_name} ({c.specialization}): {c.content}" for c in contexts])
+    if not context_text:
+        context_text = "Специфических медицинских рекомендаций не найдено (база пуста)."
+
+    # 2. Расчет BMR и Цели
+    if profile.gender == 'female':
+        bmr = 10 * profile.weight + 6.25 * profile.height - 5 * profile.age - 161
+        floor_calories = 1000
+    else:
+        bmr = 10 * profile.weight + 6.25 * profile.height - 5 * profile.age + 5
+        floor_calories = 1300
+        
+    tdee = bmr * (profile.activity_multiplier or 1.375)
+    target_kcal = tdee
+    goal_lower = profile.goal.lower() if profile.goal else ''
+    if any(k in goal_lower for k in ['снизить вес', 'снижение веса', 'похудеть', 'lose_weight', 'weight_loss']):
+        target_kcal = tdee * 0.8
+    elif any(k in goal_lower for k in ['набрать', 'набор мышечной', 'gain_muscle', 'muscle_gain']):
+        target_kcal = tdee * 1.15
+        
+    if target_kcal < floor_calories:
+        target_kcal = floor_calories
+
+    days_to_generate = 3 if profile.tier.lower() == 't1' or profile.tier == 'free' else 7
+    meal_pattern = (profile.meal_pattern or '').lower()
+    if '4' in meal_pattern or '5' in meal_pattern or 'перекус' in meal_pattern:
+        meals_per_day = 4
+    elif '2' in meal_pattern:
+        meals_per_day = 2
+    else:
+        meals_per_day = 3
+
+    # ЭТАП 1: Генерируем матрицу (Скелет)
+    matrix_prompt = PromptAssembler.build_matrix_prompt(
+        profile=profile, context_text=context_text, bmr=bmr, tdee=tdee,
+        target_kcal=target_kcal, days=days_to_generate, meals_per_day=meals_per_day
+    )
+    
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    
+    print("🤖 Отправляем запрос на Матрицу...")
+    response = await asyncio.to_thread(client.models.generate_content, model='gemini-2.5-flash', contents=matrix_prompt)
+    matrix_text = response.text.replace("```json\\n", "").replace("```", "").strip()
+    
+    try:
+        matrix_data = json.loads(matrix_text)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Ошибка генерации матрицы плана.")
+
+    # ЭТАП 2: Поиск в Кэше
+    from app.models.recipe_cache import MealCache
+    missing_meals = []
+    final_plan = {}
+    
+    # Собираем уникальные названия для поиска
+    all_names = set()
+    for day_key, day_data in matrix_data.items():
+        if not day_key.startswith('day_'): continue
+        final_plan[day_key] = {"meals": []}
+        meals = day_data.get('meals', []) if isinstance(day_data, dict) else day_data
+        for meal in meals:
+            all_names.add(meal.get('name', ''))
+
+    # Ищем в базе
+    cached = db.query(MealCache).filter(MealCache.name.in_(list(all_names))).all()
+    cache_map = {c.name: c for c in cached}
+    
+    for day_key, day_data in matrix_data.items():
+        if not day_key.startswith('day_'): continue
+        meals = day_data.get('meals', []) if isinstance(day_data, dict) else day_data
+        for meal in meals:
+            name = meal.get('name')
+            if name in cache_map:
+                c = cache_map[name]
+                meal.update({
+                    'calories': c.calories, 'protein': c.protein, 'fat': c.fat, 'carbs': c.carbs, 'fiber': c.fiber,
+                    'ingredients': c.ingredients, 'steps': c.steps, 'image_url': c.image_url
+                })
+                final_plan[day_key]['meals'].append(meal)
+            else:
+                missing_meals.append(name)
+                final_plan[day_key]['meals'].append(meal) # Placeholder
+
+    # ЭТАП 3: Генерация недостающих рецептов
+    new_recipes = {}
+    if missing_meals:
+        print(f"🤖 Генерируем недостающие рецепты: {len(missing_meals)} шт...")
+        recipe_prompt = PromptAssembler.build_recipe_prompt(profile, missing_meals, target_kcal)
+        resp_recipes = await asyncio.to_thread(client.models.generate_content, model='gemini-2.5-flash', contents=recipe_prompt)
+        rec_text = resp_recipes.text.replace("```json\\n", "").replace("```", "").strip()
+        try:
+            new_recipes = json.loads(rec_text)
+        except:
+            print("⚠️ Ошибка парсинга новых рецептов")
+
+        # Запускаем генерацию картинок в фоне для новых рецептов
+        from app.services.image_generator import generate_meal_image
+        import hashlib
+        
+        async def save_new_meals(recipes_dict):
+            for r_name, r_data in recipes_dict.items():
+                ing_text = ", ".join([i.get("name", "") for i in r_data.get("ingredients", [])])
+                img_url = await generate_meal_image(r_name, ing_text)
+                # Сохраняем в кэш
+                h = hashlib.sha256(ing_text.encode()).hexdigest()
+                new_meal = MealCache(
+                    ingredients_hash=h, name=r_name, image_url=img_url,
+                    calories=r_data.get('calories',0), protein=r_data.get('proteins',0),
+                    fat=r_data.get('fats',0), carbs=r_data.get('carbs',0), fiber=r_data.get('fiber',0),
+                    ingredients=r_data.get('ingredients',[]), steps=r_data.get('steps',[])
+                )
+                db.add(new_meal)
+            db.commit()
+            
+        background_tasks.add_task(save_new_meals, new_recipes)
+    
+    # Вливаем новые рецепты в план
+    allergen_warnings = []
+    allergens_lower = [a.lower().strip() for a in profile.allergies if a] if profile.allergies else []
+    
+    for day_key, day_data in final_plan.items():
+        for meal in day_data['meals']:
+            name = meal.get('name')
+            if name in new_recipes:
+                r = new_recipes[name]
+                meal.update({
+                    'calories': r.get('calories',0), 'protein': r.get('proteins',0), 'fat': r.get('fats',0),
+                    'carbs': r.get('carbs',0), 'fiber': r.get('fiber',0), 'ingredients': r.get('ingredients',[]),
+                    'steps': r.get('steps',[])
+                })
+            
+            # Post-validation аллергенов
+            for ing in meal.get('ingredients', []):
+                ing_name = (ing.get('name') or '').lower()
+                for allergen in allergens_lower:
+                    if allergen and allergen in ing_name:
+                        allergen_warnings.append(f"{day_key}: '{ing.get('name')}' содержит '{allergen}'")
+                        
+    # ЭТАП 4: Нормализация
+    normalized_data = normalize_plan_for_frontend(final_plan, profile.budget_level)
+    
+    return {
+        "status": "success",
+        "data": normalized_data,
+        "target_kcal": int(target_kcal),
+        "target_daily_fiber": int(profile.target_daily_fiber or (25 if profile.gender == 'female' else 30)),
+        "bmr": int(bmr),
+        "tdee": int(tdee),
+        "days_generated": days_to_generate,
+        "meals_per_day": meals_per_day,
+        "rag_context_used": len(contexts),
+        "model_used": 'gemini-2.5-flash (2-step)',
+        "allergen_warnings": allergen_warnings
+    }
+"""
+
+# Найдем функцию и заменим
+pattern = re.compile(r'@router\.post\("/generate"\).*?(?=\nfrom app\.models\.knowledge_base import)', re.DOTALL)
+new_content = pattern.sub(new_func + "\n", content)
+
+with open('app/api/plan.py', 'w') as f:
+    f.write(new_content)
+print("Patch applied successfully")

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - U-7 Вкусы и предпочтения</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-divider); background: #FFFFFF; }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid var(--color-divider); color: var(--color-text-primary); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; }
+    .header-title { font-size: 18px; font-weight: 700; color: var(--color-text-primary); }
+    .save-btn { font-size: 14px; font-weight: 700; color: var(--color-primary); background: none; border: none; cursor: pointer; }
+    .subtitle { font-size: 14px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.8px; margin: 24px 0 12px 0; }
+    .chip i { font-size: 18px; }
+    .input-box { display: flex; flex-direction: column; gap: 10px; }
+    .label { font-size: 14px; font-weight: 700; color: var(--color-text-primary); }
+    .textarea { 
+      width: 100%; height: 100px; padding: 16px; border-radius: 18px; border: 1px solid var(--color-divider); 
+      background: #FFFFFF; font-family: 'Inter', sans-serif; font-size: 15px; outline: none; line-height: 1.5; resize: none;
+      transition: border-color 0.2s;
+    }
+    .textarea:focus { border-color: var(--color-primary); }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js">
+    // === PROFILE PRE-FILL from onboarding ===
+    document.addEventListener("DOMContentLoaded", () => {
+    const d = (window.AIDiet && window.AIDiet.getProfile) ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+    const liked = document.querySelector('#likedFoods, #likedInput, [data-field="liked"]');
+    if (liked && d.liked_foods) liked.value = d.liked_foods;
+    const disliked = document.querySelector('#dislikedFoods, #dislikedInput, [data-field="disliked"]');
+    if (disliked && d.disliked_foods) disliked.value = d.disliked_foods;
+    if (d.excluded_meal_types) {
+      document.querySelectorAll('.meal-type-chip, .exclude-chip').forEach(c => {
+        if (d.excluded_meal_types.includes(c.dataset.key || c.textContent.trim())) c.classList.add('active');
+      });
+    }
+
+    });
+  </script>
+  <script src="u-series-state.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="back-btn" onclick="history.back()" aria-label="Назад"><i class="ph ph-arrow-left"></i></button>
+        <h1 class="header-title">Вкусы</h1>
+      </div>
+      <button class="save-btn">Сохранить</button>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <div>
+        <div class="subtitle">Нежелательные категории</div>
+        <div class="chip-grid">
+          <div class="chip active"><i class="ph ph-bowl-steam"></i> Супы</div>
+          <div class="chip"><i class="ph ph-leaf"></i> Салаты</div>
+          <div class="chip active"><i class="ph ph-brandy"></i> Смузи</div>
+          <div class="chip"><i class="ph ph-cookie"></i> Каши</div>
+          <div class="chip"><i class="ph ph-oven"></i> Запеканки</div>
+          <div class="chip active"><i class="ph ph-thermometer-cold"></i> Сырые блюда</div>
+        </div>
+      </div>
+
+      <div class="input-box">
+        <div class="label">Любимые продукты</div>
+        <textarea class="textarea" placeholder="Напиши продукты, которые любишь (через запятую)...">Курица, Киноа, Авокадо, Баклажаны, Сыр халлуми</textarea>
+      </div>
+
+      <div class="input-box">
+        <div class="label">Нелюбимые продукты</div>
+        <textarea class="textarea" placeholder="Напиши продукты, которые точно НЕ хочешь видеть в плане...">Кинза, Сельдерей, Лук вареный, Творог с изюмом</textarea>
+      </div>
+
+    </div>
+
+  </div>
+<script src="onboarding-state.js"></script>
+</body>
+</html>

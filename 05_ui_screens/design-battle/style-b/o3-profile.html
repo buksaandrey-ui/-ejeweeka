@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIDiet - O-3 Базовый профиль (Style B)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <style>
+    :root {
+      --color-primary: #F5922B;
+      --color-primary-gradient: linear-gradient(135deg, #F59520, #E07018);
+      --color-bg-main: #FAFAFA;
+      --color-surface: #FFFFFF;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B7280;
+      --color-text-tertiary: #9E9E9E;
+      --color-divider: #E5E7EB;
+      --color-border: #D1D5DB;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: #E5E7EB;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+    }
+    
+    .phone {
+      width: 390px;
+      height: 844px;
+      background-color: var(--color-bg-main);
+      border-radius: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .status-bar {
+      height: 47px;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      flex-shrink: 0;
+      z-index: 20;
+    }
+    .status-bar-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 16px;
+    }
+    
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 100px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px; /* Tighter gaps for Style B */
+      -ms-overflow-style: none;  
+      scrollbar-width: none;  
+    }
+    .content::-webkit-scrollbar { display: none; }
+
+    .header-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .progress-container {
+      margin-bottom: 8px;
+    }
+    .progress-bar {
+      height: 6px;
+      background-color: var(--color-divider);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background-color: var(--color-primary);
+      width: 14%;
+      border-radius: 3px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+    .subtitle {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+
+    .card {
+      background-color: var(--color-surface);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--color-divider);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 16px; 
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--color-divider);
+      margin-bottom: 4px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+    
+    .field-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .input {
+      background-color: #FFFFFF;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      color: var(--color-text-primary);
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input:focus {
+      border-color: var(--color-primary);
+    }
+    .input::placeholder {
+      color: var(--color-text-tertiary);
+    }
+
+    .select-wrapper {
+      position: relative;
+    }
+    .select-wrapper select {
+      appearance: none;
+      cursor: pointer;
+      padding-right: 40px;
+    }
+    .select-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-secondary);
+      pointer-events: none;
+      font-size: 18px;
+    }
+
+    .toggle-group {
+      display: flex;
+      background-color: #F3F4F6;
+      border-radius: 8px;
+      padding: 4px;
+      gap: 4px;
+      border: 1px solid var(--color-divider);
+    }
+    .toggle-btn {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      transition: all 0.2s ease;
+    }
+    .toggle-btn.active {
+      background-color: var(--color-primary);
+      color: #FFFFFF;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .tooltip-icon {
+      color: var(--color-text-secondary);
+      cursor: help;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+    }
+
+    .tooltip {
+      margin-top: 2px;
+      background-color: var(--color-text-primary);
+      color: #FFFFFF;
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      line-height: 1.4;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    .tooltip::before {
+      content: "";
+      position: absolute;
+      top: -4px;
+      left: 16px;
+      width: 8px;
+      height: 8px;
+      background-color: var(--color-text-primary);
+      transform: rotate(45deg);
+    }
+
+    .checkbox-lbl {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .checkbox {
+      appearance: none;
+      min-width: 18px;
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--color-border);
+      border-radius: 4px; /* Material slightly squared */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background-color: #FFFFFF;
+      cursor: pointer;
+      outline: none;
+    }
+    .checkbox:checked {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+    .checkbox:checked::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 9px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-top: -2px;
+    }
+
+    .bottom-cta {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 20px 34px 20px;
+      background: #FAFAFA;
+      border-top: 1px solid var(--color-divider);
+      z-index: 10;
+    }
+    
+    .btn-primary {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--color-primary-gradient);
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(245,146,43,0.2);
+    }
+    .btn-primary i {
+      font-size: 20px;
+    }
+    .motto-card {
+      margin-top: 8px;
+      padding: 16px;
+      background-color: #FFF8E1;
+      border-radius: 12px;
+      border: 1px solid #FFECB3;
+      display: flex;
+      gap: 12px;
+    }
+    .motto-icon {
+      color: #F57C00;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .motto-text {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #5D4037;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar Mock -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="content">
+      <div class="header-section">
+        <div class="progress-container">
+          <div class="progress-bar">
+            <!-- 2 of 14 steps ~ 14% -->
+            <div class="progress-fill"></div>
+          </div>
+        </div>
+        <h1>Базовый профиль</h1>
+        <p class="subtitle">Расскажи о себе — это поможет рассчитать план</p>
+      </div>
+
+      <!-- Section: О тебе -->
+      <div class="card">
+        <div class="card-title">О тебе</div>
+        
+        <div class="field-group">
+          <label class="field-label">Имя</label>
+          <input type="text" class="input" placeholder="Например: Иван, Мария" value="Андрей">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Пол</label>
+          <div class="toggle-group">
+            <button class="toggle-btn" style="display:flex; align-items:center; justify-content:center; gap:6px;">
+              <i class="ph ph-gender-female" style="font-size: 18px;"></i> Женщина
+            </button>
+            <button class="toggle-btn active" style="display:flex; align-items:center; justify-content:center; gap:6px;">
+              <i class="ph ph-gender-male" style="font-size: 18px;"></i> Мужчина
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Возраст</label>
+          <input type="number" class="input" value="32">
+        </div>
+      </div>
+
+      <!-- Section: Параметры тела -->
+      <div class="card">
+        <div class="card-title">Параметры тела</div>
+
+        <div class="field-group">
+          <label class="field-label">Рост (см)</label>
+          <input type="number" class="input" value="178">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Текущий вес (кг)</label>
+          <input type="number" class="input" value="82">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Телосложение</label>
+          <div class="select-wrapper">
+            <select class="input">
+              <option>Худощавое</option>
+              <option selected>Среднее</option>
+              <option>Крепкое</option>
+              <option>Спортивное</option>
+              <option>Есть лишний вес</option>
+            </select>
+            <i class="ph ph-caret-down select-icon"></i>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Обхват талии (см)
+            <i class="ph ph-info tooltip-icon"></i>
+          </label>
+          <div class="tooltip">
+            Измерь сантиметровой лентой на уровне пупка, стоя, на выдохе.
+          </div>
+          <input type="number" class="input" value="91">
+          <label class="checkbox-lbl">
+            <input type="checkbox" class="checkbox">
+            Не знаю / измерю позже
+          </label>
+        </div>
+
+        <!-- Conditional Field: Где лишний вес заметнее всего? -->
+        <div class="field-group">
+          <label class="field-label">Где лишний вес заметнее всего?</label>
+          <div class="select-wrapper">
+            <select class="input">
+              <option selected>В основном живот и талия</option>
+              <option>Бёдра и ягодицы</option>
+              <option>Равномерно по телу</option>
+              <option>Затрудняюсь ответить</option>
+            </select>
+            <i class="ph ph-caret-down select-icon"></i>
+          </div>
+        </div>
+      <div class="card" style="background: none; border: none; box-shadow: none; padding: 0;">
+        <div class="motto-card">
+          <i class="ph ph-lightbulb-filament motto-icon"></i>
+          <p class="motto-text">
+            Эти данные — основа всего. Из роста, веса и возраста мы рассчитаем ваш базовый обмен веществ: сколько калорий нужно именно вашему телу в состоянии покоя. Это стартовая точка, от которой строится весь план питания. А соотношение талии к росту выше 0,5 повышает риск сердечно-сосудистых заболеваний — даже при «нормальном» ИМТ. Чем точнее данные — тем точнее вердикт и план
+          </p>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Fixed Bottom CTA -->
+    <div class="bottom-cta">
+      <button class="btn-primary">
+        Далее 
+        <i class="ph ph-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</body>
+</html>

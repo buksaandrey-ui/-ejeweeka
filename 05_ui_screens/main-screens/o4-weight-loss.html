@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-4 Ветка похудения</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="drum-picker.css">
+  <style>
+    .segmented-control { display: flex; background: #EEE; border-radius: 14px; padding: 4px; gap: 4px; }
+    .segment-btn { flex: 1; height: 48px; border-radius: 10px; border: none; background: transparent; font-size: 12px; font-weight: 600; color: var(--color-text-secondary); cursor: pointer; }
+    .segment-btn.active { background: #FFFFFF; color: var(--color-text-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .pace-card { 
+      background: #FFF7ED; border: 1px solid #FFEDD5; border-radius: 18px; padding: 20px; margin-top: 20px;
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .pace-header { display: flex; justify-content: space-between; align-items: center; }
+    .pace-label { font-size: 13px; font-weight: 700; color: var(--color-primary); text-transform: uppercase; }
+    .pace-val { font-size: 15px; font-weight: 800; color: var(--color-text-primary); }
+    .pace-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+    .onboarding-tip-card {
+      background-color: #E8F5E9;
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      border: 1px solid #C8E6C9;
+    }
+    .onboarding-tip-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .onboarding-tip-text {
+      font-size: 13px;
+      color: #2E7D32;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+    @media (max-width: 440px) {
+    }
+</style>
+
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 3 из 14</div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+      <h1 class="question-title">Цель по весу</h1>
+      <p class="question-desc">Мы поможем достичь желаемого веса без вреда для здоровья и «откатов».</p>
+
+      <div class="form-section">
+        <div class="field-group">
+          <label class="field-label">Желаемый вес (кг)</label>
+          <div class="input-wrapper">
+            <input type="hidden" id="target-weight" data-question="target_weight" value="">
+            <div class="drum-tap" id="tapTargetWeight" onclick="openTargetWeightPicker()" style="flex:1">—</div>
+            <span class="input-unit">кг</span>
+          </div>
+          <div style="display:flex; justify-content:flex-end; margin-top:4px;">
+            <button type="button" id="manualWeightToggle" style="background:none; border:none; color:var(--color-primary); font-size:12px; font-weight:600; cursor:pointer; padding:2px 0;">⌨️ Ввести с клавиатуры</button>
+          </div>
+        </div>
+
+        <div class="field-group" style="margin-top: 8px;">
+          <label class="field-label">За какой срок?</label>
+          <div style="display: flex; gap: 12px; align-items: center;">
+            <div class="input-wrapper" style="flex: 1;">
+              <input type="hidden" id="target-weeks" data-question="Срок (недель)" value="12">
+              <div class="drum-tap" id="tapTargetWeeks" onclick="openTargetWeeksPicker()" style="width:100%">12</div>
+            </div>
+            <div class="segmented-control" style="flex: 1;">
+              <button class="segment-btn active">Недели</button>
+              <button class="segment-btn">Месяцы</button>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Pace Feedback Card -->
+        <div class="pace-card" id="paceCard">
+          <div class="pace-header">
+            <span class="pace-label" id="paceName">Темп: БЕЗОПАСНЫЙ</span>
+            <span class="pace-val" id="paceVal">~0.5 кг/нед</span>
+          </div>
+          <p class="pace-desc" id="paceDesc">Плавное снижение. Датa достижения цели появится после ввода целевого веса и срока.</p>
+        </div>
+      </div>
+          <!-- Motivation Block -->
+      <div class="onboarding-tip-card">
+        <div class="onboarding-tip-icon">💡</div>
+        <div class="onboarding-tip-text">
+          Нет «правильной» скорости — есть твоя. Кому-то важен медленный путь без стресса и срывов. Кому-то нужен видимый результат через месяц для мотивации. Мы рассчитаем безопасный коридор под твою цель и покажем, что реалистично, а что — риск для здоровья.
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="location.href='o3-profile.html'">← Назад</button>
+      <button class="btn-primary disabled" id="btnNextO4" disabled>Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+
+  </div>
+
+  <script src="drum-picker.js"></script>
+  <script src="onboarding-state.js"></script>
+  <script>
+    // BUG-08 fix: Динамический расчёт темпа и даты завершения
+    const MONTHS_RU = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+    let weeksMultiplier = 1; // 1 = недели, ~4.33 = месяцы
+
+    // Переключатель «Недели / Месяцы» — BUG-07
+    const timeSegBtn = document.querySelectorAll('.segmented-control')[0];
+    if (timeSegBtn) {
+      timeSegBtn.querySelectorAll('.segment-btn').forEach((btn, i) => {
+        btn.addEventListener('click', () => {
+          timeSegBtn.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          weeksMultiplier = i === 0 ? 1 : 4.33;
+          calculatePace();
+        });
+      });
+    }
+
+    // === Ручной ввод целевого веса ===
+    document.getElementById('manualWeightToggle').addEventListener('click', () => {
+      const wrapper = document.getElementById('tapTargetWeight').parentElement;
+      const tap = document.getElementById('tapTargetWeight');
+      const hidden = document.getElementById('target-weight');
+      const toggleBtn = document.getElementById('manualWeightToggle');
+
+      if (tap.style.display !== 'none') {
+        // Переключаем на ручной ввод
+        tap.style.display = 'none';
+        const manualInput = document.createElement('input');
+        manualInput.type = 'number';
+        manualInput.id = 'manualWeightInput';
+        manualInput.className = 'input-field';
+        manualInput.placeholder = 'Например: 68.5';
+        manualInput.step = '0.5';
+        manualInput.min = '35';
+        manualInput.max = '300';
+        manualInput.style.cssText = 'flex:1; font-size:16px; font-weight:700;';
+        manualInput.value = hidden.value || '';
+        wrapper.insertBefore(manualInput, tap);
+        manualInput.focus();
+        toggleBtn.textContent = '🎰 Выбрать барабаном';
+        manualInput.addEventListener('input', () => {
+          const v = parseFloat(manualInput.value);
+          if (v && v >= 35 && v <= 300) {
+            hidden.value = v;
+            tap.textContent = v.toFixed(1);
+            window.AIDiet && window.AIDiet.saveField('target_weight', v);
+            validateO4();
+            calculatePace();
+          }
+        });
+      } else {
+        // Возвращаем барабан
+        const manualInput = document.getElementById('manualWeightInput');
+        if (manualInput) manualInput.remove();
+        tap.style.display = '';
+        toggleBtn.textContent = '⌨️ Ввести с клавиатуры';
+      }
+    });
+
+    window.isPaceActionRequired = false;
+    window.paceConfirmed = false;
+
+    function calculatePace() {
+      const targetW = parseFloat(document.getElementById('target-weight').value);
+      const weeksRaw = parseFloat(document.getElementById('target-weeks').value);
+      if (!targetW || !weeksRaw) return;
+
+      const weeks = weeksRaw * weeksMultiplier;
+
+      // Сохраняем в localStorage
+      window.AIDiet && window.AIDiet.saveField('target_weight', targetW);
+      window.AIDiet && window.AIDiet.saveField('target_timeline_weeks', Math.round(weeks));
+
+      const profile = window.AIDiet ? window.AIDiet.getProfile() : {};
+      const currentW = parseFloat(profile['weight']) || parseFloat(profile['weight_kg']) || parseFloat(profile['Текущий вес']) || 0;
+      if (!currentW) return;
+
+      const diff = currentW - targetW;
+      if (diff <= 0) {
+        // Целевой вес >= текущего — ошибка
+        const paceCard = document.getElementById('paceCard');
+        paceCard.style.backgroundColor = '#FEF2F2';
+        paceCard.style.borderColor = '#FCA5A5';
+        document.getElementById('paceName').innerText = 'ОШИБКА';
+        document.getElementById('paceName').style.color = '#DC2626';
+        document.getElementById('paceVal').innerText = '';
+        document.getElementById('paceDesc').innerHTML = `<span style="color:#DC2626; font-weight:600;">Целевой вес (${targetW} кг) должен быть <strong>меньше</strong> текущего (${currentW} кг).</span>`;
+        // Блокируем кнопку "Далее"
+        window.isPaceActionRequired = true;
+        window.paceConfirmed = false;
+        validateO4();
+        return;
+      }
+
+      const kgPerWeekRaw = diff / weeks;
+      const pctPerWeekRaw = (kgPerWeekRaw / currentW) * 100;
+      const pctPerWeek = pctPerWeekRaw.toFixed(1);
+
+      // Дата завершения
+      const d = new Date();
+      d.setDate(d.getDate() + Math.round(weeks * 7));
+      const dateStr = `${d.getDate()} ${MONTHS_RU[d.getMonth()]} ${d.getFullYear()}`;
+
+      const paceCard = document.getElementById('paceCard');
+      const paceName = document.getElementById('paceName');
+      const paceDesc = document.getElementById('paceDesc');
+      document.getElementById('paceVal').innerText = `~${pctPerWeek}% / нед`;
+
+      let baseMsg = `Цель: минус ${diff.toFixed(1)} кг за ${Math.round(weeks)} нед. Достигнете цели к <strong style="color:var(--color-text-primary);">${dateStr}</strong>.`;
+
+      // Динамическая подсветка
+      window.isPaceActionRequired = false;
+      // Читаем сохранённое подтверждение риска
+      const _saved = window.AIDiet ? window.AIDiet.getProfile() : {};
+      window.paceConfirmed = !!_saved['pace_risk_confirmed'];
+
+      let actionHtml = '';
+
+      if (pctPerWeekRaw <= 1.0) {
+          paceCard.style.backgroundColor = '#E8F5E9'; 
+          paceCard.style.borderColor = '#C8E6C9';
+          paceName.style.color = '#2E7D32';
+          paceName.innerText = 'ТЕМП: БЕЗОПАСНЫЙ';
+          paceDesc.innerHTML = baseMsg + '<br><br><span style="color:#2E7D32; font-weight:500;">Идеальный темп для долгосрочного результата без потери мышечной массы.</span>';
+          window.paceConfirmed = true; 
+      } else {
+          window.isPaceActionRequired = true;
+          
+          let alertColor, alertMsg, titleMsg;
+          let allowKeep = true;
+
+          if (pctPerWeekRaw <= 1.5) {
+              paceCard.style.backgroundColor = '#FFF7ED'; 
+              paceCard.style.borderColor = '#FFEDD5';
+              paceName.style.color = '#C2410C';
+              alertColor = '#C2410C';
+              titleMsg = 'ТЕМП: АГРЕССИВНЫЙ';
+              alertMsg = 'Ускоренный темп. Потребуется жесткий контроль макронутриентов.';
+          } else if (pctPerWeekRaw <= 1.8) {
+              paceCard.style.backgroundColor = '#FEF2F2'; 
+              paceCard.style.borderColor = '#FCA5A5';
+              paceName.style.color = '#DC2626';
+              alertColor = '#DC2626';
+              titleMsg = 'ТЕМП: КРИТИЧЕСКИ ОПАСНЫЙ';
+              alertMsg = '⚠️ Внимание! Возможна потеря мышечной массы наряду с жиром. Настоятельно рекомендуем увеличить срок!';
+          } else {
+              paceCard.style.backgroundColor = '#FFF0F0'; 
+              paceCard.style.borderColor = '#EF4444';
+              paceName.style.color = '#991B1B';
+              alertColor = '#EF4444';
+              titleMsg = 'СТОП! НЕВОЗМОЖНЫЙ ТЕМП';
+              alertMsg = '🛑 СТОП! Безопасное похудение не может превышать 1.8% массы тела в неделю. Потеря большего веса возможна только за счет воды и мышц при истощении организма. Необходимо увеличить срок!';
+              allowKeep = false;
+          }
+
+          paceName.innerText = titleMsg;
+          
+          let buttonsHtml = '';
+          if (allowKeep) {
+              buttonsHtml += `<button id="paceBtnKeep" style="width:100%; height:44px; border-radius:12px; background:transparent; border:2px solid ${alertColor}; color:${alertColor}; font-weight:600; font-size:14px; cursor:pointer;">Оставить как есть (Риск!)</button>`;
+          } else {
+              buttonsHtml += `<button id="paceBtnAcceptable" style="width:100%; height:44px; border-radius:12px; background:transparent; border:2px solid #C2410C; color:#C2410C; font-weight:600; font-size:14px; cursor:pointer;">Сделать приемлемым (~1.5%/нед)</button>`;
+          }
+          buttonsHtml += `<button id="paceBtnSafe" style="width:100%; height:44px; border-radius:12px; background:#52B044; border:none; color:#FFF; font-weight:600; font-size:14px; cursor:pointer;">⚠️ Сделать безопасным (~1.0%/нед)</button>`;
+
+          actionHtml = `
+            <div id="paceActionBlock" style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(0,0,0,0.05);">
+                <p style="font-size:14px; font-weight:700; margin-bottom:12px; color:var(--color-text-primary);">${allowKeep ? 'Оставляем темп или меняем на более безопасный?' : 'Тебе необходимо увеличить срок для продолжения!'}</p>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                   ${buttonsHtml}
+                </div>
+            </div>
+          `;
+          // Если пользователь уже подтверждал риск ранее — не спрашиваем снова
+          if (window.paceConfirmed && allowKeep) {
+              paceDesc.innerHTML = baseMsg + `<br><br><span style="color:${paceName.style.color}; font-weight:500;">${alertMsg}</span>` +
+                `<div style="margin-top:20px; padding-top:16px; border-top:1px solid rgba(0,0,0,0.05);">
+                   <p style="font-size:14px; font-weight:600; color:${alertColor};">✓ Темп подтверждён — риск принят</p>
+                 </div>`;
+              window.isPaceActionRequired = false;
+          } else {
+              paceDesc.innerHTML = baseMsg + `<br><br><span style="color:${paceName.style.color}; font-weight:500;">${alertMsg}</span>` + actionHtml;
+          }
+
+          // Слушатели кнопок подтверждения
+          setTimeout(() => {
+              const btnKeep = document.getElementById('paceBtnKeep');
+              const btnAcceptable = document.getElementById('paceBtnAcceptable');
+              const btnSafe = document.getElementById('paceBtnSafe');
+              
+              if (btnKeep) {
+                  btnKeep.onclick = (e) => {
+                      e.preventDefault();
+                      window.paceConfirmed = true;
+                      // Сохраняем факт подтверждения риска
+                      window.AIDiet && window.AIDiet.saveField('pace_risk_confirmed', true);
+                      btnKeep.style.background = alertColor;
+                      btnKeep.style.color = '#FFF';
+                      btnKeep.innerText = '✓ Темп подтвержден';
+                      if(btnSafe) btnSafe.style.display = 'none';
+                       validateO4();
+                  };
+              }
+              
+              if (btnAcceptable) {
+                  btnAcceptable.onclick = (e) => {
+                      e.preventDefault();
+                      // Сбрасываем старое подтверждение — темп изменился
+                      window.AIDiet && window.AIDiet.saveField('pace_risk_confirmed', '');
+                      const targetKgPerWeek = currentW * 0.015;
+                      const newWeeksRaw = diff / targetKgPerWeek; 
+                      const newVal = newWeeksRaw / weeksMultiplier;
+                      document.getElementById('target-weeks').value = Math.ceil(newVal);
+                      document.getElementById('tapTargetWeeks').textContent = Math.ceil(newVal);
+                      calculatePace();
+                  };
+              }
+              
+              if (btnSafe) {
+                  btnSafe.onclick = (e) => {
+                      e.preventDefault();
+                      // Сбрасываем старое подтверждение — темп изменился
+                      window.AIDiet && window.AIDiet.saveField('pace_risk_confirmed', '');
+                      const targetKgPerWeek = currentW * 0.010;
+                      const newWeeksRaw = diff / targetKgPerWeek; 
+                      const newVal = newWeeksRaw / weeksMultiplier;
+                      document.getElementById('target-weeks').value = Math.ceil(newVal);
+                      document.getElementById('tapTargetWeeks').textContent = Math.ceil(newVal);
+                      calculatePace();
+                  };
+              }
+          }, 0);
+      }
+      validateO4();
+    }
+
+    // Привязываем события ко всем полям
+    document.getElementById('target-weight').addEventListener('input', calculatePace);
+    document.getElementById('target-weeks').addEventListener('input', calculatePace);
+
+    // Пытаемся рассчитать сразу при загрузке (если пользователь вернулся кнопкой "Назад")
+    setTimeout(calculatePace, 300);
+
+    // === O-4 BUTTON VALIDATION ===
+    function validateO4() {
+      const tw = document.getElementById('target-weight').value.trim();
+      const wk = document.getElementById('target-weeks').value.trim();
+      const btn = document.getElementById('btnNextO4');
+      const hasValues = tw && wk && parseFloat(tw) > 0 && parseFloat(wk) > 0;
+      const paceOk = !window.isPaceActionRequired || window.paceConfirmed;
+      if (hasValues && paceOk) {
+        btn.disabled = false;
+        btn.classList.remove('disabled');
+      } else {
+        btn.disabled = true;
+        btn.classList.add('disabled');
+      }
+    }
+    // === DRUM PICKER OPENERS ===
+    function openTargetWeightPicker() {
+      const cur = parseFloat(document.getElementById('target-weight').value) || 75;
+      DrumPicker.openNumber('Целевой вес', { value: cur, min: 35, max: 300, step: 0.5, suffix: 'кг' }, (v) => {
+        document.getElementById('target-weight').value = v;
+        document.getElementById('tapTargetWeight').textContent = v.toFixed(1);
+        window.AIDiet && window.AIDiet.saveField('target_weight', v);
+        validateO4(); calculatePace();
+      });
+    }
+
+    function openTargetWeeksPicker() {
+      const label = weeksMultiplier === 1 ? 'Срок (недель)' : 'Срок (месяцев)';
+      const suffix = weeksMultiplier === 1 ? 'нед.' : 'мес.';
+      const max = weeksMultiplier === 1 ? 100 : 24;
+      const cur = parseFloat(document.getElementById('target-weeks').value) || 12;
+      DrumPicker.openNumber(label, { value: cur, min: 1, max: max, step: 1, suffix: suffix }, (v) => {
+        document.getElementById('target-weeks').value = v;
+        document.getElementById('tapTargetWeeks').textContent = v;
+        const weeks = Math.round(v * weeksMultiplier);
+        window.AIDiet && window.AIDiet.saveField('target_timeline_weeks', weeks);
+        validateO4(); calculatePace();
+      });
+    }
+
+    // validation — no longer needs input events, called from picker callbacks
+    document.getElementById('target-weight').addEventListener('change', validateO4);
+    document.getElementById('target-weeks').addEventListener('change', validateO4);
+
+    // === O-4 ДАЛЕЕ: сохранить все + навигация ===
+    document.getElementById('btnNextO4').addEventListener('click', (e) => {
+      e.preventDefault();
+      const tw = parseFloat(document.getElementById('target-weight').value);
+      const wk = parseFloat(document.getElementById('target-weeks').value);
+      if (!tw || !wk) return;
+      const weeks = Math.round(wk * weeksMultiplier);
+      window.AIDiet && window.AIDiet.saveField('target_weight', tw);
+      window.AIDiet && window.AIDiet.saveField('target_timeline_weeks', weeks);
+
+      // Проверка: если темп опасный и не подтверждён — не пускаем
+      if (window.isPaceActionRequired && !window.paceConfirmed) {
+        document.getElementById('paceCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('paceCard').style.animation = 'pulse 0.5s ease';
+        setTimeout(() => { document.getElementById('paceCard').style.animation = ''; }, 500);
+        return;
+      }
+
+      window.AIDiet.goNext('o5-restrictions.html');
+    });
+
+    // Гидратация при возврате
+    setTimeout(() => {
+      const prof = window.AIDiet ? window.AIDiet.getProfile() : {};
+      const savedTW = prof['target_weight'] || prof['target_weight_kg'] || prof['Целевой вес'] || '';
+      if (savedTW) {
+         document.getElementById('target-weight').value = savedTW;
+         document.getElementById('tapTargetWeight').textContent = parseFloat(savedTW).toFixed(1);
+      }
+      const savedWeeks = prof['target_timeline_weeks'] || prof['Срок (недель)'] || '';
+      if (savedWeeks) {
+         document.getElementById('target-weeks').value = savedWeeks;
+         document.getElementById('tapTargetWeeks').textContent = savedWeeks;
+      }
+      validateO4();
+      calculatePace();
+    }, 200);
+</script>
+</body>
+</html>

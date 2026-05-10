@@ -1,0 +1,64 @@
+openapi: "3.0.3"
+info:
+  title: AIDiet Core API
+  version: "1.1.0"
+  description: |
+    Backend API for AIDiet — AI-наставник по питанию.
+    Zero-Knowledge Architecture: сервер НЕ хранит медицинские данные.
+
+servers:
+  - url: https://aidiet-api.onrender.com
+    description: Production (Render)
+  - url: http://localhost:8000
+    description: Local development
+
+paths:
+  /api/v1/auth/init:
+    post:
+      summary: Анонимная инициализация
+      description: Создаёт UUID + токен. Сервер НЕ сохраняет UUID.
+      tags: [Auth]
+
+  /api/v1/auth/verify:
+    post:
+      summary: Проверка токена
+      tags: [Auth]
+
+  /api/v1/plan/generate:
+    post:
+      summary: Генерация плана питания
+      description: JSON профиля → RAG → Gemini → план на 3/7 дней
+      tags: [Meal Plan]
+
+  /api/v1/plan/stats:
+    get:
+      summary: Статистика базы знаний
+      tags: [Meal Plan]
+
+  /api/v1/photo/analyze:
+    post:
+      summary: Анализ фото блюда
+      description: Фото → Gemini Vision → КБЖУ + рекомендации
+      tags: [Photo Analysis]
+
+  /api/v1/chat/message:
+    post:
+      summary: AI-чат (Нутрициолог)
+      description: Вопрос → RAG → Gemini → ответ с источниками
+      tags: [AI Chat]
+
+  /api/v1/report/weekly:
+    post:
+      summary: Еженедельный AI-отчёт
+      description: Данные за неделю → AI-анализ → Health Score + рекомендации
+      tags: [Reports]
+
+  /api/v1/health:
+    get:
+      summary: Детальная проверка здоровья API
+      tags: [System]
+
+  /api/v1/recipes:
+    get:
+      summary: Справочник рецептов
+      tags: [Recipes]

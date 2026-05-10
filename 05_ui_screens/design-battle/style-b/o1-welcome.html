@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIDiet - O-1 Welcome (Style B)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <style>
+    :root {
+      --color-primary: #F5922B;
+      --color-primary-gradient: linear-gradient(135deg, #F59520, #E07018);
+      --color-bg-main: #FAFAFA;
+      --color-surface: #FFFFFF;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B7280;
+      --color-divider: #E5E7EB;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #E5E7EB;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+    }
+    .phone {
+      width: 390px;
+      height: 844px;
+      background-color: var(--color-bg-main);
+      border-radius: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 20px 140px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      -ms-overflow-style: none;  
+      scrollbar-width: none;  
+    }
+    .content::-webkit-scrollbar { display: none; }
+    
+    .logo-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .logo-wrapper {
+      width: 240px;
+      height: auto;
+      margin: 0 auto;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.05));
+    }
+    .logo-img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .tagline {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+      max-width: 260px;
+      font-weight: 500;
+    }
+    
+    .usp-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .usp-card {
+      background-color: var(--color-surface);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--color-divider);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: flex;
+      gap: 16px;
+    }
+    .usp-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background-color: #FFF3E0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .usp-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .usp-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .usp-desc {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+    
+    .bottom-cta {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 20px 20px 34px 20px;
+      background: linear-gradient(180deg, rgba(250,250,250,0) 0%, rgba(250,250,250,0.95) 20%, rgba(250,250,250,1) 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
+      border-top: 1px solid transparent; /* reserved for styling */
+    }
+    .btn-primary {
+      width: 100%;
+      height: 52px;
+      border-radius: 12px;
+      background: var(--color-primary);
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .btn-primary:active { opacity: 0.8; transform: translateY(1px); }
+    .btn-primary:hover {
+      box-shadow: 0 4px 12px rgba(245,146,43,0.3);
+      transform: translateY(-1px);
+    }
+    .btn-skip {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      transition: color 0.2s, text-decoration-color 0.2s;
+      text-decoration: underline;
+      text-decoration-color: transparent;
+      text-underline-offset: 4px;
+    }
+    .btn-skip:hover {
+      color: var(--color-text-primary);
+      text-decoration-color: #D1D5DB;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    
+    <!-- Scrollable Content -->
+    <div class="content">
+      
+      <!-- Logo Block -->
+      <div class="logo-block">
+        <div class="logo-wrapper">
+          <img src="../../logos/favicon/aidiet-icon-NO BACKGROUND1024x1024.png" alt="AIDiet Logo" class="logo-img">
+        </div>
+        <p class="tagline">Твой AI-наставник по питанию, сну и физической активности</p>
+      </div>
+
+      <!-- USP Cards -->
+      <div class="usp-list">
+        
+        <div class="usp-card">
+          <div class="usp-icon">
+            <i class="ph ph-clipboard-text"></i>
+          </div>
+          <div class="usp-info">
+            <div class="usp-title">Полный план под тебя</div>
+            <div class="usp-desc">Что есть, как готовить, что купить, как тренироваться — всё в одном плане под твой бюджет и время</div>
+          </div>
+        </div>
+
+        <div class="usp-card">
+          <div class="usp-icon">
+            <i class="ph ph-pill"></i>
+          </div>
+          <div class="usp-info">
+            <div class="usp-title">Умное расписание витаминов</div>
+            <div class="usp-desc">Железо с кофе — деньги на ветер. Витамин D без жирной еды не усвоится. Мы составим расписание, которое реально работает</div>
+          </div>
+        </div>
+
+        <div class="usp-card">
+          <div class="usp-icon">
+            <i class="ph ph-shield-check"></i>
+          </div>
+          <div class="usp-info">
+            <div class="usp-title">Учитываем все нюансы</div>
+            <div class="usp-desc">Веган, аллергия, беременность, подагра — учтём все важные для тебя особенности</div>
+          </div>
+        </div>
+
+        <div class="usp-card">
+          <div class="usp-icon">
+            <i class="ph ph-camera"></i>
+          </div>
+          <div class="usp-info">
+            <div class="usp-title">Фото в ресторане</div>
+            <div class="usp-desc">Ужин в ресторане или в гостях? Просто сфотографируй — мы пересчитаем план</div>
+          </div>
+        </div>
+
+      </div>
+    </div >
+
+    <!-- Bottom Sticky CTA -->
+    <div class="bottom-cta">
+      <button class="btn-primary">Начать &rarr;</button>
+    </div>
+
+  </div>
+</body>
+</html>

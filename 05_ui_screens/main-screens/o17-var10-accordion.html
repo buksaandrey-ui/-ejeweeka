@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>O-17 Accordion (Strict v3)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    /* Forcing native scroll to fix any iOS/Safari issues */
+    html, body { background: var(--color-background); color: var(--color-text-primary); margin: 0; font-family: 'Inter', sans-serif; height: auto !important; min-height: 100%; overflow: visible !important; overflow-x: hidden !important; }
+    .phone { height: auto !important; min-height: 100vh; display: flex; flex-direction: column; position: relative; padding-bottom: 140px; box-sizing: border-box; overflow: visible !important; overflow-x: hidden !important; }
+    
+    .status-bar { color: var(--color-text-primary); position: sticky; top: 0; background: var(--color-background); z-index: 10; padding: 14px 24px; display: flex; justify-content: space-between; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+    
+    /* 3D Gold Card */
+    .gold-card-container { perspective: 1000px; margin: 20px auto 30px; width: 280px; height: 180px; position: relative; flex-shrink: 0; }
+    .gold-card { width: 100%; height: 100%; border-radius: 20px; background: linear-gradient(135deg, #FFD700 0%, #F5922B 50%, #E85D04 100%); box-shadow: 0 20px 40px rgba(245, 146, 43, 0.3); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; box-sizing: border-box; transform: rotateY(-15deg) rotateX(10deg); animation: float 4s ease-in-out infinite; }
+    @keyframes float { 0% { transform: rotateY(-15deg) rotateX(10deg) translateY(0px); } 50% { transform: rotateY(-5deg) rotateX(5deg) translateY(-10px); } 100% { transform: rotateY(-15deg) rotateX(10deg) translateY(0px); } }
+    .card-logo { font-size: 16px; font-weight: 800; letter-spacing: 1px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .card-chip { width: 40px; height: 30px; background: rgba(255,255,255,0.3); border-radius: 6px; margin-top: 20px; }
+    .card-tier { font-size: 24px; font-weight: 800; color: #fff; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.2); align-self: flex-end; }
+    
+    .content-wrapper { padding: 0 24px; flex-shrink: 0; }
+    .title { font-size: 28px; font-weight: 800; line-height: 1.1; margin-bottom: 8px; text-align: center; color: var(--color-text-primary); }
+    .subtitle { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 24px; text-align: center; }
+    
+    /* Strict Accordion */
+    .accordion { display: flex; flex-direction: column; gap: 12px; }
+    .acc-item { border: 1.5px solid var(--color-divider); border-radius: 16px; overflow: hidden; transition: all 0.3s; background: var(--color-surface); }
+    .acc-header { padding: 18px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 700; font-size: 16px; }
+    .acc-header i { transition: transform 0.3s; font-size: 18px; }
+    .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.3s, padding 0.3s; }
+    .acc-list { display: flex; flex-direction: column; gap: 12px; font-size: 14px; line-height: 1.4; padding: 0 16px 16px; }
+    .acc-list div { display: flex; gap: 10px; align-items: flex-start; }
+    .acc-list i { font-size: 18px; margin-top: 1px; }
+
+    /* Plus label for Black/Gold */
+    .plus-label { font-weight: 700; opacity: 0.9; margin-bottom: 4px; color: inherit; }
+
+    /* Theme Base */
+    .acc-item.theme-base .acc-header { color: var(--color-text-primary); }
+    .acc-item.theme-base .acc-header i { color: var(--color-text-secondary); }
+    .acc-item.theme-base .acc-list { color: var(--color-text-secondary); }
+    .acc-item.theme-base .acc-list i { color: #9CA3AF; }
+    .acc-item.theme-base.active { border-color: #9CA3AF; }
+    
+    /* Theme Black */
+    .acc-item.theme-black { background: #111827; border-color: #1F2937; }
+    .acc-item.theme-black .acc-header { color: #FFFFFF; }
+    .acc-item.theme-black .acc-header i { color: #9CA3AF; }
+    .acc-item.theme-black .acc-list { color: #D1D5DB; }
+    .acc-item.theme-black .acc-list i { color: #FFFFFF; }
+    .acc-item.theme-black.active { border-color: #4B5563; }
+    
+    /* Theme Gold */
+    .acc-item.theme-gold { background: #FFFBEB; border-color: #FDE68A; }
+    .acc-item.theme-gold .acc-header { color: #B45309; }
+    .acc-item.theme-gold .acc-header i { color: #D97706; }
+    .acc-item.theme-gold .acc-list { color: #92400E; }
+    .acc-item.theme-gold .acc-list i { color: #F5922B; }
+    .acc-item.theme-gold.active { border-color: #F5922B; box-shadow: 0 4px 15px rgba(245,146,43,0.1); }
+    .acc-item.theme-gold .acc-header i { color: #F5922B; }
+    
+    /* Theme Family */
+    .acc-item.theme-family { background: #FEF2F2; border-color: #FECACA; }
+    .acc-item.theme-family .acc-header { color: #991B1B; }
+    .acc-item.theme-family .acc-header i { color: #EF4444; }
+    .acc-item.theme-family .acc-list { color: #7F1D1D; }
+    .acc-item.theme-family .acc-list i { color: #EF4444; }
+    .acc-item.theme-family.active { border-color: #EF4444; }
+
+    /* Active State Physics */
+    .acc-item.active .acc-header i { transform: rotate(180deg); }
+    .acc-item.active .acc-body { max-height: 800px; padding-top: 4px; }
+    
+    /* Bottom Actions */
+    .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 24px 34px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--color-divider); z-index: 20; }
+    .btn-activate { width: 100%; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #F5922B, #E85D04); color: #fff; font-size: 17px; font-weight: 700; border: none; cursor: pointer; box-shadow: 0 8px 20px rgba(245, 146, 43, 0.4); }
+    .disclaimer { font-size: 12px; color: var(--color-text-secondary); text-align: center; margin-top: 12px; line-height: 1.4; }
+    
+    @media (prefers-color-scheme: dark) {
+        .bottom-bar { background: rgba(0,0,0,0.95); }
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><div><i class="ph ph-wifi-high"></i> <i class="ph ph-battery-full"></i></div></div>
+
+    <div class="gold-card-container">
+      <div class="gold-card">
+        <div class="card-logo">HEALTH CODE</div>
+        <div class="card-chip"></div>
+        <div class="card-tier">СТАТУС GOLD</div>
+      </div>
+    </div>
+    
+    <div class="content-wrapper">
+      <h1 class="title">Всё готово для старта</h1>
+      <p class="subtitle">Умный наставник сформировал протокол. Ознакомься с функционалом.</p>
+
+      <div class="accordion">
+        <div class="acc-item theme-base" onclick="toggleAcc(this)">
+          <div class="acc-header">Статус Base <i class="ph ph-caret-down"></i></div>
+          <div class="acc-body">
+            <div class="acc-list">
+              <div><i class="ph ph-calendar"></i> План питания на 3 дня</div>
+              <div><i class="ph ph-cooking-pot"></i> 1 вариант блюда (без пошаговых инструкций)</div>
+              <div><i class="ph ph-chart-line-up"></i> Базовый прогресс</div>
+              <div><i class="ph ph-shield-check"></i> Аллергии, заболевания и ограничения учитываются всегда</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item theme-black" onclick="toggleAcc(this)">
+          <div class="acc-header">Статус Black <i class="ph ph-caret-down"></i></div>
+          <div class="acc-body">
+            <div class="acc-list">
+              <div class="plus-label">Все функции Статуса Base</div>
+              <div id="dynamicPlanBullet"><i class="ph ph-calendar-check"></i> <span>План питания, сна, приёма витаминов, лекарств и тренировок на неделю</span></div>
+              <div><i class="ph ph-pencil-simple"></i> Учет напитков и ручная коррекция плана (ввод блюд)</div>
+              <div><i class="ph ph-cooking-pot"></i> 2 варианта блюд на выбор с пошаговыми инструкциями</div>
+              <div><i class="ph ph-file-text"></i> Смарт-отчёты</div>
+              <div><i class="ph ph-activity"></i> Совместимость лекарств и Health Connect</div>
+              <div><i class="ph ph-palette"></i> 4 темы: Light, Океан, Закат, Лес</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item theme-gold active" onclick="toggleAcc(this)">
+          <div class="acc-header">Статус Gold <i class="ph ph-caret-down"></i></div>
+          <div class="acc-body">
+            <div class="acc-list">
+              <div class="plus-label">Все функции Статуса Black</div>
+              <div><i class="ph ph-cooking-pot"></i> 3 варианта блюд на выбор с пошаговыми инструкциями</div>
+              <div><i class="ph ph-camera"></i> Фото-анализ (5 раз в день) с коррекцией плана</div>
+              <div><i class="ph ph-barbell"></i> Персональные тренировки с видео</div>
+              <div><i class="ph ph-headset"></i> Приоритетная поддержка</div>
+              <div><i class="ph ph-palette"></i> 6 тем (добавляются премиальные: Gold и 4 Сезона)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item theme-family" onclick="toggleAcc(this)">
+          <div class="acc-header">Статус Gold Family <i class="ph ph-caret-down"></i></div>
+          <div class="acc-body">
+            <div class="acc-list">
+              <div class="plus-label">Всё из Статуса Gold</div>
+              <div><i class="ph ph-users"></i> Объединённый план для всей семьи</div>
+              <div><i class="ph ph-shopping-cart"></i> Общий список покупок</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="bottom-bar">
+    <button class="btn-activate">Войти в систему</button>
+    <div class="disclaimer">Первые 3 дня — полный Gold-доступ.</div>
+  </div>
+
+  <script>
+    function toggleAcc(el) {
+      document.querySelectorAll('.acc-item').forEach(i => {
+        if(i !== el) i.classList.remove('active');
+      });
+      el.classList.toggle('active');
+    }
+  </script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const raw = localStorage.getItem('aidiet_profile');
+        if (!raw) return;
+        const p = JSON.parse(raw);
+        
+        let parts = ['План питания', 'сна'];
+        
+        // Витамины
+        if ((p['currently_takes_supplements'] || p['takes_supplements']) && (p['currently_takes_supplements'] || p['takes_supplements']) !== 'Нет' && (p['currently_takes_supplements'] || p['takes_supplements']) !== 'false') {
+            parts.push('приёма витаминов');
+        }
+        
+        // Лекарства
+        if ((p['takes_medications'] || p['takes_medication']) && (p['takes_medications'] || p['takes_medication']) !== 'Нет' && (p['takes_medications'] || p['takes_medication']) !== 'false') {
+            parts.push('лекарств');
+        }
+        
+        // Тренировки
+        const actFreq = p['activity_frequency'];
+        if (actFreq && actFreq !== 'Не готов(а) сейчас' && actFreq !== 'Не готов сейчас') {
+            parts.push('тренировок');
+        }
+        
+        let finalStr = '';
+        if (parts.length > 2) {
+            const last = parts.pop();
+            finalStr = parts.join(', ') + ' и ' + last;
+        } else {
+            finalStr = parts.join(' и ');
+        }
+        
+        const bulletEl = document.querySelector('#dynamicPlanBullet span');
+        if (bulletEl) {
+            bulletEl.innerText = finalStr + ' на неделю';
+        }
+    } catch(e) {
+        console.warn('Error building dynamic plan bullet', e);
+    }
+});
+</script>
+
+<script>
+// Универсальный фильтр фичей статуса
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const raw = localStorage.getItem('aidiet_profile');
+        if (!raw) return;
+        const p = JSON.parse(raw);
+        
+        const _meds = p['takes_medications'] || p['takes_medication']; const noMeds = (!_meds || _meds === 'Нет' || _meds === 'false');
+        const _supps = p['currently_takes_supplements'] || p['takes_supplements']; const noSupps = (!_supps || _supps === 'Нет' || _supps === 'false');
+        const actFreq = p['activity_frequency'];
+        const noTrain = (!actFreq || actFreq === 'Не готов(а) сейчас' || actFreq === 'Не готов сейчас');
+
+        const walkDOM = (node, func) => {
+            func(node);
+            node = node.firstChild;
+            while (node) {
+                walkDOM(node, func);
+                node = node.nextSibling;
+            }
+        };
+
+        walkDOM(document.body, (node) => {
+            if (node.nodeType === 3) { // Text node
+                const text = node.nodeValue.toLowerCase();
+                
+                // Лекарства -> заменяем
+                if (noMeds && text.includes('лекарств') && text.includes('совместимость')) {
+                    node.nodeValue = 'Интеграция с Health Connect и трекерами активности';
+                }
+                
+                // Витамины -> скрываем родителя
+                if (noSupps && (text.includes('витаминов') || text.includes('бадов')) && !node.parentElement.closest('#dynamicPlanBullet')) {
+                    // Ищем ближайший контейнер-строку (обычно div)
+                    const row = node.parentElement.closest('div');
+                    if (row && row.children.length > 0 && row.innerText.length < 100) {
+                        row.style.display = 'none';
+                    }
+                }
+                
+                // Тренировки -> скрываем родителя
+                if (noTrain && text.includes('тренировк') && !node.parentElement.closest('#dynamicPlanBullet')) {
+                    const row = node.parentElement.closest('div');
+                    if (row && row.children.length > 0 && row.innerText.length < 100) {
+                        row.style.display = 'none';
+                    }
+                }
+            }
+        });
+    } catch(e) {
+        console.warn('Error in status feature filter', e);
+    }
+});
+</script>
+</body>
+</html>

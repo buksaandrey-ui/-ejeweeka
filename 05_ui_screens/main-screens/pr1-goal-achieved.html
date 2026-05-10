@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code — Цель достигнута! 🎉</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    /* ── Confetti canvas ── */
+    #confettiCanvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    /* ── Status bar ── */
+    /* ── Scrollable content ── */
+    /* ── Hero trophy ── */
+    .trophy-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      animation: popIn 0.6s cubic-bezier(0.3, 1.6, 0.6, 1) both;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.4); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .trophy-icon {
+      width: 110px; height: 110px;
+      background: linear-gradient(135deg, #FFF9E8, #FFF0C0);
+      border-radius: 32px;
+      display: flex; justify-content: center; align-items: center;
+      font-size: 56px;
+      box-shadow: 0 12px 40px rgba(245,185,0,0.25);
+      border: 2px solid #FFE066;
+    }
+    .congrats-emoji {
+      display: flex; gap: 8px; font-size: 28px;
+    }
+    .hero-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .hero-sub {
+      font-size: 15px;
+      color: var(--muted);
+      font-weight: 500;
+      line-height: 1.5;
+      max-width: 300px;
+    }
+    /* ── Stats row ── */
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+    .stat-card {
+      flex: 1;
+      background: #F9FAFB;
+      border: 1px solid var(--divider);
+      border-radius: 18px;
+      padding: 16px 12px;
+      text-align: center;
+      animation: slideUp 0.5s ease both;
+    }
+    .stat-card:nth-child(2) { animation-delay: 0.1s; }
+    .stat-card:nth-child(3) { animation-delay: 0.2s; }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .stat-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    /* ── Quote card ── */
+    .quote-card {
+      width: 100%;
+      background: linear-gradient(135deg, #FFF9F3, #FFF0E0);
+      border: 1px solid #FFE4CC;
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .quote-icon { font-size: 28px; flex-shrink: 0; }
+    .quote-text { font-size: 14px; font-weight: 500; color: #995400; line-height: 1.5; }
+    .quote-text strong { color: var(--text); }
+    /* ── "What next?" section ── */
+    .next-label {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      align-self: flex-start;
+    }
+    .option-card {
+      width: 100%;
+      background: var(--surface);
+      border: 2px solid var(--divider);
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .option-card:active { transform: scale(0.98); }
+    .option-card.primary-option {
+      border-color: var(--success);
+      background: var(--success-light);
+    }
+    .option-card.secondary-option {
+      border-color: #DBEAFE;
+      background: #EFF6FF;
+    }
+    .option-icon {
+      width: 52px; height: 52px;
+      border-radius: 16px;
+      display: flex; justify-content: center; align-items: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+    .primary-option .option-icon { background: #DCFCE7; }
+    .secondary-option .option-icon { background: #DBEAFE; }
+    .option-info { flex: 1; }
+    .option-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .option-desc { font-size: 13px; color: var(--muted); font-weight: 500; line-height: 1.4; }
+    .option-arrow { font-size: 20px; color: var(--muted); flex-shrink: 0; }
+    /* ── Bottom share strip ── */
+    .share-btn {
+      width: 100%;
+      height: 52px;
+      border-radius: 16px;
+      background: #F3F4F6;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .share-btn:active { background: #E5E7EB; }
+    /* ── Goal Adjust Overlay ── */
+    #goalAdjustOverlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 300;
+      display: none;
+      align-items: flex-end;
+    }
+    #goalAdjustOverlay.open { display: flex; }
+    .adjust-sheet {
+      width: 100%;
+      background: var(--surface);
+      border-radius: 28px 28px 0 0;
+      padding: 24px 24px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      animation: sheetIn 0.35s cubic-bezier(0.3,1,0.6,1) both;
+    }
+    @keyframes sheetIn {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
+    }
+    .sheet-title { font-size: 20px; font-weight: 800; color: var(--text); }
+    .sheet-desc { font-size: 14px; color: var(--muted); font-weight: 500; line-height: 1.5; margin-top: -8px; }
+    .field-input {
+      width: 100%;
+      height: 52px;
+      border-radius: 14px;
+      border: 1.5px solid var(--divider);
+      background: #F9FAFB;
+      padding: 0 16px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field-input:focus { border-color: var(--primary); background: #fff; }
+    .adjust-row { display: flex; gap: 12px; }
+    .btn-adjust-confirm {
+      width: 100%;
+      height: 54px;
+      border-radius: 16px;
+      background: var(--primary-grad);
+      color: #fff;
+      border: none;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(245,146,43,0.3);
+    }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+<div class="phone">
+  <!-- Confetti -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <i class="ph ph-cell-signal-medium"></i>
+      <i class="ph ph-wifi-high"></i>
+      <i class="ph ph-battery-full"></i>
+    </div>
+  </div>
+
+  <!-- Scrollable Content -->
+  <div class="content">
+
+    <!-- Hero -->
+    <div class="trophy-wrap">
+      <div class="trophy-icon">🏆</div>
+      <div class="congrats-emoji">🎉 ✨ 🎊</div>
+      <h1 class="hero-title" id="heroTitle">Ты это сделала!</h1>
+      <p class="hero-sub" id="heroSub">
+        Поздравляю! Ты достигла своей цели. Это требует настоящей силы воли — и ты доказала, что она у тебя есть.
+      </p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-val" id="statLost">—</div>
+        <div class="stat-label">кг пути</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statDays">—</div>
+        <div class="stat-label">дней</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statGoal">—</div>
+        <div class="stat-label">цель, кг</div>
+      </div>
+    </div>
+
+    <!-- AI Quote -->
+    <div class="quote-card">
+      <div class="quote-icon">🤖</div>
+      <div class="quote-text" id="aiQuote">
+        <strong>Health Code AI:</strong> Ты прошла путь, который бросают 80% людей на середине. Теперь важно закрепить результат — следующие 8 недель определяют, станет ли это постоянным изменением или очередной диетой.
+      </div>
+    </div>
+
+    <!-- What next -->
+    <div class="next-label">Что дальше?</div>
+
+    <!-- Option 1: Maintain -->
+    <div class="option-card primary-option" onclick="chooseKeep()">
+      <div class="option-icon">🛡️</div>
+      <div class="option-info">
+        <div class="option-title">Закрепить результат</div>
+        <div class="option-desc">Перейти на план удержания веса. AI поменяет рацион — без дефицита, но с контролем качества питания.</div>
+      </div>
+      <i class="ph ph-caret-right option-arrow"></i>
+    </div>
+
+    <!-- Option 2: Continue -->
+    <div class="option-card secondary-option" id="optionContinueCard" onclick="chooseContinue()">
+      <div class="option-icon">🎯</div>
+      <div class="option-info">
+        <div class="option-title" id="optionContinueTitle">Худеть дальше</div>
+        <div class="option-desc" id="optionContinueDesc">Поставить новую цель по весу. Скорректируем план под новый финиш.</div>
+      </div>
+      <i class="ph ph-caret-right option-arrow"></i>
+    </div>
+
+  </div>
+
+  <!-- Bottom Share -->
+  <div class="bottom-cta">
+    <button class="share-btn" onclick="shareResult()">
+      <i class="ph ph-share-network"></i> Поделиться результатом
+    </button>
+  </div>
+
+  <!-- Goal Adjust Overlay -->
+  <div id="goalAdjustOverlay" onclick="closeAdjust(event)">
+    <div class="adjust-sheet" onclick="event.stopPropagation()">
+      <div class="sheet-title" id="adjustTitle">Новая цель по весу</div>
+      <div class="sheet-desc" id="adjustDesc">Ты уже умеешь это. Укажи следующий ориентир — AI пересчитает план.</div>
+      <div class="adjust-row">
+        <div class="field-group" style="flex:1">
+          <div class="field-label">Новый целевой вес</div>
+          <input class="field-input" type="number" id="newTargetVal" placeholder="60">
+        </div>
+        <div class="field-group" style="flex:1">
+          <div class="field-label">Срок (недель)</div>
+          <input class="field-input" type="number" id="newWeeksVal" placeholder="12">
+        </div>
+      </div>
+      <button class="btn-adjust-confirm" onclick="confirmNewGoal()">
+        Сохранить новую цель →
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ──────────────────────────────────────────────
+  // Конфетти
+  // ──────────────────────────────────────────────
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  const phone = document.querySelector('.phone');
+  canvas.width = phone.clientWidth;
+  canvas.height = phone.clientHeight;
+
+  const COLORS = ['#F5922B','#FFD700','#52C55E','#3B82F6','#EC4899','#A855F7'];
+  const pieces = Array.from({length: 80}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * -canvas.height,
+    w: Math.random() * 10 + 5,
+    h: Math.random() * 6 + 3,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    rot: Math.random() * 360,
+    vx: (Math.random() - 0.5) * 2,
+    vy: Math.random() * 3 + 1.5,
+    vr: (Math.random() - 0.5) * 6,
+    opacity: 1
+  }));
+
+  let animActive = true;
+  function drawConfetti() {
+    if (!animActive) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      if (p.y > canvas.height + 20) {
+        p.y = -10; p.x = Math.random() * canvas.width;
+        p.opacity -= 0.05;
+      }
+    });
+    if (pieces.some(p => p.opacity > 0)) requestAnimationFrame(drawConfetti);
+  }
+  drawConfetti();
+  // Останавливаем конфетти через 4 секунды
+  setTimeout(() => { animActive = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }, 4000);
+
+  // ──────────────────────────────────────────────
+  // Данные из профиля
+  // ──────────────────────────────────────────────
+  const profile = (window.AIDiet && window.AIDiet.getProfile)
+    ? window.AIDiet.getProfile()
+    : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+  const goal = profile['Главная цель'] || profile['Какая у тебя сейчас главная цель?'] || '';
+  const isMale = (profile['Пол'] || '') === 'Мужской';
+  const startWeight = parseFloat(profile['Текущий вес']) || 0;
+  const targetWeight = parseFloat(profile['Целевой вес']) || 0;
+  const weightLogs = JSON.parse(localStorage.getItem('aidiet_weight_logs') || '[]');
+  const currentWeight = weightLogs.length > 0
+    ? weightLogs[weightLogs.length - 1].value
+    : targetWeight;
+
+  // Поздравительные тексты в зависимости от цели и пола
+  const gained = goal.includes('Набрать');
+  const pronoun = isMale ? 'ты это сделал!' : 'ты это сделала!';
+
+  document.getElementById('heroTitle').innerText = pronoun.charAt(0).toUpperCase() + pronoun.slice(1);
+  document.getElementById('heroSub').innerText = isMale
+    ? `Поздравляю! Ты достиг своей цели по ${gained ? 'набору мышечной массы' : 'снижению веса'}. Это требует настоящей силы воли — и ты доказал, что она у тебя есть.`
+    : `Поздравляю! Ты достигла своей цели по ${gained ? 'набору мышечной массы' : 'снижению веса'}. Это требует настоящей силы воли — и ты доказала, что она у тебя есть.`;
+
+  // Статистика
+  const diff = Math.abs(startWeight - currentWeight);
+  document.getElementById('statLost').innerText = diff > 0 ? (gained ? '+' : '−') + diff.toFixed(1) : '—';
+  document.getElementById('statGoal').innerText = targetWeight > 0 ? targetWeight : '—';
+
+  // Дней с начала
+  const startDate = profile['onboarding_date']
+    ? new Date(profile['onboarding_date'])
+    : new Date(Date.now() - 42 * 86400000); // mock: 42 дня назад
+  const days = Math.round((Date.now() - startDate.getTime()) / 86400000);
+  document.getElementById('statDays').innerText = days > 0 ? days : '—';
+
+  // Текст AI в зависимости от цели
+  if (gained) {
+    document.getElementById('aiQuote').innerHTML = `<strong>Health Code AI:</strong> Мышечный прогресс — это не конечный пункт, а образ жизни. Теперь важно перейти в режим поддержания: достаточно белка, без агрессивного профицита. Так ты сохранишь результат долгосрочно.`;
+    document.getElementById('optionContinueTitle').innerText = 'Набрать ещё';
+    document.getElementById('optionContinueDesc').innerText = 'Поставить новую цель по мышечной массе. AI скорректирует профицит и нагрузку.';
+    document.getElementById('adjustTitle').innerText = 'Новая цель по массе';
+    document.getElementById('adjustDesc').innerText = 'Укажи следующий целевой вес и срок — AI пересчитает план питания.';
+  }
+
+  // ──────────────────────────────────────────────
+  // Выборы: Закрепить vs Продолжить
+  // ──────────────────────────────────────────────
+  function chooseKeep() {
+    // Меняем цель в профиле
+    if (window.AIDiet && window.AIDiet.saveField) {
+      window.AIDiet.saveField('primary_goal', 'Закрепить результат');
+      window.AIDiet.saveField('target_weight', '');
+      window.AIDiet.saveField('target_timeline_weeks', '');
+      window.AIDiet.saveField('goal_achieved', 'true');
+    }
+    localStorage.removeItem('aidiet_goal_achieved_shown');
+    location.href = 'h1-dashboard.html';
+  }
+
+  function chooseContinue() {
+    // Показываем шторку с полями
+    document.getElementById('newTargetVal').value = '';
+    document.getElementById('newWeeksVal').value = '12';
+    document.getElementById('goalAdjustOverlay').classList.add('open');
+  }
+
+  function closeAdjust(e) {
+    if (e.target === document.getElementById('goalAdjustOverlay')) {
+      document.getElementById('goalAdjustOverlay').classList.remove('open');
+    }
+  }
+
+  function confirmNewGoal() {
+    const newTarget = parseFloat(document.getElementById('newTargetVal').value);
+    const newWeeks = parseInt(document.getElementById('newWeeksVal').value);
+
+    if (!newTarget || !newWeeks) { alert('Заполни оба поля'); return; }
+
+    if (window.AIDiet && window.AIDiet.saveField) {
+      window.AIDiet.saveField('weight', String(currentWeight || targetWeight));
+      window.AIDiet.saveField('target_weight', String(newTarget));
+      window.AIDiet.saveField('target_timeline_weeks', String(newWeeks));
+      window.AIDiet.saveField('onboarding_date', new Date().toISOString());
+    }
+    localStorage.removeItem('aidiet_goal_achieved_shown');
+
+    location.href = 'h1-dashboard.html';
+  }
+
+  function shareResult() {
+    const text = `Я достиг${isMale ? '' : 'ла'} своей цели с Health Code! ${diff > 0 ? (gained ? '+' : '−') + diff.toFixed(1) + ' кг за ' + days + ' дней' : 'Это работает!'} 💪`;
+    if (navigator.share) {
+      navigator.share({ title: 'Health Code — Цель достигнута!', text });
+    } else {
+      navigator.clipboard?.writeText(text);
+      alert('Скопировано в буфер обмена!');
+    }
+  }
+</script>
+<script src="onboarding-state.js"></script>
+</body>
+</html>

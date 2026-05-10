@@ -1,0 +1,66 @@
+{
+  "hash": "a7edf7a0",
+  "configHash": "8063de69",
+  "lockfileHash": "e8b4d1a3",
+  "browserHash": "cd063d14",
+  "optimized": {
+    "@phosphor-icons/react": {
+      "src": "../../node_modules/@phosphor-icons/react/dist/index.es.js",
+      "file": "@phosphor-icons_react.js",
+      "fileHash": "b9745ec7",
+      "needsInterop": false
+    },
+    "@supabase/supabase-js": {
+      "src": "../../node_modules/@supabase/supabase-js/dist/index.mjs",
+      "file": "@supabase_supabase-js.js",
+      "fileHash": "1df1aca9",
+      "needsInterop": false
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "c46d993f",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.mjs",
+      "file": "react-router-dom.js",
+      "fileHash": "b5a5ec4d",
+      "needsInterop": false
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "c78b2b22",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "c305c46e",
+      "needsInterop": true
+    },
+    "zustand": {
+      "src": "../../node_modules/zustand/esm/index.mjs",
+      "file": "zustand.js",
+      "fileHash": "171291bd",
+      "needsInterop": false
+    },
+    "zustand/middleware": {
+      "src": "../../node_modules/zustand/esm/middleware.mjs",
+      "file": "zustand_middleware.js",
+      "fileHash": "9fdb38a6",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "react-B6J-hxuQ": {
+      "file": "react-B6J-hxuQ.js",
+      "isDynamicEntry": false
+    },
+    "react-dom-BBtRa12N": {
+      "file": "react-dom-BBtRa12N.js",
+      "isDynamicEntry": false
+    }
+  }
+}

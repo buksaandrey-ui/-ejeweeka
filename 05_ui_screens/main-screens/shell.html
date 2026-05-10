@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code</title>
+  <meta name="description" content="Health Code — персональный AI-наставник. План питания, витамины, анализ фото еды.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/fill/style.css">
+  <style>
+    :root {
+      --color-primary: #F5922B;
+      --color-bg-main: #FAFAFA;
+      --color-text-tertiary: #9CA3AF;
+      --color-divider: #E5E7EB;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #E5E7EB;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* === PHONE SHELL === */
+    .shell {
+      width: 390px;
+      height: 844px;
+      background-color: var(--color-bg-main);
+      border-radius: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* === STATUS BAR === */
+    .shell-status-bar {
+      height: 47px;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1A1A1A;
+      background: var(--color-bg-main);
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .shell-status-bar .icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 16px;
+    }
+
+    /* === IFRAME CONTENT === */
+    #app-frame {
+      flex: 1;
+      border: none;
+      width: 100%;
+      background: var(--color-bg-main);
+    }
+
+    /* === TAB BAR === */
+    .shell-tab-bar {
+      height: 84px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--color-divider);
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      padding: 12px 12px 30px 12px;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .shell-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--color-text-tertiary);
+      text-decoration: none;
+      flex: 1;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.15s ease;
+    }
+    .shell-tab i {
+      font-size: 24px;
+      transition: transform 0.15s ease;
+    }
+    .shell-tab .tab-label {
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    /* Active state — icon + label both orange */
+    .shell-tab.active {
+      color: var(--color-primary);
+    }
+    .shell-tab.active i {
+      transform: scale(1.08);
+    }
+
+    /* Tap feedback */
+    .shell-tab:active {
+      opacity: 0.7;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 440px) {
+      .shell {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .shell-status-bar {
+        padding-top: env(safe-area-inset-top, 0);
+      }
+      .shell-tab-bar {
+        padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px);
+      }
+    }
+
+    /* === LOADING OVERLAY === */
+    .shell-loader {
+      position: absolute;
+      top: 47px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: transparent;
+      z-index: 20;
+      overflow: hidden;
+    }
+    .shell-loader.loading {
+      background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+      animation: shimmer 1.2s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+
+    <!-- Status Bar (persistent) -->
+    <div class="shell-status-bar">
+      <span id="shellTime">9:41</span>
+      <div class="icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div class="shell-loader" id="shellLoader"></div>
+
+    <!-- Content iframe -->
+    <iframe id="app-frame" src="about:blank"></iframe>
+
+    <!-- Tab Bar (persistent, never repaints) -->
+    <nav class="shell-tab-bar" id="shellTabBar">
+      <a class="shell-tab active" data-href="h1-dashboard.html">
+        <i class="ph-fill ph-house"></i>
+        <span class="tab-label">Главная</span>
+      </a>
+      <a class="shell-tab" data-href="p1-weekly-plan.html">
+        <i class="ph ph-calendar-check"></i>
+        <span class="tab-label">План</span>
+      </a>
+      <a class="shell-tab" data-href="s1-shopping-list.html">
+        <i class="ph ph-shopping-cart"></i>
+        <span class="tab-label">Покупки</span>
+      </a>
+      <a class="shell-tab" data-href="pr1-progress.html">
+        <i class="ph ph-chart-line-up"></i>
+        <span class="tab-label">Прогресс</span>
+      </a>
+      <a class="shell-tab" data-href="u1-profile-main.html">
+        <i class="ph ph-user"></i>
+        <span class="tab-label">Профиль</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="app-utils.js"></script>
+  <script src="api-connector.js"></script>
+  <script src="subscription-gate.js"></script>
+  <script src="router.js"></script>
+  <script>
+    // Init router
+    document.addEventListener('DOMContentLoaded', () => {
+      // Update clock
+      const updateClock = () => {
+        const now = new Date();
+        document.getElementById('shellTime').textContent = 
+          now.getHours().toString().padStart(2, '0') + ':' + 
+          now.getMinutes().toString().padStart(2, '0');
+      };
+      updateClock();
+      setInterval(updateClock, 30000);
+
+      // Loading indicator
+      const loader = document.getElementById('shellLoader');
+      const frame = document.getElementById('app-frame');
+
+      frame.addEventListener('load', () => {
+        loader.classList.remove('loading');
+      });
+
+      // Patch navigate to show loader
+      const originalNavigate = AIDietRouter.navigate;
+      AIDietRouter.navigate = function(href, pushState) {
+        loader.classList.add('loading');
+        originalNavigate.call(AIDietRouter, href, pushState);
+      };
+
+      // Init router
+      AIDietRouter.init();
+
+      // Init auth & subscription (non-blocking)
+      if (typeof initAIDietAPI === 'function') {
+        initAIDietAPI().catch(e => console.warn('[Shell] API init:', e));
+      }
+    });
+  </script>
+</body>
+</html>

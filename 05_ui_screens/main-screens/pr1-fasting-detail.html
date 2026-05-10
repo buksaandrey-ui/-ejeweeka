@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - Голодание</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/fill/style.css">
+  <style>
+    .header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid var(--color-divider); color: var(--color-text-primary); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; }
+    .header-title { font-size: 20px; font-weight: 700; color: var(--color-text-primary); }
+    .settings-btn { width: 40px; height: 40px; border-radius: 12px; background: transparent; border: none; color: var(--color-text-secondary); display: flex; justify-content: center; align-items: center; font-size: 24px; cursor: pointer; }
+    /* Timer Ring */
+    .timer-section { display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
+    .timer-badge { background: #EEF2FF; color: var(--color-fasting); padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 20px; display: flex; align-items: center; gap: 4px; }
+    .ring-container { position: relative; width: 240px; height: 240px; flex-shrink: 0; }
+    .ring-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+    .ring-bg { fill: none; stroke: #F3F4F6; stroke-width: 16; }
+    .ring-progress { fill: none; stroke: var(--color-fasting); stroke-width: 16; stroke-dasharray: 653; stroke-dashoffset: 0; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.5s; }
+    .ring-glow { fill: none; stroke: var(--color-fasting); stroke-width: 16; stroke-linecap: round; filter: blur(8px); opacity: 0.4; }
+    .timer-text-container { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .timer-status { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .timer-value { font-size: 42px; font-weight: 800; color: var(--color-text-primary); font-variant-numeric: tabular-nums; line-height: 1; }
+    .timer-end { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin-top: 4px; }
+    /* Actions */
+    .action-row { display: flex; gap: 12px; width: 100%; padding: 0 10px; }
+    .btn-main { flex: 1; height: 56px; border-radius: 16px; font-size: 16px; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; transition: 0.2s; border: none; }
+    .btn-end { background: var(--color-surface); border: 2px solid var(--color-divider); color: var(--color-text-primary); }
+    .btn-start { background: var(--color-fasting); color: #FFFFFF; display: none; }
+    /* Schedule Info */
+    .schedule-card { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 20px; padding: 16px; display: flex; justify-content: center; gap: 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    .schedule-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .schedule-label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+    .schedule-time { font-size: 18px; font-weight: 700; color: var(--color-text-primary); display: flex; align-items: center; gap: 6px; }
+    .schedule-icon { color: var(--color-primary); font-size: 16px; }
+    /* Bio Phases */
+    .section-title { font-size: 16px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 12px; margin-top: 8px; }
+    .phases-list { display: flex; flex-direction: column; gap: 12px; }
+    .phase-item { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 16px; padding: 16px; display: flex; gap: 16px; opacity: 0.5; transition: 0.3s; position: relative; overflow: hidden; }
+    .phase-item.active { opacity: 1; border-color: var(--color-fasting); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1); }
+    .phase-icon-container { width: 44px; height: 44px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; }
+    .p-sugar { background: #FEF2F2; color: #EF4444; }
+    .p-drop { background: #FFF7ED; color: #F97316; }
+    .p-fat { background: #FEF3C7; color: #F59E0B; }
+    .p-auto { background: #F3E8FF; color: #A855F7; }
+    .phase-info { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .phase-header { display: flex; justify-content: space-between; align-items: center; }
+    .phase-name { font-size: 15px; font-weight: 700; color: var(--color-text-primary); }
+    .phase-time { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); }
+    .phase-desc { font-size: 13px; color: var(--color-text-tertiary); line-height: 1.4; }
+    .phase-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--color-fasting); transition: width 1s linear; }
+    /* Tab Bar */
+    .tab-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 84px; background-color: #FFFFFF; border-top: 1px solid var(--color-divider); display: flex; justify-content: space-around; padding: 12px 12px 30px 12px; z-index: 100; }
+    .tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--color-text-tertiary); text-decoration: none; flex: 1; }
+    .tab-item.active { color: var(--color-primary); }
+    .tab-item i { font-size: 24px; }
+    .tab-label { font-size: 10px; font-weight: 600; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <header class="header">
+      <button class="back-btn" onclick="history.back()" aria-label="Назад"><i class="ph ph-arrow-left"></i></button>
+      <h1 class="header-title">Голодание</h1>
+      <button class="settings-btn" aria-label="Настройки"><i class="ph ph-gear"></i></button>
+    </header>
+
+    <div class="content">
+
+      <!-- Timer Section -->
+      <section class="timer-section">
+        <div class="timer-badge">
+          <i class="ph-fill ph-clock"></i> Планируемое 16:8
+        </div>
+        
+        <div class="ring-container">
+          <!-- Background ring -->
+          <svg class="ring-svg" viewBox="0 0 240 240">
+            <!-- Glow effect def -->
+            <defs>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="8" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+            </defs>
+            <circle class="ring-bg" cx="120" cy="120" r="104" />
+            <circle class="ring-progress" cx="120" cy="120" r="104" filter="url(#glow)"/>
+          </svg>
+          
+          <div class="timer-text-container">
+            <div class="timer-status">Голодание</div>
+            <div class="timer-value">04:32:15</div>
+            <div class="timer-end">Завершится в 12:00</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Action Buttons -->
+      <div class="action-row">
+        <button class="btn-main btn-end" id="btnToggleFast">Завершить досрочно</button>
+      </div>
+
+      <!-- Schedule Card -->
+      <div class="schedule-card">
+        <div class="schedule-col">
+          <span class="schedule-label">Начало</span>
+          <div class="schedule-time"><i class="ph-fill ph-moon schedule-icon" style="color: #6B7280;"></i> 20:00</div>
+        </div>
+        <div style="width: 1px; background: var(--color-divider);"></div>
+        <div class="schedule-col">
+          <span class="schedule-label">Конец</span>
+          <div class="schedule-time"><i class="ph-fill ph-sun schedule-icon"></i> 12:00</div>
+        </div>
+      </div>
+
+      <!-- Biological Phases -->
+      <section>
+        <h2 class="section-title">Что происходит с организмом</h2>
+        <div class="phases-list">
+          
+          <div class="phase-item" id="phase-sugar">
+            <div class="phase-progress" style="width: 0%;"></div>
+            <div class="phase-icon-container p-sugar"><i class="ph ph-trend-down"></i></div>
+            <div class="phase-info">
+              <div class="phase-header">
+                <span class="phase-name">Падение сахара</span>
+                <span class="phase-time">2–12 ч</span>
+              </div>
+              <div class="phase-desc">Уровень инсулина снижается, организм перерабатывает запасы гликогена в печени.</div>
+            </div>
+          </div>
+
+          <div class="phase-item" id="phase-fat">
+            <div class="phase-progress" style="width: 0%;"></div>
+            <div class="phase-icon-container p-fat"><i class="ph ph-fire"></i></div>
+            <div class="phase-info">
+              <div class="phase-header">
+                <span class="phase-name">Сжигание жира</span>
+                <span class="phase-time">12–16 ч</span>
+              </div>
+              <div class="phase-desc">Запасы углеводов истощены. Организм начинает активно использовать жир как топливо.</div>
+            </div>
+          </div>
+
+          <div class="phase-item" id="phase-auto">
+            <div class="phase-progress" style="width: 0%;"></div>
+            <div class="phase-icon-container p-auto"><i class="ph ph-recycle"></i></div>
+            <div class="phase-info">
+              <div class="phase-header">
+                <span class="phase-name">Аутофагия</span>
+                <span class="phase-time">16+ ч</span>
+              </div>
+              <div class="phase-desc">Глубокое очищение клеток от белков и токсинов, процесс клеточного омоложения.</div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Tab Bar -->
+    <nav class="tab-bar">
+      <a href="h1-dashboard.html" class="tab-item"><i class="ph ph-house"></i><span class="tab-label">Главная</span></a>
+      <a href="p1-weekly-plan.html" class="tab-item"><i class="ph ph-calendar-blank"></i><span class="tab-label">План</span></a>
+      <a href="s1-shopping-list.html" class="tab-item"><i class="ph ph-shopping-cart"></i><span class="tab-label">Покупки</span></a>
+      <a href="pr1-progress.html" class="tab-item active"><i class="ph ph-chart-line-up"></i><span class="tab-label">Прогресс</span></a>
+      <a href="u1-profile-main.html" class="tab-item"><i class="ph ph-user"></i><span class="tab-label">Профиль</span></a>
+    </nav>
+  </div>
+
+  <script src="fasting-state.js"></script>
+</body>
+</html>

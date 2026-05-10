@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-13 Витамины и БАДы</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .section-label {
+      font-size: 12px; font-weight: 700; color: var(--color-text-secondary);
+      text-transform: uppercase; letter-spacing: 0.7px; margin: 22px 0 12px 0;
+    }
+    .section-question { font-size: 15px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 12px; }
+    /* YES/NO toggle */
+    .yn-row { display: flex; gap: 12px; margin-bottom: 12px; }
+    .yn-btn {
+      flex: 1; height: 54px; border-radius: 14px; border: 1.5px solid var(--color-divider);
+      background: #FFFFFF; font-size: 15px; font-weight: 700; color: var(--color-text-primary);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .yn-btn.active { border-color: var(--color-primary); background: #FFF7ED; color: var(--color-primary); }
+    .textarea {
+      width: 100%; min-height: 90px; padding: 14px 16px; border-radius: 16px;
+      border: 1.5px solid var(--color-divider); background: #FFFFFF;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+      outline: none; transition: border-color 0.2s; resize: none; color: var(--color-text-primary);
+    }
+    .textarea:focus { border-color: var(--color-primary); }
+    .textarea::placeholder { color: #9CA3AF; }
+    /* Readiness options */
+    .selection-list { display: flex; flex-direction: column; gap: 10px; }
+    .selection-item {
+      background: #FFFFFF; border: 1.5px solid var(--color-divider); border-radius: 16px;
+      padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .selection-item.active { border-color: var(--color-primary); background: #FFF7ED; }
+    .selection-label { font-size: 14px; font-weight: 600; color: var(--color-text-primary); line-height: 1.3; flex: 1; padding-right: 12px; }
+    .radio-circle { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--color-divider); position: relative; flex-shrink: 0; }
+    .selection-item.active .radio-circle { border-color: var(--color-primary); }
+    .selection-item.active .radio-circle::after { content: ""; position: absolute; top: 4px; left: 4px; width: 10px; height: 10px; background: var(--color-primary); border-radius: 50%; }
+    @media (max-width: 440px) {
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 12 из 14</div>
+    </div>
+
+    <div class="content">
+      <h1 class="question-title">Витамины и БАДы</h1>
+
+      <!-- Block A: Current intake -->
+      <div class="section-label">Текущий приём</div>
+      <div class="section-question">Принимаешь ли сейчас витамины или БАДы?</div>
+      <div class="yn-row">
+        <button class="yn-btn active" id="btnNo" onclick="setIntake(false)">Нет</button>
+        <button class="yn-btn" id="btnYes" onclick="setIntake(true)">Да</button>
+      </div>
+      <div id="intakeTextWrap" style="display:none; margin-bottom: 4px;">
+        <textarea class="textarea" id="intakeText"
+          placeholder="Например: витамин D 2000 МЕ, омега-3, магний"></textarea>
+      </div>
+
+      <!-- Block B: Readiness -->
+      <div class="section-label">Готовность к добавкам</div>
+      <div class="section-question">Готов(а) рассматривать витамины или БАДы для закрытия дефицитов?</div>
+      <div class="selection-list" id="readinessList">
+        <div class="selection-item" data-val="yes_full">
+          <span class="selection-label">Да, подбери что нужно</span>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="selection-item" data-val="yes_explain">
+          <span class="selection-label">Скорее да, но хочу понимать зачем</span>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="selection-item" data-val="only_if_needed">
+          <span class="selection-label">Только если действительно необходимо</span>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="selection-item" data-val="no">
+          <span class="selection-label">Нет, предпочитаю без добавок</span>
+          <div class="radio-circle"></div>
+        </div>
+      </div>
+
+      <div class="onboarding-tip-card">
+        <div class="onboarding-tip-icon">💡</div>
+        <div class="onboarding-tip-text">
+          Время приёма витаминов важно так же, как их выбор. Магний расслабляет мышцы — лучше вечером. Железо блокируется кальцием и кофе — принимать отдельно. Витамин D усваивается только с жиром — в обед или ужин, не натощак. Мы составим расписание приёма так, чтобы каждая добавка работала по-настоящему. Мы покажем, какие дефициты можно восполнить рационом, а что разумнее принимать в виде добавки — без лишних расходов и без перегруза.
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="location.href='o12-blood-tests.html'">← Назад</button>
+      <button class="btn-primary disabled" id="btnNext" disabled>Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <script>
+    let takesSupplements = false;
+    let readinessVal = null;
+
+    function setIntake(yes) {
+      takesSupplements = yes;
+      document.getElementById('btnYes').classList.toggle('active', yes);
+      document.getElementById('btnNo').classList.toggle('active', !yes);
+      document.getElementById('intakeTextWrap').style.display = yes ? 'block' : 'none';
+      if (!yes) document.getElementById('intakeText').value = '';
+      saveO13State();
+    }
+    
+    document.getElementById('intakeText').addEventListener('input', () => {
+        saveO13State();
+    });
+
+    // Readiness single-select
+    document.querySelectorAll('#readinessList .selection-item').forEach(item => {
+      item.addEventListener('click', () => {
+        document.querySelectorAll('#readinessList .selection-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        readinessVal = item.dataset.val;
+        const btn = document.getElementById('btnNext');
+        btn.disabled = false;
+        btn.classList.remove('disabled');
+        saveO13State();
+      });
+    });
+
+    function saveO13State() {
+      const intakeText = document.getElementById('intakeText').value.trim();
+      window.AIDiet && window.AIDiet.saveField('supplements', takesSupplements ? (intakeText || 'Да (не указано)') : 'Нет');
+      if (readinessVal) {
+        const readinessLabels = { yes_full: 'Да, подбери', yes_explain: 'Да, но хочу понимать зачем', only_if_needed: 'Только если необходимо', no: 'Нет, без добавок' };
+        window.AIDiet && window.AIDiet.saveField('supplement_openness', readinessLabels[readinessVal] || readinessVal);
+      }
+      window.AIDiet && window.AIDiet.saveField('_o13uiState', JSON.stringify({ takesSupplements, intakeText, readinessVal }));
+    }
+
+    document.getElementById('btnNext').addEventListener('click', (e) => {
+      e.preventDefault();
+      saveO13State();
+      window.AIDiet.goNext('o14-motivation.html');
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const p = window.AIDiet ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+      if (p['_o13uiState']) {
+        try {
+          const st = JSON.parse(p['_o13uiState']);
+          if (st.takesSupplements !== undefined) setIntake(st.takesSupplements);
+          if (st.intakeText) document.getElementById('intakeText').value = st.intakeText;
+          if (st.readinessVal) {
+            const item = document.querySelector(`#readinessList .selection-item[data-val="${st.readinessVal}"]`);
+            if (item) item.click();
+          }
+        } catch(e) {}
+      }
+      window.__inlineHydrated = true;
+    });
+  </script>
+
+  <script src="onboarding-state.js"></script>
+</body>
+</html>

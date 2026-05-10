@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIDiet - Live Knowledge Base Dashboard</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
+            --text-gray: #94a3b8;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --success: #10b981;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-gray);
+            font-size: 1.1rem;
+        }
+
+        .stats-cards {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            flex: 1;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 0 20px var(--accent-glow);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 10px 0;
+            color: var(--text-light);
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .table-container {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text-gray);
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .doctor-name {
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .chunk-count {
+            display: inline-block;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .pulse {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: var(--success);
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+        
+        .error {
+            color: #ef4444;
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>AIDiet AI Pipeline</h1>
+            <div class="subtitle">Live Knowledge Base Status</div>
+        </header>
+
+        <div class="stats-cards">
+            <div class="card">
+                <div class="stat-label">Всего Медицинских Чанков</div>
+                <div class="stat-value" id="total-chunks">0</div>
+            </div>
+            <div class="card">
+                <div class="stat-label">Одобренных Экспертов</div>
+                <div class="stat-value" id="total-experts">0</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Имя Врача / Эксперт</th>
+                        <th style="text-align: right;">Извлечено Векторов</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <tr><td colspan="2" style="text-align: center;">Загрузка данных...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="status-container">
+            <span class="pulse"></span> Бэкенд Охотника активен. Авто-обновление каждые 5 сек.
+        </div>
+        
+        <div id="error-msg" class="error">
+            Не удалось связаться с сервером (http://127.0.0.1:8000). Убедитесь, что бэкенд запущен.
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://127.0.0.1:8000/api/v1/plan/stats';
+        
+        async function fetchStats() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Network error');
+                
+                const data = await response.json();
+                document.getElementById('error-msg').style.display = 'none';
+                
+                // Update stats
+                document.getElementById('total-chunks').innerText = data.total_chunks;
+                
+                // Group experts with small variations mapping (optional UI cleanup)
+                // Filter out "null" and aggregate generic ones
+                let validExperts = data.experts.filter(e => e.name && e.name !== "null" && e.name !== "Не указано");
+                document.getElementById('total-experts').innerText = validExperts.length;
+                
+                // Render table
+                const tbody = document.getElementById('table-body');
+                tbody.innerHTML = '';
+                
+                validExperts.forEach(exp => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="doctor-name">${exp.name}</td>
+                        <td style="text-align: right;"><span class="chunk-count">+${exp.count}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                
+            } catch (err) {
+                console.error("Error fetching stats:", err);
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        // Fetch immediately, then every 5 seconds
+        fetchStats();
+        setInterval(fetchStats, 5000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-9 Режим сна</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="drum-picker.css">
+  <style>
+    /* Чтобы контент не выходил за пределы .phone */
+    .phone { display: flex; flex-direction: column; }
+    .content { flex: 1; overflow-y: auto; }
+
+    /* Тип режима сна */
+    .sleep-type-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 0; }
+    .irreg-option {
+      padding: 12px 16px; background: #fff; border: 1.5px solid var(--color-divider);
+      border-radius: 14px; cursor: pointer; display: flex; align-items: center; gap: 12px;
+      font-size: 14px; font-weight: 600; color: var(--color-text-primary); transition: all 0.2s;
+    }
+    .irreg-option.active {
+      border-color: var(--color-primary); background: rgba(245,146,43,0.07); color: var(--color-primary);
+    }
+    .irreg-dot {
+      width: 18px; height: 18px; min-width: 18px; border-radius: 50%;
+      border: 2px solid var(--color-divider); transition: all 0.2s;
+    }
+    .irreg-option.active .irreg-dot { background: var(--color-primary); border-color: var(--color-primary); }
+
+    /* Карточки времени */
+    .sleep-row { display: flex; gap: 14px; }
+    .time-card {
+      flex: 1; background: #fff; border: 1.5px solid var(--color-divider); border-radius: 20px;
+      padding: 16px 12px 14px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+      cursor: pointer; user-select: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .time-card:active { transform: scale(0.97); }
+    .time-card.open { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(245,146,43,0.15); }
+    .time-label { font-size: 11px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.6px; }
+    .time-icon { font-size: 22px; color: var(--color-primary); }
+    .time-display { font-size: 26px; font-weight: 800; color: var(--color-text-primary); letter-spacing: -0.5px; }
+
+    /* Посменный режим */
+    .shift-block { display: flex; flex-direction: column; gap: 14px; }
+    .section-label { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); margin-bottom: 6px; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      padding: 8px 14px; border-radius: 20px; border: 1.5px solid var(--color-divider);
+      font-size: 13px; font-weight: 600; cursor: pointer; background: #fff; color: var(--color-text-primary);
+      transition: all 0.2s; user-select: none;
+    }
+    .chip.active { border-color: var(--color-primary); background: rgba(245,146,43,0.1); color: var(--color-primary); }
+
+    /* Нерегулярный */
+    .hint-box {
+      padding: 14px 16px; background: #FFF7ED; border: 1px solid #FFEDD5;
+      border-radius: 14px; font-size: 13px; color: #92400E; line-height: 1.5;
+    }
+
+    /* Конфликт */
+    .conflict-warn { display:none; padding: 12px 14px; background: #FFF7ED; border: 1px solid #FFEDD5; border-radius: 14px; font-size: 13px; color: #92400E; line-height: 1.5; }
+
+    /* Gauge */
+    .gauge-section { text-align: center; }
+    .duration-title { font-size: 12px; font-weight: 700; color: var(--color-text-secondary); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .duration-val { font-size: 36px; font-weight: 800; margin-bottom: 16px; transition: color 0.3s; }
+    .gauge-wrapper { height: 10px; background: #E5E7EB; border-radius: 6px; overflow: hidden; }
+    .gauge-fill { height: 100%; width: 0%; background: #52B044; border-radius: 6px; transition: width 0.4s, background 0.3s; }
+    .gauge-hints { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; font-weight: 600; color: #9CA3AF; }
+
+    /* Инсайт */
+    .insight-card { padding: 14px 16px; background: #F3F4F6; border-radius: 16px; display: flex; gap: 12px; align-items: flex-start; }
+    .insight-text { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; font-weight: 500; }
+
+    /* Мотивация */
+    .motivation-card { background: #E8F5E9; border-radius: 16px; padding: 14px 16px; display: flex; gap: 12px; border: 1px solid #C8E6C9; }
+    .motivation-icon { font-size: 20px; flex-shrink: 0; }
+    .motivation-text { font-size: 13px; color: #2E7D32; line-height: 1.5; font-weight: 500; }
+
+    /* Секционные отступы */
+    .section-gap { margin-top: 32px; }
+
+
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div><i class="ph ph-cell-signal-medium"></i> <i class="ph ph-wifi-high"></i> <i class="ph ph-battery-full"></i></div>
+    </div>
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 8 из 14</div>
+    </div>
+
+    <div class="content">
+      <h1 class="question-title">Режим сна</h1>
+      <p class="question-desc">Мы подстроим время приёмов пищи и витаминов под твой график.</p>
+
+      <!-- ШАГ 1: Тип режима -->
+      <div class="section-label">Насколько стабилен твой режим сна?</div>
+      <div class="sleep-type-options">
+        <div class="irreg-option active" onclick="selectSleepType(this,'stable')">
+          <div class="irreg-dot"></div>
+          <div>
+            <div>Примерно одинаковый</div>
+            <div style="font-size:12px;color:#9CA3AF;font-weight:500;margin-top:2px">Каждый день примерно в одно время</div>
+          </div>
+        </div>
+        <div class="irreg-option" onclick="selectSleepType(this,'shift')">
+          <div class="irreg-dot"></div>
+          <div>
+            <div>Работаю посменно</div>
+            <div style="font-size:12px;color:#9CA3AF;font-weight:500;margin-top:2px">Сон сдвигается в зависимости от смены</div>
+          </div>
+        </div>
+        <div class="irreg-option" onclick="selectSleepType(this,'chaotic')">
+          <div class="irreg-dot"></div>
+          <div>
+            <div>Сплю мало и нерегулярно</div>
+            <div style="font-size:12px;color:#9CA3AF;font-weight:500;margin-top:2px">Нет чёткого расписания</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ШАГ 2a: Стабильный — время -->
+      <div id="stableSection" class="section-gap">
+        <div class="section-label">Укажи примерное время:</div>
+        <div class="sleep-row">
+          <div class="time-card" id="cardSleep" onclick="openPicker('sleep')">
+            <i class="ph ph-moon time-icon"></i>
+            <span class="time-label">Ложусь спать</span>
+            <div class="time-display" id="sleepDisplay">23:00</div>
+          </div>
+          <div class="time-card" id="cardWake" onclick="openPicker('wake')">
+            <i class="ph ph-sun time-icon"></i>
+            <span class="time-label">Просыпаюсь</span>
+            <div class="time-display" id="wakeDisplay">07:15</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ШАГ 2b: Посменный — тип смены + ср. продолжительность -->
+      <div id="shiftSection" class="section-gap" style="display:none;">
+        <div class="shift-block">
+          <div>
+            <div class="section-label">Тип смен:</div>
+            <div class="chip-row" id="shiftTypeChips">
+              <div class="chip" onclick="selectChip(this,'shiftType','morning')">🌅 Утро</div>
+              <div class="chip" onclick="selectChip(this,'shiftType','evening')">🌆 Вечер</div>
+              <div class="chip" onclick="selectChip(this,'shiftType','night')">🌙 Ночь</div>
+              <div class="chip" onclick="selectChip(this,'shiftType','mixed')">🔄 Разные</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-label">Средняя продолжительность сна:</div>
+            <div class="chip-row" id="shiftDurChips">
+              <div class="chip" onclick="selectChip(this,'shiftDur','5')">5 ч</div>
+              <div class="chip" onclick="selectChip(this,'shiftDur','6')">6 ч</div>
+              <div class="chip active" onclick="selectChip(this,'shiftDur','7')">7 ч</div>
+              <div class="chip" onclick="selectChip(this,'shiftDur','8')">8 ч</div>
+              <div class="chip" onclick="selectChip(this,'shiftDur','9')">9+ ч</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ШАГ 2c: Нерегулярный -->
+      <div id="chaoticSection" class="section-gap" style="display:none;">
+        <div class="hint-box">
+          💬 Составим гибкое расписание без привязки к строгому времени. Это учтём при составлении плана.
+        </div>
+      </div>
+
+      <!-- Конфликт с голоданием -->
+      <div class="conflict-warn section-gap" id="fastingConflictWarn"></div>
+
+      <!-- Gauge + insight (для стабильного) -->
+      <div id="gaugeSection" class="section-gap">
+        <div class="gauge-section">
+          <div class="duration-title">Продолжительность сна</div>
+          <div class="duration-val" id="sleepDurationVal" style="color:var(--color-text-primary)">—</div>
+          <div class="gauge-wrapper"><div class="gauge-fill" id="sleepGaugeFill"></div></div>
+          <div class="gauge-hints">
+            <span id="hintLow">Слишком мало</span>
+            <span id="hintOk">Идеально</span>
+            <span id="hintHigh">Много</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight-card section-gap" id="insightCard">
+        <i class="ph ph-check-circle" id="insightIcon" style="color:#52B044;font-size:20px;flex-shrink:0;"></i>
+        <p class="insight-text" id="insightText"></p>
+      </div>
+
+      <div class="motivation-card section-gap">
+        <div class="motivation-icon">💡</div>
+        <div class="motivation-text">Плохой сон буквально меняет пищевое поведение. Всего одна ночь менее 6 часов повышает уровень грелина (гормон голода) на 28% и снижает лептин (гормон сытости). В итоге — незаметные лишние 300–400 ккал в день и постоянное ощущение, что «что-то не так». Время ужина и витамины мы рассчитаем под твой режим сна. Работаешь посменно или часто летаешь со сменой часовых поясов? Хаотичный сон — это не приговор для здорового питания, но он требует особого подхода. Мы учтём нестабильный режим и предложим гибкое расписание приёмов пищи, которое не рассыплется при пересменке.</div>
+      </div>
+    </div>
+
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="location.href='o8-habits.html'">← Назад</button>
+      <button class="btn-primary" id="btnNext" onclick="proceed()">
+        Далее <i class="ph ph-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+
+
+  <script>
+    // ================================================================
+    // СОСТОЯНИЕ
+    // ================================================================
+    const timeState = { sleep: { h: 23, m: 0 }, wake: { h: 7, m: 15 } };
+    const chipState = { shiftType: null, shiftDur: '7' };
+    let sleepType = 'stable';
+
+    // ════════════════════════════════════════════════════════════════
+    // OPEN PICKER (uses shared DrumPicker module)
+    // ════════════════════════════════════════════════════════════════
+    function openPicker(field) {
+      const t = field === 'sleep' ? timeState.sleep : timeState.wake;
+      const title = field === 'sleep' ? 'Ложусь спать' : 'Просыпаюсь';
+      DrumPicker.openTime(title, { h: t.h, m: t.m }, (r) => {
+        if (field === 'sleep') {
+          timeState.sleep = { h: r.h, m: r.m };
+          document.getElementById('sleepDisplay').textContent = `${String(r.h).padStart(2,'0')}:${String(r.m).padStart(2,'0')}`;
+        } else {
+          timeState.wake = { h: r.h, m: r.m };
+          document.getElementById('wakeDisplay').textContent = `${String(r.h).padStart(2,'0')}:${String(r.m).padStart(2,'0')}`;
+        }
+        checkSleepLogic();
+        checkFastingConflict();
+        saveO9State();
+      });
+    }
+
+    // ================================================================
+    // ТИП РЕЖИМА СНА
+    // ================================================================
+    function selectSleepType(el, type) {
+      sleepType = type;
+      document.querySelectorAll('.sleep-type-options .irreg-option').forEach(o => o.classList.remove('active'));
+      el.classList.add('active');
+
+      document.getElementById('stableSection').style.display   = type === 'stable' ? 'block' : 'none';
+      document.getElementById('shiftSection').style.display    = type === 'shift'  ? 'block' : 'none';
+      document.getElementById('chaoticSection').style.display  = type === 'chaotic'? 'block' : 'none';
+      document.getElementById('gaugeSection').style.display    = (type === 'stable' || type === 'shift') ? 'block' : 'none';
+      document.getElementById('insightCard').style.display     = (type === 'stable' || type === 'shift') ? 'flex'  : 'none';
+      document.getElementById('fastingConflictWarn').style.display = 'none';
+
+      if (type === 'stable' || type === 'shift') { checkSleepLogic(); }
+      if (type === 'stable') { checkFastingConflict(); }
+      saveO9State();
+    }
+
+    // Чипы (для посменного)
+    function selectChip(el, group, val) {
+      chipState[group] = val;
+      const container = group === 'shiftType' ? 'shiftTypeChips' : 'shiftDurChips';
+      document.getElementById(container).querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      if (group === 'shiftDur') { checkSleepLogic(); }
+      saveO9State();
+    }
+
+    // ================================================================
+    // РАСЧЁТ СНА
+    // ================================================================
+    function calcDuration(sh, sm, wh, wm) {
+      let diff = (wh * 60 + wm) - (sh * 60 + sm);
+      if (diff <= 0) diff += 24 * 60;
+      return diff;
+    }
+
+    function checkSleepLogic() {
+      let totalH, displayStr;
+
+      if (sleepType === 'stable') {
+        const { h: sh, m: sm } = timeState.sleep;
+        const { h: wh, m: wm } = timeState.wake;
+        const dMins = calcDuration(sh, sm, wh, wm);
+        const hours = Math.floor(dMins / 60);
+        const mins  = dMins % 60;
+        totalH = hours + mins / 60;
+        displayStr = `${hours} ч ${String(mins).padStart(2,'0')} мин`;
+      } else if (sleepType === 'shift') {
+        totalH = chipState.shiftDur === '9' ? 12 : parseInt(chipState.shiftDur);
+        displayStr = chipState.shiftDur === '9' ? '9+ ч' : `${parseInt(chipState.shiftDur)} ч`;
+      } else {
+        return;
+      }
+
+      document.getElementById('sleepDurationVal').textContent = displayStr;
+
+      const gauge = document.getElementById('sleepGaugeFill');
+      gauge.style.width = Math.min(totalH / 12 * 100, 100) + '%';
+
+      let color, icon, msg;
+      if (totalH < 5) {
+        color='#EF4444'; icon='ph-warning';
+        msg='<b style="color:#EF4444">Слишком мало.</b> Менее 5 часов сна — серьёзный риск для здоровья.';
+      } else if (totalH < 7) {
+        color='#F5922B'; icon='ph-warning';
+        msg='<b style="color:#F5922B">Немного маловато.</b> Постарайся спать хотя бы 7 часов.';
+      } else if (totalH <= 9) {
+        color='#52B044'; icon='ph-check-circle';
+        msg='<b style="color:#52B044">Отлично!</b> Здоровый сон снижает тягу к сладкому и помогает придерживаться плана.';
+      } else {
+        color='#EAB308'; icon='ph-sun';
+        msg='<b style="color:#EAB308">Многовато.</b> Сон дольше 9 часов может говорить об усталости.';
+      }
+
+      gauge.style.background = color;
+      document.getElementById('sleepDurationVal').style.color = color;
+      document.getElementById('hintLow').style.color  = totalH < 7  ? color  : '#9CA3AF';
+      document.getElementById('hintOk').style.color   = (totalH >= 7 && totalH <= 9) ? '#52B044' : '#9CA3AF';
+      document.getElementById('hintHigh').style.color = totalH > 9  ? '#EAB308' : '#9CA3AF';
+      document.getElementById('insightIcon').className  = `ph ${icon}`;
+      document.getElementById('insightIcon').style.color = color;
+      document.getElementById('insightText').innerHTML = msg;
+    }
+
+    // ================================================================
+    // КОНФЛИКТ С ГОЛОДАНИЕМ
+    // ================================================================
+    function checkFastingConflict() {
+      const warnEl = document.getElementById('fastingConflictWarn');
+      if (sleepType !== 'stable') { warnEl.style.display='none'; return; }
+      const prof = window.AIDiet ? window.AIDiet.getProfile() : {};
+      const fsStr = prof['_fastingState'];
+      if (!fsStr) { warnEl.style.display='none'; return; }
+      try {
+        const o8 = JSON.parse(fsStr);
+        if (o8.fastingStatus !== 'daily' || !o8.fastingWindowEnd) { warnEl.style.display='none'; return; }
+        let [eatH, eatM] = o8.fastingWindowEnd.split(':').map(Number);
+        let slH = timeState.sleep.h, slM = timeState.sleep.m;
+        if (slH < 12) slH += 24;
+        if (eatH < 12) eatH += 24;
+        if (eatH * 60 + eatM > slH * 60 + slM - 120) {
+          const recH = (eatH + 2) % 24;
+          const rec = `${String(recH).padStart(2,'0')}:${String(eatM).padStart(2,'0')}`;
+          warnEl.style.display = 'block';
+          warnEl.innerHTML = `⚠️ Пищевое окно до <b>${o8.fastingWindowEnd}</b> — слишком близко ко сну.<br>Рекомендуем ложиться не ранее <b>${rec}</b>.`;
+        } else {
+          warnEl.style.display = 'none';
+        }
+      } catch(e) { warnEl.style.display='none'; }
+    }
+
+    // ================================================================
+    // СОХРАНЕНИЕ
+    // ================================================================
+    function saveO9State() {
+      let sleepStr, wakeStr, durMins;
+
+      if (sleepType === 'stable') {
+        sleepStr = `${String(timeState.sleep.h).padStart(2,'0')}:${String(timeState.sleep.m).padStart(2,'0')}`;
+        wakeStr  = `${String(timeState.wake.h).padStart(2,'0')}:${String(timeState.wake.m).padStart(2,'0')}`;
+        durMins   = calcDuration(timeState.sleep.h, timeState.sleep.m, timeState.wake.h, timeState.wake.m);
+      } else if (sleepType === 'shift') {
+        sleepStr = 'Посменно';
+        wakeStr  = 'Посменно';
+      } else {
+        sleepStr = 'Нерегулярный';
+        wakeStr  = 'Нерегулярный';
+      }
+
+      if (window.AIDiet) {
+        window.AIDiet.saveField('sleep_time',     sleepStr);
+        window.AIDiet.saveField('sleep_waketime',    wakeStr);
+        window.AIDiet.saveField('sleep_type', sleepType);
+        if (durMins != null) window.AIDiet.saveField('sleep_duration_hours', Math.round(durMins / 60 * 10) / 10);
+        if (sleepType === 'shift') {
+          if (chipState.shiftType) window.AIDiet.saveField('shift_type', chipState.shiftType);
+          window.AIDiet.saveField('avg_sleep_hours', chipState.shiftDur);
+        }
+        window.AIDiet.saveField('_o9uiState', JSON.stringify({ sleepType, chipState }));
+      }
+    }
+
+    function proceed() {
+      saveO9State();
+      window.AIDiet.goNext('o10-activity.html');
+    }
+
+    // ================================================================
+    // ИНИЦИАЛИЗАЦИЯ
+    // ================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      const prof = window.AIDiet ? window.AIDiet.getProfile() : {};
+      const savedSleep = prof['sleep_time'] || prof['Отбой'];
+      if (savedSleep && !['Посменно','Нерегулярный'].includes(savedSleep)) {
+        const [h, m] = savedSleep.split(':').map(Number);
+        timeState.sleep = { h, m };
+        document.getElementById('sleepDisplay').textContent = savedSleep;
+      }
+      const savedWake = prof['sleep_waketime'] || prof['wake_time'] || prof['Подъем'];
+      if (savedWake && !['Посменно','Нерегулярный'].includes(savedWake)) {
+        const [h, m] = savedWake.split(':').map(Number);
+        timeState.wake = { h, m };
+        document.getElementById('wakeDisplay').textContent = savedWake;
+      }
+      if (prof['_o9uiState']) {
+        try {
+          const st = JSON.parse(prof['_o9uiState']);
+          if (st.chipState) {
+            chipState = { ...chipState, ...st.chipState };
+            if (chipState.shiftType) {
+              const chip = Array.from(document.querySelectorAll('#shiftTypeChips .chip')).find(c => c.getAttribute('onclick') && c.getAttribute('onclick').includes(chipState.shiftType));
+              if (chip) selectChip(chip, 'shiftType', chipState.shiftType);
+            }
+            if (chipState.shiftDur) {
+              const durRaw = String(chipState.shiftDur).replace('+', '');
+              const chip = Array.from(document.querySelectorAll('#shiftDurChips .chip')).find(c => c.getAttribute('onclick') && c.getAttribute('onclick').includes(`,'${durRaw}'`));
+              if (chip) selectChip(chip, 'shiftDur', durRaw);
+            }
+          }
+          if (st.sleepType && st.sleepType !== 'stable') {
+             const match = Array.from(document.querySelectorAll('.sleep-type-options .irreg-option')).find(o => o.getAttribute('onclick').includes(st.sleepType));
+             if (match) selectSleepType(match, st.sleepType);
+          }
+        } catch(e) {}
+      } else if (prof['Режим сна'] && prof['Режим сна'] !== 'stable') {
+        const match = document.querySelector(`.sleep-type-options .irreg-option:nth-child(${prof['Режим сна']==='shift'?2:3})`);
+        if (match) selectSleepType(match, prof['Режим сна']);
+        
+        if (prof['Режим сна'] === 'shift') {
+           if (prof['Тип смен']) {
+              const chip = Array.from(document.querySelectorAll('#shiftTypeChips .chip')).find(c => c.getAttribute('onclick') && c.getAttribute('onclick').includes(prof['Тип смен']));
+              if (chip) selectChip(chip, 'shiftType', prof['Тип смен']);
+           }
+           if (prof['Средний сон (ч)']) {
+              const durRaw = String(prof['Средний сон (ч)']).replace('+', '');
+              const chip = Array.from(document.querySelectorAll('#shiftDurChips .chip')).find(c => c.getAttribute('onclick') && c.getAttribute('onclick').includes(`,'${durRaw}'`));
+              if (chip) selectChip(chip, 'shiftDur', durRaw);
+           }
+        }
+      }
+      checkSleepLogic();
+      checkFastingConflict();
+    });
+  </script>
+  <script src="drum-picker.js"></script>
+  <script src="onboarding-state.js"></script>
+</body>
+</html>

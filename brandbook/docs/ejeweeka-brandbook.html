@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ejeweeka — Brand System 1.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ─────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --brand-blackberry:   #4C1D95;
+  --brand-neon-violet:  #8B5CF6;
+  --brand-neon-magenta: #D946EF;
+  --brand-bright:       #A855F7;
+  --brand-glow-pink:    #F472B6;
+  --brand-glow-violet:  #7C3AED;
+  --brand-deep:         #0D0618;
+
+  --bg-oled:    #000000;
+  --bg-dark:    #0D0618;
+  --surface:    #1A0A35;
+  --surface-2:  #221344;
+  --glass:      rgba(255,255,255,0.06);
+  --glass-b:    rgba(255,255,255,0.10);
+  --border:     rgba(255,255,255,0.08);
+  --border-b:   rgba(255,255,255,0.14);
+
+  --text-1:     #FFFFFF;
+  --text-2:     #A1A1AA;
+  --text-3:     #71717A;
+  --text-acc:   #A855F7;
+
+  --status-gold:        #F59E0B;
+  --status-gold-soft:   #FCD34D;
+  --status-family:      #D97706;
+
+  --r-sm:  8px;
+  --r-md:  12px;
+  --r-lg:  16px;
+  --r-xl:  24px;
+  --r-2xl: 32px;
+
+  --glow-sm:  0 0 12px rgba(139,92,246,.25);
+  --glow-md:  0 0 28px rgba(139,92,246,.35);
+  --glow-lg:  0 0 56px rgba(139,92,246,.4);
+  --glow-mg:  0 0 32px rgba(217,70,239,.3);
+  --card-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 20px 40px rgba(0,0,0,.45);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg-oled);
+  color: var(--text-1);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ───────────────────────────────────────── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+.section { padding: 100px 0; border-bottom: 1px solid var(--border); }
+.section:last-child { border-bottom: none; }
+
+/* ── Nav ──────────────────────────────────────────── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(0,0,0,.75);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex; align-items: center; gap: 40px;
+  padding: 16px 40px; max-width: 1200px; margin: 0 auto;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; flex-shrink: 0;
+}
+.nav-brand img { width: 28px; height: 28px; border-radius: 6px; }
+.nav-brand span {
+  font-size: 15px; font-weight: 600; color: var(--text-1); letter-spacing: -0.01em;
+}
+.nav-links {
+  display: flex; gap: 28px; list-style: none; flex: 1; overflow: hidden;
+}
+.nav-links a {
+  font-size: 13px; font-weight: 500; color: var(--text-2);
+  text-decoration: none; transition: color .2s; white-space: nowrap;
+}
+.nav-links a:hover { color: var(--text-1); }
+.nav-version {
+  font-size: 11px; font-weight: 500; color: var(--text-3);
+  border: 1px solid var(--border); border-radius: 100px;
+  padding: 3px 10px; flex-shrink: 0;
+}
+
+/* ── Hero ─────────────────────────────────────────── */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,92,246,.12) 0%, transparent 60%),
+              var(--bg-oled);
+}
+.hero-inner { text-align: center; padding: 120px 40px; max-width: 1200px; margin: 0 auto; }
+.hero-icon {
+  width: 120px; height: 120px; border-radius: 28px; margin: 0 auto 32px;
+  display: block;
+}
+.hero-eyebrow {
+  font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--brand-neon-violet); margin-bottom: 16px;
+}
+.hero-title {
+  font-size: clamp(40px, 6vw, 72px); font-weight: 800; letter-spacing: -.03em;
+  line-height: 1.05; margin-bottom: 16px;
+}
+.hero-title .brand { color: var(--brand-bright); }
+.hero-sub {
+  font-size: 20px; color: var(--text-2); font-weight: 400; margin-bottom: 48px;
+  max-width: 520px; margin-left: auto; margin-right: auto;
+}
+.hero-meta {
+  display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
+}
+.pill {
+  font-size: 12px; font-weight: 500; padding: 6px 14px;
+  border-radius: 100px; border: 1px solid var(--border);
+  color: var(--text-2); background: var(--glass);
+}
+
+/* ── Section Headers ──────────────────────────────── */
+.section-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--brand-neon-violet); margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(28px, 4vw, 44px); font-weight: 800;
+  letter-spacing: -.025em; line-height: 1.1; margin-bottom: 16px;
+}
+.section-desc { font-size: 17px; color: var(--text-2); max-width: 560px; line-height: 1.6; }
+
+/* ── Cards ────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 28px;
+  box-shadow: var(--card-shadow);
+}
+.card-label {
+  font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text-3); margin-bottom: 16px;
+}
+.card-title {
+  font-size: 15px; font-weight: 600; color: var(--text-1); margin-bottom: 8px;
+}
+.card-body { font-size: 14px; color: var(--text-2); line-height: 1.55; }
+
+/* ── Grid ─────────────────────────────────────────── */
+.grid { display: grid; gap: 16px; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) {
+  .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .container, .nav-inner, .hero-inner { padding-left: 20px; padding-right: 20px; }
+  .section { padding: 60px 0; }
+}
+
+/* ── Logo Showcase ────────────────────────────────── */
+.logo-stage {
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--r-xl); padding: 56px 40px; gap: 24px; flex-wrap: wrap;
+  border: 1px solid var(--border);
+}
+.logo-stage.dark  { background: var(--bg-dark); }
+.logo-stage.oled  { background: var(--bg-oled); }
+.logo-stage.light { background: #F9FAFB; }
+.logo-stage.glass { background: var(--glass); backdrop-filter: blur(12px); }
+
+.logo-stage img { display: block; }
+.logo-stage .logo-mark { width: 72px; height: 72px; }
+.logo-stage .logo-icon { border-radius: 18px; }
+.logo-stage .wordmark {
+  font-size: 26px; font-weight: 700; letter-spacing: -.02em; color: var(--text-1);
+}
+.logo-stage .wordmark.dark-txt { color: #4C1D95; }
+.logo-stage .descriptor {
+  font-size: 11px; font-weight: 500; color: var(--text-2); letter-spacing: .04em;
+  text-transform: uppercase; margin-top: 4px;
+}
+.logo-lockup { display: flex; align-items: center; gap: 12px; }
+.logo-lockup-v { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+/* ── Color Swatches ───────────────────────────────── */
+.swatch {
+  border-radius: var(--r-lg); overflow: hidden;
+  border: 1px solid var(--border);
+}
+.swatch-color {
+  height: 80px;
+}
+.swatch-info { background: var(--surface); padding: 14px 16px; }
+.swatch-name { font-size: 13px; font-weight: 600; color: var(--text-1); margin-bottom: 4px; }
+.swatch-hex  { font-size: 11px; font-weight: 500; color: var(--text-2); font-family: 'SF Mono', monospace; }
+.swatch-role { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+
+/* ── Typography Scale ─────────────────────────────── */
+.type-row {
+  display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap;
+  padding: 20px 0; border-bottom: 1px solid var(--border);
+}
+.type-row:last-child { border-bottom: none; }
+.type-meta { width: 180px; flex-shrink: 0; }
+.type-meta-name { font-size: 12px; font-weight: 600; color: var(--text-2); }
+.type-meta-spec { font-size: 11px; color: var(--text-3); margin-top: 4px; font-family: monospace; }
+.type-sample { flex: 1; }
+
+/* ── Usage Grid ───────────────────────────────────── */
+.usage-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 16px; border-radius: var(--r-md);
+  background: var(--glass); border: 1px solid var(--border);
+}
+.usage-icon {
+  width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+}
+.usage-icon.ok  { background: rgba(16,185,129,.15); color: #10B981; }
+.usage-icon.no  { background: rgba(239,68,68,.15);  color: #EF4444; }
+.usage-body { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+.usage-body strong { color: var(--text-1); }
+
+/* ── Status Cards ─────────────────────────────────── */
+.status-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+@media (max-width: 700px) { .status-cards { grid-template-columns: 1fr; } }
+
+.sc {
+  border-radius: var(--r-xl); padding: 28px; position: relative; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.08);
+}
+.sc::before {
+  content: ''; position: absolute; inset: 0;
+  background: inherit; z-index: 0;
+}
+.sc > * { position: relative; z-index: 1; }
+.sc-badge {
+  display: inline-flex; font-size: 10px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 100px; margin-bottom: 16px;
+}
+.sc-title { font-size: 22px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 6px; }
+.sc-desc  { font-size: 13px; opacity: .7; line-height: 1.5; margin-bottom: 20px; }
+.sc-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 600; padding: 10px 20px;
+  border-radius: var(--r-md); cursor: pointer; text-decoration: none;
+  transition: opacity .2s;
+}
+.sc-cta:hover { opacity: .85; }
+
+/* Status White */
+.sc-white { background: #F9FAFB; color: #18181B; }
+.sc-white .sc-badge { background: #4C1D95; color: #fff; }
+.sc-white .sc-title { color: #3B0764; }
+.sc-white .sc-desc  { color: #52525B; }
+.sc-white .sc-cta   { background: linear-gradient(135deg, #7C3AED, #A855F7); color: #fff; box-shadow: 0 0 16px rgba(124,58,237,.2); }
+
+/* Status Gold */
+.sc-gold {
+  background: var(--surface);
+  background-image: radial-gradient(ellipse at top right, rgba(245,158,11,.15) 0%, transparent 60%);
+}
+.sc-gold .sc-badge { background: rgba(245,158,11,.15); color: var(--status-gold); border: 1px solid rgba(245,158,11,.3); }
+.sc-gold .sc-title { color: var(--status-gold-soft); }
+.sc-gold .sc-cta   { background: linear-gradient(135deg, #F59E0B, #FCD34D); color: #000; box-shadow: 0 0 16px rgba(245,158,11,.25); }
+
+/* Status Black */
+.sc-black {
+  background: #000;
+  background-image: radial-gradient(ellipse at top, rgba(139,92,246,.18) 0%, transparent 60%);
+}
+.sc-black .sc-badge { background: rgba(139,92,246,.15); color: var(--brand-bright); border: 1px solid rgba(139,92,246,.25); }
+.sc-black .sc-title { background: linear-gradient(135deg, #fff 0%, var(--brand-bright) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.sc-black .sc-cta   { background: linear-gradient(135deg, #7C3AED, #A855F7); color: #fff; box-shadow: 0 0 16px rgba(124,58,237,.2); }
+
+/* Family Gold */
+.sc-family {
+  background: var(--surface);
+  background-image: radial-gradient(ellipse at bottom left, rgba(217,119,6,.15) 0%, transparent 60%);
+}
+.sc-family .sc-badge { background: rgba(217,119,6,.15); color: var(--status-family); border: 1px solid rgba(217,119,6,.3); }
+.sc-family .sc-title { color: var(--status-family); }
+.sc-family .sc-cta   { background: linear-gradient(135deg, #D97706, #FBBF24); color: #fff; box-shadow: 0 0 16px rgba(217,119,6,.25); }
+
+/* ── UI Component Mockups ─────────────────────────── */
+.mockup-frame {
+  background: var(--bg-dark);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.mockup-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.mockup-body { padding: 24px; }
+
+/* Splash mockup */
+.splash-mock {
+  background: #000;
+  border-radius: var(--r-xl);
+  border: 1px solid var(--border);
+  aspect-ratio: 9/19.5;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
+  max-width: 220px; margin: 0 auto;
+  position: relative; overflow: hidden;
+}
+.splash-mock::before {
+  content: '';
+  position: absolute;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(139,92,246,.25) 0%, transparent 70%);
+  top: 30%; left: 50%; transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.splash-mock img { width: 72px; height: 72px; border-radius: 18px; z-index: 1; }
+.splash-mock .splash-name { font-size: 18px; font-weight: 700; letter-spacing: -.02em; z-index: 1; }
+.splash-mock .splash-sub  { font-size: 11px; color: var(--text-3); letter-spacing: .05em; z-index: 1; }
+
+/* CTA Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 15px; font-weight: 600; letter-spacing: -.01em;
+  padding: 14px 28px; border-radius: var(--r-lg); cursor: pointer;
+  text-decoration: none; border: none; transition: all .25s;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand-glow-violet) 0%, var(--brand-neon-magenta) 100%);
+  color: #fff; box-shadow: var(--glow-sm);
+}
+.btn-primary:hover { box-shadow: var(--glow-md); transform: translateY(-1px); }
+.btn-secondary {
+  background: var(--glass); color: var(--text-1);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: var(--glass-b); }
+.btn-ghost { color: var(--text-acc); background: transparent; padding: 14px 4px; }
+
+/* ── Token Code Blocks ────────────────────────────── */
+.code-block {
+  background: #0A0A0F; border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 20px 24px;
+  font-family: 'SF Mono', 'JetBrains Mono', monospace;
+  font-size: 12px; line-height: 1.7; overflow-x: auto; color: #E4E4E7;
+}
+.token-var   { color: #A855F7; }
+.token-val   { color: #10B981; }
+.token-comt  { color: #52525B; }
+.token-key   { color: #60A5FA; }
+
+/* ── Size Grid ────────────────────────────────────── */
+.size-grid {
+  display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end;
+}
+.size-item { text-align: center; }
+.size-img  { border-radius: 22%; display: block; margin: 0 auto 8px; }
+.size-lbl  { font-size: 10px; color: var(--text-3); }
+
+/* ── Progress / Insight Card ──────────────────────── */
+.insight-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 22px 24px;
+  box-shadow: var(--card-shadow);
+}
+.insight-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 16px;
+}
+.insight-label { font-size: 11px; color: var(--text-3); font-weight: 500; letter-spacing: .04em; text-transform: uppercase; }
+.insight-value { font-size: 32px; font-weight: 800; letter-spacing: -.03em; }
+.insight-sub   { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+.progress-bar-bg { height: 4px; background: var(--glass); border-radius: 100px; margin-top: 16px; }
+.progress-bar-fill {
+  height: 100%; border-radius: 100px;
+  background: linear-gradient(90deg, var(--brand-glow-violet), var(--brand-neon-magenta));
+}
+.insight-badge {
+  font-size: 10px; font-weight: 600; padding: 4px 10px;
+  border-radius: 100px; background: rgba(139,92,246,.15);
+  color: var(--brand-bright); border: 1px solid rgba(139,92,246,.2);
+}
+
+/* ── Notification Card ────────────────────────────── */
+.notif {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 16px; border-radius: var(--r-lg);
+  background: var(--surface); border: 1px solid var(--border);
+}
+.notif-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--brand-glow-violet), var(--brand-neon-magenta));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; box-shadow: var(--glow-sm);
+}
+.notif-title { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.notif-body  { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+.notif-time  { font-size: 10px; color: var(--text-3); margin-top: 4px; }
+
+/* ── Divider ──────────────────────────────────────── */
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+
+/* ── Footer ───────────────────────────────────────── */
+.footer {
+  padding: 48px 40px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: gap;
+  max-width: 1200px; margin: 0 auto; gap: 16px;
+}
+.footer-brand { display: flex; align-items: center; gap: 10px; }
+.footer-brand img { width: 24px; height: 24px; border-radius: 6px; }
+.footer-brand span { font-size: 14px; font-weight: 600; color: var(--text-2); }
+.footer-meta { font-size: 12px; color: var(--text-3); }
+
+/* ── Misc ─────────────────────────────────────────── */
+.mt-8  { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mt-32 { margin-top: 32px; }
+.mt-48 { margin-top: 48px; }
+.mt-64 { margin-top: 64px; }
+.gap-12 { gap: 12px; }
+.gap-16 { gap: 16px; }
+.text-2 { color: var(--text-2); }
+.text-3 { color: var(--text-3); }
+.text-acc { color: var(--text-acc); }
+.font-mono { font-family: 'SF Mono', monospace; }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-brand" href="#hero">
+      <img src="../assets/logo/eje-app-icon-master.png" alt="ejeweeka">
+      <span>ejeweeka</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#logo">Logo</a></li>
+      <li><a href="#colors">Colors</a></li>
+      <li><a href="#typography">Typography</a></li>
+      <li><a href="#assets">Assets</a></li>
+      <li><a href="#status">Status</a></li>
+      <li><a href="#ui">UI</a></li>
+      <li><a href="#usage">Usage</a></li>
+      <li><a href="#tokens">Tokens</a></li>
+    </ul>
+    <span class="nav-version">v1.0</span>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<section class="hero" id="hero">
+  <div class="hero-inner">
+    <img class="hero-icon" src="../assets/logo/eje-app-icon-master@2x.png" alt="ejeweeka app icon">
+    <div class="hero-eyebrow">Brand System 1.0</div>
+    <h1 class="hero-title">
+      <span class="brand">ejeweeka</span><br>Brand Guidelines
+    </h1>
+    <p class="hero-sub">
+      premium wellness intelligence — design system, logo rules, tokens, and assets
+    </p>
+    <div class="hero-meta">
+      <span class="pill">premium mass</span>
+      <span class="pill">dark theme first</span>
+      <span class="pill">soft neon</span>
+      <span class="pill">apple-like</span>
+      <span class="pill">wellness · sleep · nutrition</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── BRAND OVERVIEW ──────────────────────────────── -->
+<section class="section" id="brand">
+  <div class="container">
+    <div class="section-label">Brand</div>
+    <h2 class="section-title">Who we are</h2>
+    <p class="section-desc">
+      ejeweeka is a daily wellness intelligence app — tracking nutrition, sleep, activity, habits, and daily wellbeing. Premium mass positioning: an exclusive club feeling, without cold elitism.
+    </p>
+
+    <div class="grid grid-3 mt-48">
+      <div class="card">
+        <div class="card-label">Positioning</div>
+        <div class="card-title">premium mass</div>
+        <div class="card-body">Exclusive-club feeling without cold elitism. Intelligent, caring, empathetic. Not a medical service, not a fitness marathon.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Tone of Voice</div>
+        <div class="card-title">smart · calm · caring</div>
+        <div class="card-body">Intelligent, quiet, clean. No blame, no pressure, no medical promises, no cheap sales triggers, no guaranteed-result claims.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">References</div>
+        <div class="card-title">Apple · Linear · Arc · Calm</div>
+        <div class="card-body">Visual language close to Apple Health, Linear, Arc, Raycast, Calm Premium. Never medical, pharma, gaming, crypto, or children's.</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="section-label mt-32">Name Rule</div>
+    <h3 class="section-title" style="font-size:32px">Always <span class="text-acc">ejeweeka</span></h3>
+    <p class="section-desc">The brand name is always written in lowercase. No exceptions — not in titles, not in UI, not in documents, not in code.</p>
+
+    <div class="grid grid-2 mt-32">
+      <div class="usage-item">
+        <span class="usage-icon ok">✓</span>
+        <div class="usage-body"><strong>ejeweeka</strong> — correct. Always lowercase. Everywhere.</div>
+      </div>
+      <div class="usage-item">
+        <span class="usage-icon no">✗</span>
+        <div class="usage-body"><strong>Ejeweeka, EJEWEEKA, EjeWEEKa, ejeWeeka</strong> — never.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── LOGO ──────────────────────────────────────────── -->
+<section class="section" id="logo">
+  <div class="container">
+    <div class="section-label">Logo System</div>
+    <h2 class="section-title">The eje mark</h2>
+    <p class="section-desc">
+      The primary mark is the "eje" sign: three letters that form a playful face — two "e"s as eyes, "j" as the center element, and the arc as a smile. Neon violet-magenta glow on a deep dark background.
+    </p>
+
+    <!-- App Icon Master -->
+    <h3 class="mt-48" style="font-size:18px; font-weight:600; margin-bottom:16px">App Icon Master</h3>
+    <p class="text-2" style="font-size:14px; margin-bottom:24px">
+      The master version with the dark rounded-square background and glass panel. Use for App Store, social avatars, PWA, Telegram, any platform that needs a square icon.
+    </p>
+    <div class="logo-stage oled">
+      <img class="logo-icon" src="../assets/logo/eje-app-icon-master@2x.png" alt="ejeweeka app icon" style="width:160px;height:160px;border-radius:36px;">
+      <img class="logo-icon" src="../assets/logo/eje-app-icon-master@2x.png" alt="ejeweeka app icon" style="width:96px;height:96px;border-radius:22px;">
+      <img class="logo-icon" src="../assets/logo/eje-app-icon-master@2x.png" alt="ejeweeka app icon" style="width:56px;height:56px;border-radius:13px;">
+    </div>
+
+    <!-- Vertical Lockup -->
+    <h3 class="mt-48" style="font-size:18px; font-weight:600; margin-bottom:8px">Vertical Lockup</h3>
+    <p class="text-2" style="font-size:14px; margin-bottom:24px">For splash screens, onboarding, welcome screens, presentations.</p>
+    <div class="grid grid-2">
+      <div class="logo-stage oled">
+        <div class="logo-lockup-v">
+          <img src="../assets/logo/eje-app-icon-master@2x.png" alt="" style="width:80px;height:80px;border-radius:20px;">
+          <span style="font-size:20px;font-weight:700;letter-spacing:-.02em;">ejeweeka</span>
+        </div>
+      </div>
+      <div class="logo-stage light">
+        <div class="logo-lockup-v">
+          <img src="../assets/logo/eje-mark-transparent@2x.png" alt="" style="height:80px;width:auto;">
+          <span style="font-size:20px;font-weight:700;letter-spacing:-.02em;color:#4C1D95;">ejeweeka</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Inline Wordmark: eje mark + weeka ── -->
+    <h3 class="mt-48" style="font-size:18px; font-weight:600; margin-bottom:8px">Inline Wordmark — eje + weeka</h3>
+    <p class="text-2" style="font-size:14px; margin-bottom:24px">
+      Знак <strong>eje</strong> становится первыми тремя буквами, текст <strong>weeka</strong> — продолжением. Единое слово, единый градиент. SF Rounded + фиолетово-малиновый градиент бренда.
+    </p>
+    <div class="grid grid-2">
+      <div>
+        <div class="logo-stage light" style="min-height:120px; padding:32px 40px;">
+          <img src="../assets/logo/ejeweeka-inline-wordmark@2x.png"
+               alt="ejeweeka inline wordmark"
+               style="height:64px; width:auto;">
+        </div>
+        <p class="text-3 mt-12" style="font-size:12px;">На белом — базовая тема</p>
+      </div>
+      <div>
+        <div class="logo-stage oled" style="min-height:120px; padding:32px 40px;">
+          <img src="../assets/logo/ejeweeka-inline-wordmark@2x.png"
+               alt="ejeweeka inline wordmark"
+               style="height:64px; width:auto;">
+        </div>
+        <p class="text-3 mt-12" style="font-size:12px;">На чёрном — тёмная тема</p>
+      </div>
+    </div>
+    <div class="logo-stage dark mt-12" style="padding:40px;">
+      <img src="../assets/logo/ejeweeka-inline-wordmark@3x.png"
+           alt="ejeweeka inline wordmark large"
+           style="height:96px; width:auto;">
+    </div>
+    <p class="text-3 mt-12" style="font-size:12px;">Крупный вариант — hero, лендинг, презентации</p>
+
+    <hr class="divider">
+
+    <!-- Transparent Neon Mark -->
+    <h3 class="mt-48" style="font-size:18px; font-weight:600; margin-bottom:8px">Transparent Neon Mark</h3>
+    <p class="text-2" style="font-size:14px; margin-bottom:8px">
+      Mark without any background. Works on both light and dark surfaces. Primary use: white/light backgrounds (base theme).
+    </p>
+    <div class="grid grid-2 mt-16">
+      <div>
+        <div class="logo-stage light" style="min-height:160px;">
+          <img src="../assets/logo/eje-mark-transparent@3x.png" alt="ejeweeka neon mark on white" style="height:96px;">
+        </div>
+        <p class="text-3 mt-12" style="font-size:12px;">On white — base theme ✓</p>
+      </div>
+      <div>
+        <div class="logo-stage oled" style="min-height:160px;">
+          <img src="../assets/logo/eje-mark-transparent@3x.png" alt="ejeweeka neon mark on black" style="height:96px;">
+        </div>
+        <p class="text-3 mt-12" style="font-size:12px;">On OLED black — premium dark mode ✓</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COLORS ────────────────────────────────────────── -->
+<section class="section" id="colors">
+  <div class="container">
+    <div class="section-label">Color System</div>
+    <h2 class="section-title">Palette</h2>
+    <p class="section-desc">Extracted from the app icon. Built around deep dark backgrounds, neon violet-magenta gradients, and soft glow accents.</p>
+
+    <!-- Brand Core -->
+    <h3 class="mt-48" style="font-size:16px;font-weight:600;color:var(--text-2);margin-bottom:20px;letter-spacing:.04em;text-transform:uppercase;font-size:11px;">Brand Core</h3>
+    <div class="grid grid-4">
+      <div class="swatch">
+        <div class="swatch-color" style="background:linear-gradient(135deg,#7C3AED,#A855F7,#D946EF,#C026D3)"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Neon Gradient</div>
+          <div class="swatch-hex">#7C3AED → #D946EF</div>
+          <div class="swatch-role">Primary mark gradient</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#8B5CF6"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Neon Violet</div>
+          <div class="swatch-hex">#8B5CF6</div>
+          <div class="swatch-role">Primary neon, accents, links</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#D946EF"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Neon Magenta</div>
+          <div class="swatch-hex">#D946EF</div>
+          <div class="swatch-role">Center glow highlight</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#A855F7"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Bright Purple</div>
+          <div class="swatch-hex">#A855F7</div>
+          <div class="swatch-role">Mid-gradient, text accent</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#4C1D95"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Blackberry</div>
+          <div class="swatch-hex">#4C1D95</div>
+          <div class="swatch-role">Formal brand anchor</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#7C3AED"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Glow Violet</div>
+          <div class="swatch-hex">#7C3AED</div>
+          <div class="swatch-role">Deeper glow base</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#F472B6"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Glow Pink</div>
+          <div class="swatch-hex">#F472B6</div>
+          <div class="swatch-role">Soft ambient glow</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#0D0618"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Deep Purple</div>
+          <div class="swatch-hex">#0D0618</div>
+          <div class="swatch-role">App icon background</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dark Theme -->
+    <h3 class="mt-40" style="font-size:11px;font-weight:600;color:var(--text-2);margin-bottom:20px;letter-spacing:.04em;text-transform:uppercase;">Dark Theme</h3>
+    <div class="grid grid-4">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#000000;border-bottom:1px solid #111;"></div>
+        <div class="swatch-info"><div class="swatch-name">OLED Black</div><div class="swatch-hex">#000000</div><div class="swatch-role">App / web base background</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#0D0618"></div>
+        <div class="swatch-info"><div class="swatch-name">Brand Dark</div><div class="swatch-hex">#0D0618</div><div class="swatch-role">Premium dark background</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1A0A35"></div>
+        <div class="swatch-info"><div class="swatch-name">Surface Dark</div><div class="swatch-hex">#1A0A35</div><div class="swatch-role">Cards, panels, modals</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#221344"></div>
+        <div class="swatch-info"><div class="swatch-name">Surface Raised</div><div class="swatch-hex">#221344</div><div class="swatch-role">Elevated / hover surface</div></div>
+      </div>
+    </div>
+
+    <!-- Light Theme -->
+    <h3 class="mt-40" style="font-size:11px;font-weight:600;color:var(--text-2);margin-bottom:20px;letter-spacing:.04em;text-transform:uppercase;">Light Theme (Status White)</h3>
+    <div class="grid grid-4">
+      <div class="swatch" style="border-color:#E4E4E7;">
+        <div class="swatch-color" style="background:#F9FAFB;border-bottom:1px solid #E4E4E7;"></div>
+        <div class="swatch-info" style="background:#fff;"><div class="swatch-name" style="color:#18181B;">Off-White</div><div class="swatch-hex" style="color:#71717A;">#F9FAFB</div><div class="swatch-role" style="color:#A1A1AA;">Base background</div></div>
+      </div>
+      <div class="swatch" style="border-color:#E4E4E7;">
+        <div class="swatch-color" style="background:#FFFFFF;border-bottom:1px solid #E4E4E7;"></div>
+        <div class="swatch-info" style="background:#fff;"><div class="swatch-name" style="color:#18181B;">White</div><div class="swatch-hex" style="color:#71717A;">#FFFFFF</div><div class="swatch-role" style="color:#A1A1AA;">Surface, cards</div></div>
+      </div>
+      <div class="swatch" style="border-color:#E4E4E7;">
+        <div class="swatch-color" style="background:#18181B;"></div>
+        <div class="swatch-info" style="background:#fff;"><div class="swatch-name" style="color:#18181B;">Text Dark</div><div class="swatch-hex" style="color:#71717A;">#18181B</div><div class="swatch-role" style="color:#A1A1AA;">Primary text on light</div></div>
+      </div>
+      <div class="swatch" style="border-color:#E4E4E7;">
+        <div class="swatch-color" style="background:#E4E4E7;"></div>
+        <div class="swatch-info" style="background:#fff;"><div class="swatch-name" style="color:#18181B;">Soft Border</div><div class="swatch-hex" style="color:#71717A;">#E4E4E7</div><div class="swatch-role" style="color:#A1A1AA;">Borders on light surfaces</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TYPOGRAPHY ────────────────────────────────────── -->
+<section class="section" id="typography">
+  <div class="container">
+    <div class="section-label">Typography</div>
+    <h2 class="section-title">Type Scale</h2>
+    <p class="section-desc">Inter on web. SF Pro Display / SF Pro Text on iOS. Roboto / Inter on Android. No decorative fonts. Large headings always −0.02em letter-spacing.</p>
+
+    <div class="card mt-48">
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-name">Display</div><div class="type-meta-spec">56px / 800 / -0.03em</div></div>
+        <div class="type-sample" style="font-size:clamp(36px,5vw,56px);font-weight:800;letter-spacing:-.03em;line-height:1.1;">ejeweeka</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-name">H1</div><div class="type-meta-spec">40px / 700 / -0.02em</div></div>
+        <div class="type-sample" style="font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-.02em;line-height:1.15;">daily wellness intelligence</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-name">H2</div><div class="type-meta-spec">32px / 700 / -0.02em</div></div>
+        <div class="type-sample" style="font-size:clamp(22px,3vw,32px);font-weight:700;letter-spacing:-.02em;line-height:1.2;">Your progress this week</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-name">H3</div><div class="type-meta-spec">24px / 600 / -0.015em</div></div>
+        <div class="type-sample" style="font-size:24px;font-weight:600;letter-spacing:-.015em;line-height:1.3;">Sleep quality overview</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-name">Body Large</div><div class="type-meta-spec">18px / 400 / 0</div></div>
+        <div class="type-sample" style="font-size:18px;font-weight:400;line-height:1.6;color:var(--text-2);">Track your daily habits with calm intelligence. No judgement, no pressure.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-name">Body</div><div class="type-meta-spec">16px / 400 / 0</div></div>
+        <div class="type-sample" style="font-size:16px;font-weight:400;line-height:1.55;color:var(--text-2);">Understand your patterns. Sleep, nutrition, activity and mood — in one place.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-name">Caption</div><div class="type-meta-spec">13px / 400 / +0.01em</div></div>
+        <div class="type-sample" style="font-size:13px;font-weight:400;letter-spacing:.01em;line-height:1.4;color:var(--text-3);">Last updated 2 minutes ago · Personal data</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-name">Button</div><div class="type-meta-spec">16px / 600 / -0.01em</div></div>
+        <div class="type-sample"><span style="font-size:16px;font-weight:600;letter-spacing:-.01em;">Activate Status</span></div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta"><div class="type-meta-name">Microcopy</div><div class="type-meta-spec">11px / 500 / +0.02em</div></div>
+        <div class="type-sample" style="font-size:11px;font-weight:500;letter-spacing:.02em;color:var(--text-3);">DAILY WELLNESS INTELLIGENCE</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ASSETS ────────────────────────────────────────── -->
+<section class="section" id="assets">
+  <div class="container">
+    <div class="section-label">Asset Sizes</div>
+    <h2 class="section-title">iOS App Icon Sizes</h2>
+    <p class="section-desc">All sizes generated from the 1024×1024 master. iOS applies corner rounding automatically — always submit solid square icons.</p>
+
+    <div class="size-grid mt-48">
+      <div class="size-item"><img class="size-img" src="../assets/app-icon/ios-120.png" alt="" style="width:60px;height:60px;"><div class="size-lbl">120×120<br>@3x</div></div>
+      <div class="size-item"><img class="size-img" src="../assets/app-icon/ios-80.png" alt="" style="width:40px;height:40px;"><div class="size-lbl">80×80<br>@2x</div></div>
+      <div class="size-item"><img class="size-img" src="../assets/app-icon/ios-60.png" alt="" style="width:30px;height:30px;"><div class="size-lbl">60×60<br>@1x</div></div>
+      <div class="size-item"><img class="size-img" src="../assets/app-icon/ios-58.png" alt="" style="width:29px;height:29px;"><div class="size-lbl">58×58<br>Settings</div></div>
+      <div class="size-item"><img class="size-img" src="../assets/app-icon/ios-40.png" alt="" style="width:20px;height:20px;"><div class="size-lbl">40×40<br>Spotlight</div></div>
+      <div class="size-item"><img class="size-img" src="../assets/app-icon/ios-29.png" alt="" style="width:20px;height:20px;"><div class="size-lbl">29×29<br>Settings</div></div>
+    </div>
+
+    <h3 class="mt-48" style="font-size:18px;font-weight:600;margin-bottom:16px">Favicon System</h3>
+    <div class="size-grid">
+      <div class="size-item"><img class="size-img" src="../assets/favicon/favicon-48.png" alt="" style="width:48px;height:48px;"><div class="size-lbl">48px<br>favicon</div></div>
+      <div class="size-item"><img class="size-img" src="../assets/favicon/favicon-32.png" alt="" style="width:32px;height:32px;"><div class="size-lbl">32px<br>favicon</div></div>
+      <div class="size-item"><img class="size-img" src="../assets/favicon/favicon-16.png" alt="" style="width:16px;height:16px;"><div class="size-lbl">16px<br>favicon</div></div>
+      <div class="size-item"><img class="size-img" src="../assets/favicon/apple-touch-icon.png" alt="" style="width:60px;height:60px;border-radius:12px;"><div class="size-lbl">180px<br>apple-touch</div></div>
+      <div class="size-item"><img class="size-img" src="../assets/favicon/pwa-192.png" alt="" style="width:48px;height:48px;border-radius:12px;"><div class="size-lbl">192px<br>PWA</div></div>
+      <div class="size-item"><img class="size-img" src="../assets/favicon/pwa-512.png" alt="" style="width:64px;height:64px;border-radius:16px;"><div class="size-lbl">512px<br>PWA</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATUS ────────────────────────────────────────── -->
+<section class="section" id="status">
+  <div class="container">
+    <div class="section-label">Access Levels</div>
+    <h2 class="section-title">Status System</h2>
+    <p class="section-desc">
+      Access levels are called <strong>Status</strong>, not "subscription", "plan", or "tier". Compliance-aware wording — reduces App Store review risk.
+    </p>
+    <div class="card mt-16" style="background:rgba(245,158,11,.06);border-color:rgba(245,158,11,.2);">
+      <div class="card-body" style="font-size:13px;">
+        <strong style="color:var(--status-gold);">Terminology rule:</strong> Never use "subscription", "price", "buy", "tariff", "купить", "цена", "тариф", "подписка" in any UI copy. Use: "статус", "открыть статус", "активировать статус", "возможности статуса". This approach <em>reduces</em> moderation risk — it does not guarantee App Store approval.
+      </div>
+    </div>
+
+    <div class="status-cards mt-32">
+      <div class="sc sc-white">
+        <div class="sc-badge">Status White</div>
+        <div class="sc-title">Essential access</div>
+        <div class="sc-desc">Core features. Clean light interface. A complete experience — not a "free tier".</div>
+        <a class="sc-cta" href="#">Activate Status</a>
+      </div>
+      <div class="sc sc-gold">
+        <div class="sc-badge">✦ Status Gold</div>
+        <div class="sc-title">Full access</div>
+        <div class="sc-desc">All features unlocked. Priority insights, advanced analytics, and personalized intelligence.</div>
+        <a class="sc-cta" href="#">Open Status Gold</a>
+      </div>
+      <div class="sc sc-black">
+        <div class="sc-badge">● Status Black</div>
+        <div class="sc-title">Maximum access</div>
+        <div class="sc-desc">The deepest level. Early access to new features. For those who want everything.</div>
+        <a class="sc-cta" href="#">Explore Status Black</a>
+      </div>
+      <div class="sc sc-family">
+        <div class="sc-badge">♦ Family Gold</div>
+        <div class="sc-title">Family access</div>
+        <div class="sc-desc">All Family Gold members get full access. Up to 6 people. Warm, shared wellness.</div>
+        <a class="sc-cta" href="#">Open Family Status</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── UI COMPONENTS ─────────────────────────────────── -->
+<section class="section" id="ui">
+  <div class="container">
+    <div class="section-label">UI Components</div>
+    <h2 class="section-title">Components & Screens</h2>
+
+    <!-- Buttons -->
+    <h3 class="mt-48" style="font-size:16px;font-weight:600;margin-bottom:20px;">Buttons</h3>
+    <div class="card">
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+        <a class="btn btn-primary">Activate Status</a>
+        <a class="btn btn-secondary">Learn More</a>
+        <a class="btn btn-ghost">See all features →</a>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:16px;">
+        <a class="btn btn-primary" style="background:var(--status-gold);color:#000;box-shadow:0 0 20px rgba(245,158,11,.3);">Open Status Gold</a>
+        <a class="btn btn-secondary" style="border-color:rgba(139,92,246,.3);color:var(--brand-bright);">View capabilities</a>
+      </div>
+    </div>
+
+    <!-- Splash Screen -->
+    <h3 class="mt-48" style="font-size:16px;font-weight:600;margin-bottom:20px;">Splash Screen</h3>
+    <div class="splash-mock">
+      <img src="../assets/logo/eje-app-icon-master@2x.png" alt="ejeweeka">
+      <span class="splash-name">ejeweeka</span>
+      <span class="splash-sub">daily wellness</span>
+    </div>
+
+    <!-- Insight / Progress Cards -->
+    <h3 class="mt-48" style="font-size:16px;font-weight:600;margin-bottom:20px;">Insight Cards</h3>
+    <div class="grid grid-2">
+      <div class="insight-card">
+        <div class="insight-top">
+          <div>
+            <div class="insight-label">Sleep</div>
+            <div class="insight-value">7h 42m</div>
+            <div class="insight-sub" style="color:#10B981;">+18 min vs last week</div>
+          </div>
+          <span class="insight-badge">↑ Improving</span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:78%"></div></div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-top">
+          <div>
+            <div class="insight-label">Nutrition</div>
+            <div class="insight-value">1,840</div>
+            <div class="insight-sub">kcal · 82% of target</div>
+          </div>
+          <span class="insight-badge">On track</span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:82%;background:linear-gradient(90deg,#10B981,#34D399);"></div></div>
+      </div>
+    </div>
+
+    <!-- Notification Cards -->
+    <h3 class="mt-32" style="font-size:16px;font-weight:600;margin-bottom:20px;">Notification Cards</h3>
+    <div style="display:flex;flex-direction:column;gap:8px;max-width:400px;">
+      <div class="notif">
+        <div class="notif-icon">😴</div>
+        <div>
+          <div class="notif-title">Sleep window in 30 min</div>
+          <div class="notif-body">Your best window based on recent patterns. No alarm needed tonight.</div>
+          <div class="notif-time">10:28 PM</div>
+        </div>
+      </div>
+      <div class="notif">
+        <div class="notif-icon" style="background:linear-gradient(135deg,rgba(245,158,11,.3),rgba(245,158,11,.1));color:var(--status-gold);">✦</div>
+        <div>
+          <div class="notif-title">Status Gold insight ready</div>
+          <div class="notif-body">Your weekly wellness report is now available.</div>
+          <div class="notif-time">9:01 AM</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Website Header Mockup — Dark -->
+    <h3 class="mt-48" style="font-size:16px;font-weight:600;margin-bottom:12px;">Website Header — Dark</h3>
+    <div class="mockup-frame">
+      <div class="mockup-header">
+        <div class="logo-lockup">
+          <img src="../assets/logo/eje-app-icon-master@2x.png" alt="" style="width:32px;height:32px;border-radius:8px;">
+          <span style="font-size:16px;font-weight:600;letter-spacing:-.01em;color:#fff;">ejeweeka</span>
+        </div>
+        <div style="display:flex;gap:24px;align-items:center;">
+          <span style="font-size:14px;color:var(--text-2);">Features</span>
+          <span style="font-size:14px;color:var(--text-2);">Status</span>
+          <span style="font-size:14px;color:var(--text-2);">About</span>
+          <a class="btn btn-primary" style="padding:10px 20px;font-size:14px;">Open Status</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Website Header Mockup — Light (base theme) -->
+    <h3 class="mt-24" style="font-size:16px;font-weight:600;margin-bottom:12px;">Website Header — White (base theme)</h3>
+    <div class="mockup-frame" style="background:#F9FAFB;border-color:#E4E4E7;">
+      <div class="mockup-header" style="border-bottom-color:#E4E4E7;">
+        <div class="logo-lockup">
+          <img src="../assets/logo/eje-mark-transparent@2x.png" alt="" style="height:32px;width:auto;">
+          <span style="font-size:16px;font-weight:600;letter-spacing:-.01em;color:#4C1D95;">ejeweeka</span>
+        </div>
+        <div style="display:flex;gap:24px;align-items:center;">
+          <span style="font-size:14px;color:#52525B;">Features</span>
+          <span style="font-size:14px;color:#52525B;">Status</span>
+          <span style="font-size:14px;color:#52525B;">About</span>
+          <a class="btn btn-primary" style="padding:10px 20px;font-size:14px;">Open Status</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Website Footer — Dark -->
+    <h3 class="mt-32" style="font-size:16px;font-weight:600;margin-bottom:12px;">Website Footer — Dark</h3>
+    <div class="mockup-frame">
+      <div class="mockup-body" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+        <div class="logo-lockup">
+          <img src="../assets/app-icon/ios-29.png" alt="" style="width:20px;height:20px;border-radius:5px;">
+          <span style="font-size:13px;color:var(--text-3);">ejeweeka</span>
+        </div>
+        <div style="font-size:12px;color:var(--text-3);">Privacy · Terms · Support — © 2026 ejeweeka</div>
+      </div>
+    </div>
+
+    <!-- Website Footer — Light -->
+    <h3 class="mt-16" style="font-size:16px;font-weight:600;margin-bottom:12px;">Website Footer — White</h3>
+    <div class="mockup-frame" style="background:#F9FAFB;border-color:#E4E4E7;">
+      <div class="mockup-body" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+        <div class="logo-lockup">
+          <img src="../assets/logo/eje-mark-transparent@2x.png" alt="" style="height:20px;width:auto;">
+          <span style="font-size:13px;color:#7C3AED;font-weight:600;">ejeweeka</span>
+        </div>
+        <div style="font-size:12px;color:#A1A1AA;">Privacy · Terms · Support — © 2026 ejeweeka</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── USAGE RULES ────────────────────────────────────── -->
+<section class="section" id="usage">
+  <div class="container">
+    <div class="section-label">Logo Usage</div>
+    <h2 class="section-title">Rules & Do/Don'ts</h2>
+
+    <div class="grid grid-2 mt-48">
+      <div>
+        <h3 style="font-size:14px;font-weight:600;color:#10B981;margin-bottom:16px;">✓ Do</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="usage-item"><span class="usage-icon ok">✓</span><div class="usage-body">Use app icon master on dark / OLED backgrounds with full glow</div></div>
+          <div class="usage-item"><span class="usage-icon ok">✓</span><div class="usage-body">Use transparent mark on dark backgrounds (site, splash, presentations)</div></div>
+          <div class="usage-item"><span class="usage-icon ok">✓</span><div class="usage-body">Scale proportionally — width AND height together</div></div>
+          <div class="usage-item"><span class="usage-icon ok">✓</span><div class="usage-body">Use tiny 29–40px favicon-optimized PNG for small UI placements</div></div>
+          <div class="usage-item"><span class="usage-icon ok">✓</span><div class="usage-body">Use monochrome mark (app-icon desaturated) for documents and email</div></div>
+          <div class="usage-item"><span class="usage-icon ok">✓</span><div class="usage-body">Maintain clear space of at least 0.5× icon height on all sides</div></div>
+          <div class="usage-item"><span class="usage-icon ok">✓</span><div class="usage-body">Write <strong>ejeweeka</strong> — always lowercase, everywhere</div></div>
+        </div>
+      </div>
+      <div>
+        <h3 style="font-size:14px;font-weight:600;color:#EF4444;margin-bottom:16px;">✗ Don't</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="usage-item"><span class="usage-icon no">✗</span><div class="usage-body">Use capital letters: <strong>Ejeweeka, EJEWEEKA, EjeWeeka</strong></div></div>
+          <div class="usage-item"><span class="usage-icon no">✗</span><div class="usage-body">Stretch, compress, or rotate the mark</div></div>
+          <div class="usage-item"><span class="usage-icon no">✗</span><div class="usage-body">Change the smile shape, letter spacing, or eje proportions</div></div>
+          <div class="usage-item"><span class="usage-icon no">✗</span><div class="usage-body">Place the neon mark on white/light backgrounds without proper masking — glow looks dirty</div></div>
+          <div class="usage-item"><span class="usage-icon no">✗</span><div class="usage-body">Use the complex neon logo at 16px — use tiny favicon-optimized version instead</div></div>
+          <div class="usage-item"><span class="usage-icon no">✗</span><div class="usage-body">Add medical symbols: cross, heart, leaf, scale, fork, spoon, pulse, pill</div></div>
+          <div class="usage-item"><span class="usage-icon no">✗</span><div class="usage-body">Make the entire wordmark a gradient — gradient on the mark only</div></div>
+          <div class="usage-item"><span class="usage-icon no">✗</span><div class="usage-body">Place logo on noisy, photographic, or pattern-heavy backgrounds</div></div>
+          <div class="usage-item"><span class="usage-icon no">✗</span><div class="usage-body">Use cheap drop shadows — use glow or no shadow</div></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="mt-48" style="font-size:16px;font-weight:600;margin-bottom:20px;">When to use which version</h3>
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="card-label">App Icon Master</div>
+        <div class="card-body">App Store, Google Play, social avatar, PWA icon, Telegram, email avatar, any platform expecting a square icon.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Transparent Neon Mark</div>
+        <div class="card-body">Website header/hero, splash screen, onboarding, presentations on dark backgrounds. Refined mask required for light backgrounds.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Tiny Mark (favicon)</div>
+        <div class="card-body">Browser tab (16/32/48px), app notification badges, small UI contexts where full detail can't render. Use favicon-NN.png files.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Horizontal Lockup</div>
+        <div class="card-body">Website nav header, in-app navigation bar (if logo is shown), partner placements, presentation headers.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Vertical Lockup</div>
+        <div class="card-body">Splash screen, welcome screen, onboarding first slide, presentation title slide. Center-aligned, OLED background.</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Monochrome (desaturated icon)</div>
+        <div class="card-body">PDF documents, invoices, email signatures (non-HTML), printed materials. Never the neon version on white paper.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TOKENS ─────────────────────────────────────────── -->
+<section class="section" id="tokens">
+  <div class="container">
+    <div class="section-label">Design Tokens</div>
+    <h2 class="section-title">CSS Variables</h2>
+    <p class="section-desc">Import <code style="font-size:13px;background:var(--glass);padding:2px 6px;border-radius:4px;">brandbook/tokens/colors.css</code> at your app root.</p>
+
+    <div class="code-block mt-32">
+<span class="token-comt">/* ejeweeka — brand core */</span>
+<span class="token-var">--color-brand-blackberry</span>:      <span class="token-val">#4C1D95</span>;
+<span class="token-var">--color-brand-neon-violet</span>:      <span class="token-val">#8B5CF6</span>;
+<span class="token-var">--color-brand-neon-magenta</span>:     <span class="token-val">#D946EF</span>;
+<span class="token-var">--color-brand-bright-purple</span>:    <span class="token-val">#A855F7</span>;
+<span class="token-var">--color-brand-glow-pink</span>:        <span class="token-val">#F472B6</span>;
+<span class="token-var">--color-brand-glow-violet</span>:      <span class="token-val">#7C3AED</span>;
+
+<span class="token-comt">/* backgrounds */</span>
+<span class="token-var">--color-bg-oled</span>:                <span class="token-val">#000000</span>;
+<span class="token-var">--color-bg-dark</span>:                <span class="token-val">#0D0618</span>;
+<span class="token-var">--color-surface-dark</span>:           <span class="token-val">#1A0A35</span>;
+
+<span class="token-comt">/* text */</span>
+<span class="token-var">--color-text-primary-dark</span>:      <span class="token-val">#FFFFFF</span>;
+<span class="token-var">--color-text-secondary-dark</span>:    <span class="token-val">#A1A1AA</span>;
+
+<span class="token-comt">/* status */</span>
+<span class="token-var">--color-status-white</span>:           <span class="token-val">#F9FAFB</span>;
+<span class="token-var">--color-status-gold</span>:            <span class="token-val">#F59E0B</span>;
+<span class="token-var">--color-status-black</span>:           <span class="token-val">#000000</span>;
+<span class="token-var">--color-status-family-gold</span>:     <span class="token-val">#D97706</span>;
+    </div>
+
+    <h3 class="mt-32" style="font-size:16px;font-weight:600;margin-bottom:16px;">Tailwind Config</h3>
+    <div class="code-block">
+<span class="token-comt">// tailwind.config.js</span>
+<span class="token-key">const</span> ejeweekaTokens = require(<span class="token-val">'./brandbook/tokens/tailwind.tokens.js'</span>);
+
+module.exports = {
+  theme: {
+    extend: ejeweekaTokens,
+  },
+};
+    </div>
+
+    <h3 class="mt-32" style="font-size:16px;font-weight:600;margin-bottom:16px;">Favicon HTML</h3>
+    <div class="code-block">
+<span class="token-comt">&lt;!-- Paste in &lt;head&gt; --&gt;</span>
+&lt;<span class="token-key">link</span> rel=<span class="token-val">"icon"</span> href=<span class="token-val">"/favicon.ico"</span> sizes=<span class="token-val">"any"</span>&gt;
+&lt;<span class="token-key">link</span> rel=<span class="token-val">"icon"</span> href=<span class="token-val">"/favicon-32.png"</span> type=<span class="token-val">"image/png"</span> sizes=<span class="token-val">"32x32"</span>&gt;
+&lt;<span class="token-key">link</span> rel=<span class="token-val">"apple-touch-icon"</span> href=<span class="token-val">"/apple-touch-icon.png"</span>&gt;
+&lt;<span class="token-key">link</span> rel=<span class="token-val">"manifest"</span> href=<span class="token-val">"/manifest.json"</span>&gt;
+    </div>
+
+    <h3 class="mt-32" style="font-size:16px;font-weight:600;margin-bottom:16px;">PWA Manifest</h3>
+    <div class="code-block">
+{
+  <span class="token-key">"name"</span>: <span class="token-val">"ejeweeka"</span>,
+  <span class="token-key">"short_name"</span>: <span class="token-val">"ejeweeka"</span>,
+  <span class="token-key">"icons"</span>: [
+    { <span class="token-key">"src"</span>: <span class="token-val">"/pwa-192.png"</span>, <span class="token-key">"sizes"</span>: <span class="token-val">"192x192"</span>, <span class="token-key">"type"</span>: <span class="token-val">"image/png"</span> },
+    { <span class="token-key">"src"</span>: <span class="token-val">"/pwa-512.png"</span>, <span class="token-key">"sizes"</span>: <span class="token-val">"512x512"</span>, <span class="token-key">"type"</span>: <span class="token-val">"image/png"</span> }
+  ],
+  <span class="token-key">"theme_color"</span>: <span class="token-val">"#0D0618"</span>,
+  <span class="token-key">"background_color"</span>: <span class="token-val">"#000000"</span>
+}
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ────────────────────────────────────────── -->
+<footer style="border-top:1px solid var(--border);">
+  <div class="footer">
+    <div class="footer-brand">
+      <img src="../assets/logo/eje-app-icon-master.png" alt="ejeweeka">
+      <span>ejeweeka brand system</span>
+    </div>
+    <div class="footer-meta">v1.0 · 2026 · premium wellness intelligence</div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>AIDiet — Финальная цветовая схема</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #161616;
+  min-height: 100vh;
+  padding: 32px 24px 80px;
+}
+h1 { color: #fff; font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+.subtitle { color: #666; font-size: 13px; text-align: center; margin-bottom: 36px; }
+
+/* ── Финальная схема CSS-переменных ──────────────────────── */
+:root {
+  /* Фон */
+  --bg-app:    #FAFAFA;     /* ← из брендбука B */
+  --surface:   #FFFFFF;
+
+  /* Основной оранжевый */
+  --primary:        #F5922B;  /* ← из скриншотов A */
+  --cta-gradient:   linear-gradient(135deg, #F59520, #E07018); /* ← A */
+  --ring-gradient:  linear-gradient(135deg, #F59520, #E07018); /* ← НОВОЕ (как кнопки) */
+
+  /* Макро-нутриенты */
+  --color-protein:  #52B044;  /* ← A: яркий зелёный */
+  --color-fat:      #F09030;  /* ← A: оранжевый */
+  --color-carbs:    #42A5F5;  /* ← НОВОЕ: синий */
+
+  /* Доменные */
+  --color-sleep:    #9575CD;  /* ← из брендбука B: лавандовый */
+  --color-hydration:#42A5F5;  /* ← брендбук */
+
+  /* Gold */
+  --gold-gradient:  linear-gradient(135deg, #FFD700, #C8A96E); /* ← из B */
+
+  /* Зелёный (чип 94%, тогл) */
+  --green:          #52B044;
+  --green-light:    #E8F5E2;
+  --toggle-on:      #34C759;  /* ← A: iOS-зелёный */
+
+  /* Чипы нутриентов */
+  --chip-kcal-bg:  #FFF0E5; --chip-kcal-fg:  #E07018;
+  --chip-prot-bg:  #EEF8E8; --chip-prot-fg:  #52B044;
+  --chip-fat-bg:   #FFF3E0; --chip-fat-fg:   #F09030;
+  --chip-carb-bg:  #E3F2FD; --chip-carb-fg:  #1E88E5; /* ← НОВОЕ: сине-голубой */
+
+  /* Текст */
+  --text-primary:  #2E2E2E;
+  --text-body:     #2E2E2E;
+  --text-muted:    #757575;
+
+  /* Рамки */
+  --divider:       #E0E0E0;
+  --border-input:  #E0E0E0;
+
+  /* Таб-бар */
+  --tab-inactive:  #9E9E9E;
+}
+
+/* ── Сетка 4 телефона ────────────────────────────────────── */
+.phones-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 393px);
+  gap: 28px;
+  justify-content: center;
+  align-items: start;
+}
+
+/* ── Фрейм телефона ──────────────────────────────────────── */
+.phone {
+  width: 393px;
+  border-radius: 48px;
+  overflow: hidden;
+  background: var(--bg-app);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 32px 80px rgba(0,0,0,0.65);
+  position: relative;
+}
+.phone-inner { display: flex; flex-direction: column; min-height: 852px; }
+.dynamic-island {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  width: 126px; height: 37px; background: #000; border-radius: 20px; z-index: 10;
+}
+.status-bar {
+  height: 59px; display: flex; align-items: flex-end;
+  padding: 0 28px 10px; justify-content: space-between;
+}
+.status-time { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.status-icons { font-size: 12px; color: var(--text-primary); display: flex; gap: 5px; align-items: center; }
+
+.screen-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.8px;
+  text-transform: uppercase; color: #888; text-align: center; padding: 6px 0 0;
+}
+.screen-content { flex: 1; padding: 0 16px; overflow: hidden; }
+
+/* Хедер */
+.screen-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-top: 10px; }
+.screen-header h2 { font-size: 24px; font-weight: 700; color: var(--text-primary); }
+.screen-header p  { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.bell-btn { width: 40px; height: 40px; border-radius: 20px; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+/* Карточка */
+.card { background: var(--surface); border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 12px; }
+
+/* ── КОЛЬЦО КАЛОРИЙ ──────────────────────────────────────── */
+.calorie-ring-wrap { display: flex; align-items: center; gap: 20px; padding: 4px 0 10px; }
+.ring-info h3 { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.ring-info p  { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.ring-info .ring-sub { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+
+/* Макро-бары */
+.macro-list { display: flex; flex-direction: column; gap: 10px; }
+.macro-row { display: flex; align-items: center; justify-content: space-between; }
+.macro-label { font-size: 14px; color: var(--text-body); width: 84px; }
+.macro-track { flex: 1; height: 6px; background: var(--divider); border-radius: 3px; margin: 0 12px; overflow: hidden; }
+.macro-fill { height: 100%; border-radius: 3px; }
+.macro-val { font-size: 13px; color: var(--text-muted); width: 40px; text-align: right; }
+
+/* Секция */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin: 18px 0 12px; }
+.section-header h3 { font-size: 17px; font-weight: 600; color: var(--text-primary); }
+.section-header span { font-size: 13px; color: var(--primary); font-weight: 500; }
+
+/* Карточки блюд */
+.meals-scroll { display: flex; gap: 10px; overflow: hidden; }
+.meal-card { flex-shrink: 0; width: 112px; background: var(--surface); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; }
+.meal-photo { width: 112px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+.meal-info { padding: 8px 8px 10px; }
+.meal-info h4 { font-size: 12px; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
+.meal-info p  { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+/* Quick actions */
+.quick-actions { display: flex; gap: 0; justify-content: space-around; margin: 6px 0 20px; }
+.qa-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.qa-circle { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.qa-item span { font-size: 11px; color: var(--text-muted); }
+
+/* Таб-бар */
+.tab-bar { height: 83px; background: var(--surface); display: flex; align-items: flex-start; padding-top: 10px; border-top: 1px solid var(--divider); }
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+.tab-icon { font-size: 22px; }
+.tab-label { font-size: 10px; font-weight: 500; }
+
+/* ── ЭКРАН 2: AI-ОТЧЁТ ───────────────────────────────────── */
+.score-ring { position: relative; display: inline-block; }
+.score-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+.score-num { font-size: 40px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+.score-denom { font-size: 16px; color: var(--text-muted); }
+
+.metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.metric-card { background: var(--surface); border-radius: 16px; padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.metric-head { font-size: 13px; color: var(--text-muted); margin-bottom: 4px; }
+.metric-val { font-size: 20px; font-weight: 700; color: var(--text-primary); }
+.metric-val span { font-size: 13px; font-weight: 400; color: var(--text-muted); }
+.metric-track { height: 4px; background: var(--divider); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+.metric-fill { height: 100%; border-radius: 2px; }
+
+/* ── ЭКРАН 3: ФОТО-АНАЛИЗ ────────────────────────────────── */
+.nav-bar { display: flex; align-items: center; padding: 8px 4px; gap: 10px; }
+.nav-back { font-size: 22px; color: var(--text-primary); }
+.nav-title { font-size: 17px; font-weight: 600; color: var(--text-primary); }
+
+.hero-photo {
+  width: 100%; height: 216px;
+  background: linear-gradient(135deg, #c8d4b0, #a8b890);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 64px; margin-bottom: 16px; position: relative;
+}
+.gold-badge {
+  position: absolute; top: 12px; right: 12px;
+  background: var(--gold-gradient);
+  color: #fff; font-size: 12px; font-weight: 700;
+  padding: 5px 12px; border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(200,169,110,0.4);
+}
+
+.dish-title { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; }
+
+.confidence-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--green-light); color: var(--green);
+  font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 20px; margin-bottom: 14px;
+}
+.conf-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+
+.nutrient-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.n-chip { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 12px; }
+.n-chip .n-val { font-size: 14px; font-weight: 700; }
+.n-chip .n-sub { font-size: 11px; color: var(--text-muted); }
+.chip-kcal { background: var(--chip-kcal-bg); color: var(--chip-kcal-fg); }
+.chip-prot { background: var(--chip-prot-bg); color: var(--chip-prot-fg); }
+.chip-fat  { background: var(--chip-fat-bg);  color: var(--chip-fat-fg); }
+.chip-carb { background: var(--chip-carb-bg); color: var(--chip-carb-fg); }
+
+.portion { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+.input-field {
+  width: 100%; padding: 13px 16px; border: 1px solid var(--border-input);
+  border-radius: 12px; font-size: 15px; color: var(--text-muted);
+  background: var(--surface); margin-bottom: 14px; font-family: inherit;
+}
+.btn-primary {
+  width: 100%; height: 52px; border-radius: 28px;
+  background: var(--cta-gradient); border: none;
+  color: #fff; font-size: 16px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 10px; font-family: inherit;
+  box-shadow: 0 4px 16px rgba(224,112,24,0.3);
+}
+.btn-secondary {
+  width: 100%; height: 48px; border-radius: 12px;
+  background: var(--surface); border: 1px solid var(--border-input);
+  color: var(--text-body); font-size: 14px; font-weight: 500; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; margin-bottom: 10px; font-family: inherit;
+}
+.upsell-link { text-align: center; font-size: 13px; color: var(--text-muted); }
+.upsell-link a { color: var(--primary); text-decoration: none; font-weight: 500; }
+
+/* ── ЭКРАН 4: ЗДОРОВЬЕ ───────────────────────────────────── */
+.progress-label { text-align: right; font-size: 14px; color: var(--text-muted); margin-bottom: 14px; }
+.onb-title { font-size: 26px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; line-height: 1.2; }
+.onb-sub   { font-size: 15px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+
+.platform-btns { display: flex; gap: 10px; margin-bottom: 22px; }
+.platform-btn {
+  flex: 1; height: 40px; border: 1px solid var(--border-input);
+  border-radius: 20px; background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px; font-size: 13px; font-weight: 500; color: var(--text-body); cursor: pointer;
+}
+
+.toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 22px; }
+.toggle-card {
+  background: var(--surface); border-radius: 16px; padding: 18px 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.tc-icon  { font-size: 36px; }
+.tc-label { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+.toggle { width: 51px; height: 31px; border-radius: 16px; display: flex; align-items: center; padding: 2px; cursor: pointer; }
+.toggle.on  { background: var(--toggle-on); }
+.toggle.off { background: #E5E5EA; }
+.toggle-thumb { width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+.toggle.on  .toggle-thumb { transform: translateX(20px); }
+
+.skip-link { text-align: center; font-size: 15px; color: var(--text-muted); padding: 10px 0 24px; }
+
+/* ── Таблица решений ─────────────────────────────────────── */
+.decision-table {
+  max-width: 1100px; margin: 48px auto 0;
+  background: #1E1E1E; border-radius: 20px; padding: 28px 32px;
+}
+.decision-table h2 { color: #fff; font-size: 17px; font-weight: 700; margin-bottom: 20px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { color: #666; font-weight: 500; text-align: left; padding: 6px 14px; border-bottom: 1px solid #2a2a2a; }
+td { color: #ddd; padding: 9px 14px; border-bottom: 1px solid #252525; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+.swatch { display: inline-block; width: 20px; height: 20px; border-radius: 5px; vertical-align: middle; margin-right: 7px; border: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; }
+.grad-swatch { display: inline-block; width: 60px; height: 20px; border-radius: 5px; vertical-align: middle; margin-right: 7px; border: 1px solid rgba(255,255,255,0.08); }
+.token { font-family: monospace; font-size: 12px; color: #aaa; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.badge-a  { background: rgba(245,146,43,0.2);  color: #F5922B; }
+.badge-b  { background: rgba(149,117,205,0.2); color: #9575CD; }
+.badge-new{ background: rgba(66,165,245,0.2);  color: #42A5F5; }
+.diff-label { color: #fff; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>AIDiet — Финальная цветовая схема</h1>
+<p class="subtitle">Схема A как основа · 3 исправления из B · 3 новых значения</p>
+
+<div class="phones-grid">
+
+  <!-- ── Экран 1: Главная ───────────────────────────────── -->
+  <div class="phone">
+    <div class="dynamic-island"></div>
+    <div class="phone-inner">
+      <div class="screen-label">Главная</div>
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+      <div class="screen-content">
+        <div class="screen-header">
+          <div>
+            <h2>Привет, Анна 👋</h2>
+            <p>15 января</p>
+          </div>
+          <div class="bell-btn">🔔</div>
+        </div>
+
+        <!-- Кольцо с оранжевым градиентом -->
+        <div class="card">
+          <div class="calorie-ring-wrap">
+            <svg width="114" height="114" viewBox="0 0 114 114" flex-shrink="0" style="flex-shrink:0">
+              <defs>
+                <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#F59520"/>
+                  <stop offset="100%" stop-color="#E07018"/>
+                </linearGradient>
+              </defs>
+              <circle cx="57" cy="57" r="48" fill="none" stroke="#E0E0E0" stroke-width="9"/>
+              <circle cx="57" cy="57" r="48" fill="none" stroke="url(#ringGrad)" stroke-width="9"
+                stroke-dasharray="188 302" stroke-dashoffset="-40" stroke-linecap="round"
+                transform="rotate(-90 57 57)"/>
+              <text x="57" y="53" text-anchor="middle" font-size="20" font-weight="700" fill="#2E2E2E" font-family="Inter">1420</text>
+              <text x="57" y="69" text-anchor="middle" font-size="10.5" fill="#757575" font-family="Inter">/ 2000 ккал</text>
+            </svg>
+            <div class="ring-info">
+              <h3>Дневная цель</h3>
+              <p>2 200 ккал</p>
+              <p class="ring-sub">Осталось 780 ккал</p>
+            </div>
+          </div>
+          <div class="macro-list">
+            <div class="macro-row">
+              <span class="macro-label">Белки</span>
+              <div class="macro-track"><div class="macro-fill" style="width:68%;background:#52B044"></div></div>
+              <span class="macro-val">72 г</span>
+            </div>
+            <div class="macro-row">
+              <span class="macro-label">Жиры</span>
+              <div class="macro-track"><div class="macro-fill" style="width:74%;background:#F09030"></div></div>
+              <span class="macro-val">58 г</span>
+            </div>
+            <div class="macro-row">
+              <span class="macro-label">Углеводы</span>
+              <div class="macro-track"><div class="macro-fill" style="width:53%;background:#42A5F5"></div></div>
+              <span class="macro-val">180 г</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <h3>Ближайший приём пищи</h3>
+          <span>13:00 Обед</span>
+        </div>
+        <div class="meals-scroll">
+          <div class="meal-card">
+            <div class="meal-photo" style="background:linear-gradient(135deg,#e0eed8,#c8dcc0)">🥗</div>
+            <div class="meal-info"><h4>Греческий салат</h4><p>280 ккал</p></div>
+          </div>
+          <div class="meal-card">
+            <div class="meal-photo" style="background:linear-gradient(135deg,#fce8d0,#f4d0a8)">🍲</div>
+            <div class="meal-info"><h4>Куриный суп</h4><p>220 ккал</p></div>
+          </div>
+          <div class="meal-card">
+            <div class="meal-photo" style="background:linear-gradient(135deg,#eedcc8,#e0c8a8)">🍞</div>
+            <div class="meal-info"><h4>Цельнозерновой хлеб</h4><p>140 ккал</p></div>
+          </div>
+        </div>
+
+        <div class="section-header" style="margin-top:16px"><h3>Быстрые действия</h3></div>
+        <div class="quick-actions">
+          <div class="qa-item">
+            <div class="qa-circle" style="background:rgba(66,165,245,0.12)">💧</div><span>Вода</span>
+          </div>
+          <div class="qa-item">
+            <div class="qa-circle" style="background:rgba(141,110,99,0.12)">⚖️</div><span>Вес</span>
+          </div>
+          <div class="qa-item">
+            <div class="qa-circle" style="background:rgba(82,176,68,0.12)">💊</div><span>Витамины</span>
+          </div>
+          <div class="qa-item">
+            <div class="qa-circle" style="background:rgba(245,146,43,0.12)">📷</div><span>Фото</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab"><div class="tab-icon">🏠</div><div class="tab-label" style="color:#F5922B">Главная</div></div>
+        <div class="tab"><div class="tab-icon" style="opacity:.4">📋</div><div class="tab-label" style="color:#9E9E9E">План</div></div>
+        <div class="tab"><div class="tab-icon" style="opacity:.4">🛒</div><div class="tab-label" style="color:#9E9E9E">Покупки</div></div>
+        <div class="tab"><div class="tab-icon" style="opacity:.4">📊</div><div class="tab-label" style="color:#9E9E9E">Прогресс</div></div>
+        <div class="tab"><div class="tab-icon" style="opacity:.4">👤</div><div class="tab-label" style="color:#9E9E9E">Профиль</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Экран 2: AI-отчёт ──────────────────────────────── -->
+  <div class="phone">
+    <div class="dynamic-island"></div>
+    <div class="phone-inner">
+      <div class="screen-label">AI-отчёт</div>
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+      <div class="screen-content">
+        <div style="text-align:center;padding-top:10px;margin-bottom:6px">
+          <div style="font-size:22px;font-weight:700;color:var(--text-primary)">AI-отчёт</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:3px">Неделя 14–20 июля</div>
+        </div>
+        <div class="card" style="display:flex;flex-direction:column;align-items:center;padding:20px 16px 16px">
+          <div class="score-ring">
+            <svg width="144" height="144" viewBox="0 0 144 144">
+              <defs>
+                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#F59520"/>
+                  <stop offset="55%" stop-color="#E07018"/>
+                  <stop offset="100%" stop-color="#52B044"/>
+                </linearGradient>
+              </defs>
+              <circle cx="72" cy="72" r="58" fill="none" stroke="#E0E0E0" stroke-width="10"/>
+              <circle cx="72" cy="72" r="58" fill="none" stroke="url(#scoreGrad)" stroke-width="10"
+                stroke-dasharray="314 365" stroke-dashoffset="-28" stroke-linecap="round"
+                transform="rotate(-90 72 72)"/>
+            </svg>
+            <div class="score-center">
+              <div class="score-num">87</div>
+              <div class="score-denom">/100</div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:var(--text-muted);margin-top:6px">Общая оценка</div>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-head">🥗 Питание</div>
+            <div class="metric-val">91<span>/100</span></div>
+            <div class="metric-track"><div class="metric-fill" style="width:91%;background:#52B044"></div></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-head">🏃 Активность</div>
+            <div class="metric-val">78<span>/100</span></div>
+            <div class="metric-track"><div class="metric-fill" style="width:78%;background:#F5922B"></div></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-head">🌙 Сон</div>
+            <div class="metric-val">82<span>/100</span></div>
+            <div class="metric-track"><div class="metric-fill" style="width:82%;background:#9575CD"></div></div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-head">💧 Гидратация</div>
+            <div class="metric-val">74<span>/100</span></div>
+            <div class="metric-track"><div class="metric-fill" style="width:74%;background:#42A5F5"></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="font-size:17px;font-weight:600;color:var(--text-primary);margin-bottom:10px">Резюме недели</div>
+          <div style="font-size:14px;line-height:1.6;color:var(--text-body)">
+            Отличная неделя! Ты соблюдал план питания 6 дней из 7, регулярно занимался физической активностью и поддерживал здоровый режим сна.
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab"><div class="tab-icon" style="opacity:.4">🏠</div><div class="tab-label" style="color:#9E9E9E">Главная</div></div>
+        <div class="tab"><div class="tab-icon" style="opacity:.4">📋</div><div class="tab-label" style="color:#9E9E9E">План</div></div>
+        <div class="tab"><div class="tab-icon" style="opacity:.4">🛒</div><div class="tab-label" style="color:#9E9E9E">Покупки</div></div>
+        <div class="tab"><div class="tab-icon">📊</div><div class="tab-label" style="color:#F5922B">Прогресс</div></div>
+        <div class="tab"><div class="tab-icon" style="opacity:.4">👤</div><div class="tab-label" style="color:#9E9E9E">Профиль</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Экран 3: Фото-анализ ───────────────────────────── -->
+  <div class="phone">
+    <div class="dynamic-island"></div>
+    <div class="phone-inner">
+      <div class="screen-label">Фото-анализ</div>
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+      <div class="screen-content">
+        <div class="nav-bar">
+          <span class="nav-back">←</span>
+          <span class="nav-title">📷 Фото-анализ</span>
+        </div>
+        <div class="hero-photo">
+          🥗
+          <div class="gold-badge">★ Gold</div>
+        </div>
+        <div class="dish-title">Цезарь с курицей</div>
+        <div class="confidence-chip"><div class="conf-dot"></div>94% уверенность</div>
+        <div class="nutrient-chips">
+          <div class="n-chip chip-kcal">
+            <span>🔥</span>
+            <div><div class="n-val">420 ккал</div></div>
+          </div>
+          <div class="n-chip chip-prot">
+            <span>🥩</span>
+            <div><div class="n-val">32 г белки</div></div>
+          </div>
+          <div class="n-chip chip-fat">
+            <span>🧈</span>
+            <div><div class="n-val">28 г жиры</div></div>
+          </div>
+          <div class="n-chip chip-carb">
+            <span>💧</span>
+            <div><div class="n-val">18 г углеводы</div></div>
+          </div>
+        </div>
+        <div class="portion">1 порция · ~320 г</div>
+        <input class="input-field" type="text" placeholder="Уточнить блюдо…" readonly>
+        <button class="btn-primary">+ Добавить в дневник</button>
+        <button class="btn-secondary">🔄 Повторить</button>
+        <div class="upsell-link">Не Gold? <a href="#">Повысить статус →</a></div>
+      </div>
+      <div class="tab-bar">
+        <div class="tab"><div class="tab-icon">🏠</div><div class="tab-label" style="color:#F5922B">Главная</div></div>
+        <div class="tab"><div class="tab-icon" style="opacity:.4">📋</div><div class="tab-label" style="color:#9E9E9E">План</div></div>
+        <div class="tab"><div class="tab-icon" style="opacity:.4">🛒</div><div class="tab-label" style="color:#9E9E9E">Покупки</div></div>
+        <div class="tab"><div class="tab-icon" style="opacity:.4">📊</div><div class="tab-label" style="color:#9E9E9E">Прогресс</div></div>
+        <div class="tab"><div class="tab-icon" style="opacity:.4">👤</div><div class="tab-label" style="color:#9E9E9E">Профиль</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Экран 4: Подключить данные ────────────────────── -->
+  <div class="phone">
+    <div class="dynamic-island"></div>
+    <div class="phone-inner">
+      <div class="screen-label">Здоровье</div>
+      <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div>
+      </div>
+      <div class="screen-content">
+        <div class="progress-label">15 / 16</div>
+        <div class="onb-title">Подключить данные о здоровье?</div>
+        <div class="onb-sub">Мы можем получать данные о сне, шагах и тренировках из Apple Health / Google Health Connect</div>
+        <div class="platform-btns">
+          <div class="platform-btn">🍎 Apple Health</div>
+          <div class="platform-btn">🔵 Google Health Connect</div>
+        </div>
+        <div class="toggle-grid">
+          <div class="toggle-card">
+            <div class="tc-icon">🌙</div>
+            <div class="tc-label">Сон</div>
+            <div class="toggle on"><div class="toggle-thumb"></div></div>
+          </div>
+          <div class="toggle-card">
+            <div class="tc-icon">👣</div>
+            <div class="tc-label">Шаги</div>
+            <div class="toggle on"><div class="toggle-thumb"></div></div>
+          </div>
+          <div class="toggle-card">
+            <div class="tc-icon">🏋️</div>
+            <div class="tc-label">Тренировки</div>
+            <div class="toggle on"><div class="toggle-thumb"></div></div>
+          </div>
+          <div class="toggle-card">
+            <div class="tc-icon">⚖️</div>
+            <div class="tc-label">Вес</div>
+            <div class="toggle off"><div class="toggle-thumb"></div></div>
+          </div>
+        </div>
+        <button class="btn-primary">Подключить ›</button>
+        <div class="skip-link">Пропустить</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /phones-grid -->
+
+
+<!-- ── Таблица финальных решений ──────────────────────────── -->
+<div class="decision-table">
+  <h2>Финальные цветовые токены — решение</h2>
+  <table>
+    <tr>
+      <th>Токен</th>
+      <th>Значение</th>
+      <th>Источник</th>
+      <th>Назначение</th>
+    </tr>
+    <tr>
+      <td class="diff-label">--bg-app</td>
+      <td><span class="swatch" style="background:#FAFAFA;border:1px solid #444"></span>#FAFAFA</td>
+      <td><span class="badge badge-b">Брендбук B</span></td>
+      <td>Фон всех экранов</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--primary</td>
+      <td><span class="swatch" style="background:#F5922B"></span>#F5922B</td>
+      <td><span class="badge badge-a">Скриншоты A</span></td>
+      <td>Активный таб, акцентный текст, иконки</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--cta-gradient</td>
+      <td><span class="grad-swatch" style="background:linear-gradient(135deg,#F59520,#E07018)"></span>#F59520 → #E07018</td>
+      <td><span class="badge badge-a">Скриншоты A</span></td>
+      <td>CTA-кнопки, кольцо калорий</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--ring-gradient</td>
+      <td><span class="grad-swatch" style="background:linear-gradient(135deg,#F59520,#E07018)"></span>= cta-gradient</td>
+      <td><span class="badge badge-new">Новое</span></td>
+      <td>Кольцо «Дневная цель» — оранжевый градиент</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--gold-gradient</td>
+      <td><span class="grad-swatch" style="background:linear-gradient(135deg,#FFD700,#C8A96E)"></span>#FFD700 → #C8A96E</td>
+      <td><span class="badge badge-b">Брендбук B</span></td>
+      <td>Gold-бейдж, Premium CTA</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--color-protein</td>
+      <td><span class="swatch" style="background:#52B044"></span>#52B044</td>
+      <td><span class="badge badge-a">Скриншоты A</span></td>
+      <td>Бар белков, метрика «Питание»</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--color-fat</td>
+      <td><span class="swatch" style="background:#F09030"></span>#F09030</td>
+      <td><span class="badge badge-a">Скриншоты A</span></td>
+      <td>Бар жиров</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--color-carbs</td>
+      <td><span class="swatch" style="background:#42A5F5"></span>#42A5F5</td>
+      <td><span class="badge badge-new">Новое</span></td>
+      <td>Бар углеводов, плашка углеводов — синий</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--chip-carb-bg/fg</td>
+      <td><span class="swatch" style="background:#E3F2FD"></span>#E3F2FD / <span class="swatch" style="background:#1E88E5"></span>#1E88E5</td>
+      <td><span class="badge badge-new">Новое</span></td>
+      <td>Плашка «18 г углеводы» на экране Фото-анализ</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--color-sleep</td>
+      <td><span class="swatch" style="background:#9575CD"></span>#9575CD</td>
+      <td><span class="badge badge-b">Брендбук B</span></td>
+      <td>Бар Сон — лавандовый/фиолетовый</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--color-hydration</td>
+      <td><span class="swatch" style="background:#42A5F5"></span>#42A5F5</td>
+      <td><span class="badge badge-b">Брендбук B</span></td>
+      <td>Бар Гидратация — голубой</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--toggle-on</td>
+      <td><span class="swatch" style="background:#34C759"></span>#34C759</td>
+      <td><span class="badge badge-a">Скриншоты A</span></td>
+      <td>Тогл ON — iOS-зелёный</td>
+    </tr>
+    <tr>
+      <td class="diff-label">--green (чип, бары)</td>
+      <td><span class="swatch" style="background:#52B044"></span>#52B044</td>
+      <td><span class="badge badge-a">Скриншоты A</span></td>
+      <td>Чип «94% уверенность», бары успеха</td>
+    </tr>
+  </table>
+</div>
+
+</body>
+</html>

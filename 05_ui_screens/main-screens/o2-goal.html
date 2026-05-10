@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-2 Главная цель</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .choice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .choice-card {
+      background: #FFFFFF;
+      border: 1.5px solid var(--color-divider);
+      border-radius: 18px;
+      padding: 20px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .choice-card.active {
+      border-color: var(--color-primary);
+      background: #FFF7ED;
+    }
+
+    .choice-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .radio-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--color-divider);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .choice-card.active .radio-circle {
+      border-color: var(--color-primary);
+    }
+
+    .choice-card.active .radio-circle::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 10px;
+      height: 10px;
+      background: var(--color-primary);
+      border-radius: 50%;
+    }
+
+    .onboarding-tip-card {
+      background-color: #E8F5E9;
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      border: 1px solid #C8E6C9;
+    }
+
+    .onboarding-tip-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .onboarding-tip-text {
+      font-size: 13px;
+      color: #2E7D32;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    @media (max-width: 440px) {}
+  </style>
+
+  <!-- ЕДИНСТВЕННАЯ загрузка persistence (UI-утилиты, haptics, CSS) -->
+  <script src="app-utils.js"></script>
+</head>
+
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 1 из 14</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <h1 class="question-title">Какая у тебя сейчас главная цель?</h1>
+
+      <div class="choice-list">
+        <!-- АРХИТЕКТУРНОЕ РЕШЕНИЕ: Ни одна карточка НЕ имеет class="active" в HTML.
+             Активная карточка определяется ТОЛЬКО JavaScript'ом из localStorage.
+             Это устраняет корневую причину бага двойного выделения. -->
+        <div class="choice-card">
+          <span class="choice-label">Снизить вес</span>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card">
+          <span class="choice-label">Набрать мышечную массу</span>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card">
+          <span class="choice-label">Питание для кожи, ногтей, волос</span>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card">
+          <span class="choice-label">Питание при ограничениях по здоровью</span>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card">
+          <span class="choice-label">Адаптировать питание к возрасту (40+ / 50+ / 60+)</span>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card">
+          <span class="choice-label">Снизить тягу к сладкому и голод</span>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card">
+          <span class="choice-label">Улучшить самочувствие и энергию</span>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card">
+          <span class="choice-label">Восстановление после болезни/стресса</span>
+          <div class="radio-circle"></div>
+        </div>
+        <div class="choice-card">
+          <span class="choice-label">Поддержание веса</span>
+          <div class="radio-circle"></div>
+        </div>
+      </div>
+      <!-- Motivation Block -->
+      <div class="onboarding-tip-card">
+        <div class="onboarding-tip-icon">💡</div>
+        <div class="onboarding-tip-text">
+          Разные цели — принципиально разные планы. При похудении важен дефицит калорий и контроль инсулина. При наборе
+          массы — белок и тайминг питания. При усталости — железо, B12 и магний. Один шаблон не подходит всем. Именно
+          твоя цель определяет всё: соотношение БЖУ, режим питания, тип и режим активности и приоритеты по витаминам.
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="location.href='o1-country.html'">← Назад</button>
+      <button class="btn-primary disabled" id="btnNext" disabled onclick="goNext()">Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+
+  </div>
+
+  <!-- АРХИТЕКТУРА СКРИПТОВ O-2:
+       1. onboarding-state.js — загружается, создаёт window.AIDiet, гидратирует UI
+       2. Inline-скрипт — ЕДИНСТВЕННЫЙ обработчик кликов, сохраняет под КАНОНИЧЕСКИМ ключом
+       Никакого setupAutoSave для O-2: данные сохраняются при каждом клике мгновенно.
+  -->
+  <script src="onboarding-state.js"></script>
+  <script>
+    (function() {
+      // ═══════════════════════════════════════════════════════════
+      // O-2 GOAL SELECTION — SINGLE SOURCE OF TRUTH
+      // Канонический ключ: "Главная цель" (русский, единый)
+      // ═══════════════════════════════════════════════════════════
+
+      const GOAL_KEY = 'primary_goal';
+      const cards = document.querySelectorAll('.choice-card');
+
+      // 1. ГИДРАТАЦИЯ: Восстанавливаем выбор из профиля (если пользователь вернулся)
+      const profile = window.AIDiet ? window.AIDiet.getProfile() : {};
+      const savedGoal = profile[GOAL_KEY] || profile['Главная цель'] || '';
+
+      if (savedGoal) {
+        // Пользователь уже выбирал цель ранее — восстанавливаем
+        cards.forEach(card => {
+          const label = card.querySelector('.choice-label').innerText.trim();
+          if (label === savedGoal) {
+            card.classList.add('active');
+          }
+          // Никаких else — все карточки стартуют без active (HTML чистый)
+        });
+      }
+      // Если savedGoal пуст (первый визит) — ни одна карточка не выделена.
+      // Кнопка «Далее» заблокирована до клика (через глобальный валидатор).
+
+      // 2. ЕДИНСТВЕННЫЙ обработчик кликов
+      cards.forEach(card => {
+        card.addEventListener('click', () => {
+          // Снимаем active со ВСЕХ
+          cards.forEach(c => c.classList.remove('active'));
+          // Ставим active на кликнутую
+          card.classList.add('active');
+          // Сохраняем под ЕДИНСТВЕННЫМ каноническим ключом
+          const label = card.querySelector('.choice-label').innerText.trim();
+          window.AIDiet && window.AIDiet.saveField(GOAL_KEY, label);
+          // Enable next button
+          const btn = document.getElementById('btnNext');
+          btn.disabled = false;
+          btn.classList.remove('disabled');
+        });
+      });
+
+      // If already had a goal saved, enable button
+      if (savedGoal) {
+        const btn = document.getElementById('btnNext');
+        btn.disabled = false;
+        btn.classList.remove('disabled');
+      }
+
+      window.goNext = function() {
+        window.AIDiet.goNext('o3-profile.html');
+      };
+    })();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIDiet - P-4 Полный рецепт (Style C)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/duotone/style.css">
+  <style>
+    :root {
+      --color-primary: #F5922B;
+      --color-primary-gradient: linear-gradient(135deg, #F59520, #E07018);
+      --color-gold-gradient: linear-gradient(135deg, #FFD700, #C8A96E);
+      --color-bg-page: linear-gradient(180deg, #FAFAFA 0%, #F0F4FF 100%);
+      --color-surface: #FFFFFF;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #5C6370;
+      --color-text-tertiary: #9E9E9E;
+      
+      --color-glass-card: rgba(255, 255, 255, 0.65);
+      --color-glass-border: rgba(255, 255, 255, 0.6);
+      --color-glass-input: rgba(255, 255, 255, 0.5);
+      --color-glass-input-border: rgba(255, 255, 255, 0.8);
+      
+      --color-glass-shadow: 0 4px 24px rgba(0, 0, 10, 0.04);
+      --color-glow: 0 6px 20px rgba(245, 146, 43, 0.25);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: #E5E7EB;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+    }
+    
+    .phone {
+      width: 390px;
+      height: 844px;
+      background: var(--color-bg-page);
+      border-radius: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bg-shape-1 {
+      position: absolute;
+      top: -30px;
+      left: -80px;
+      width: 300px;
+      height: 300px;
+      background: rgba(139, 195, 74, 0.15); /* light green to match recipe */
+      filter: blur(50px);
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .bg-shape-2 {
+      position: absolute;
+      bottom: 100px;
+      right: -80px;
+      width: 250px;
+      height: 250px;
+      background: rgba(245, 146, 43, 0.1); 
+      filter: blur(50px);
+      border-radius: 50%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .status-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 47px;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: #FFFFFF;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      flex-shrink: 0;
+      z-index: 20;
+    }
+    .status-bar-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 16px;
+    }
+
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 0 100px 0; 
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      z-index: 5;
+    }
+    .content::-webkit-scrollbar { display: none; }
+
+    .recipe-hero {
+      height: 340px;
+      background-image: url('../assets/images/greek_salad.png');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      padding-top: 47px; /* For status bar */
+      display: flex;
+      flex-direction: column;
+    }
+    .recipe-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0) 70%, #FAFAFA 100%);
+      z-index: 1;
+    }
+
+    .nav-header {
+      position: relative;
+      z-index: 10;
+      padding: 8px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.25);
+      backdrop-filter: blur(8px);
+      color: #FFFFFF;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+      font-size: 24px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .icon-btn:active {
+      transform: scale(0.95);
+      background: rgba(255,255,255,0.15);
+    }
+    .header-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #FFFFFF;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+
+    .meta-card {
+      margin: 0 20px;
+      background: var(--color-glass-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 16px 20px;
+      border: 1px solid var(--color-glass-border);
+      box-shadow: var(--color-glass-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .meta-stats {
+      display: flex;
+      gap: 16px;
+    }
+    .meta-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .meta-icon {
+      color: var(--color-primary);
+      font-size: 20px;
+    }
+    .badge-black {
+      background: #1A1A1A;
+      color: #FFFFFF;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+    .badge-gold {
+      background: var(--color-gold-gradient);
+      color: #FFFFFF;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 12px rgba(255, 215, 0, 0.25);
+    }
+
+    .card {
+      margin: 0 20px;
+      background: var(--color-glass-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--color-glass-border);
+      box-shadow: var(--color-glass-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+
+    .ingredient-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .ingredient-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 15px;
+      color: var(--color-text-primary);
+      cursor: pointer;
+    }
+    .ingredient-item.checked {
+      color: var(--color-text-tertiary);
+      text-decoration: line-through;
+    }
+    
+    .checkbox {
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      border: 1px solid var(--color-glass-input-border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: var(--color-glass-input);
+      backdrop-filter: blur(4px);
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .ingredient-item.checked .checkbox {
+      background: var(--color-primary-gradient);
+      border-color: transparent;
+      box-shadow: 0 2px 8px rgba(245,146,43,0.3);
+    }
+    .ingredient-item.checked .checkbox::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-top: -2px;
+    }
+
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .step-item {
+      display: flex;
+      gap: 14px;
+    }
+    .step-number {
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
+      border-radius: 10px;
+      background: var(--color-glass-input);
+      border: 1px solid var(--color-glass-input-border);
+      color: var(--color-text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(8px);
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
+    }
+    .step-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 4px;
+    }
+    .step-text {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+    .timer-btn {
+      align-self: flex-start;
+      height: 36px;
+      padding: 0 16px;
+      border-radius: 10px;
+      background: rgba(245, 146, 43, 0.1);
+      border: 1px solid rgba(245, 146, 43, 0.4);
+      color: var(--color-primary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(8px);
+    }
+    .timer-btn i {
+      font-size: 18px;
+    }
+
+    .bottom-cta {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 20px 34px 20px;
+      background: linear-gradient(180deg, rgba(250,250,250,0) 0%, rgba(250,250,250,0.8) 30%, rgba(250,250,250,0.95) 100%);
+      z-index: 10;
+      pointer-events: none;
+    }
+    .btn-primary {
+      pointer-events: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      height: 52px;
+      border-radius: 14px;
+      background: var(--color-primary-gradient);
+      color: #FFFFFF;
+      font-size: 16px;
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      box-shadow: var(--color-glow);
+      transition: all 0.2s;
+    }
+    .btn-primary:active {
+      transform: scale(0.98);
+      box-shadow: 0 2px 8px rgba(245,146,43,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="bg-shape-1"></div>
+    <div class="bg-shape-2"></div>
+
+    <!-- Status Bar Mock -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph-duotone ph-cell-signal-medium"></i>
+        <i class="ph-duotone ph-wifi-high"></i>
+        <i class="ph-duotone ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+      
+      <!-- Hero Image Header -->
+      <div class="recipe-hero">
+        <div class="nav-header">
+          <button class="icon-btn">
+            <i class="ph-duotone ph-arrow-left"></i>
+          </button>
+          <span class="header-title">Греческий салат</span>
+          <button class="icon-btn">
+            <i class="ph-duotone ph-share-network"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Meta Info Row -->
+      <div class="meta-card">
+        <div class="meta-stats">
+          <div class="meta-stat">
+            <i class="ph-duotone ph-fire meta-icon"></i>
+            320 kcal
+          </div>
+          <div class="meta-stat">
+            <i class="ph-duotone ph-clock meta-icon"></i>
+            15 мин
+          </div>
+          <div class="meta-stat" style="color: var(--color-text-secondary);">
+            Легко
+          </div>
+        </div>
+        <div class="badge-black">Black</div>
+      </div>
+
+      <!-- Ingredients Section -->
+      <div class="card">
+        <div class="card-title">Ингредиенты</div>
+        <div class="ingredient-list">
+          
+          <label class="ingredient-item checked">
+            <div class="checkbox"></div>
+            Помидоры — 2 шт
+          </label>
+          
+          <label class="ingredient-item checked">
+            <div class="checkbox"></div>
+            Огурцы — 1 шт
+          </label>
+          
+          <label class="ingredient-item">
+            <div class="checkbox"></div>
+            Перец болгарский — 1 шт
+          </label>
+          
+          <label class="ingredient-item">
+            <div class="checkbox"></div>
+            Маслины — 50 г
+          </label>
+          
+          <label class="ingredient-item">
+            <div class="checkbox"></div>
+            Сыр фета — 80 г
+          </label>
+          
+          <label class="ingredient-item">
+            <div class="checkbox"></div>
+            Оливковое масло — 1 ст.л.
+          </label>
+
+        </div>
+      </div>
+
+      <!-- Preparation Steps Section -->
+      <div class="card">
+        <div class="card-title">Приготовление</div>
+        <div class="step-list">
+          
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <div class="step-text">Нарежь овощи крупными кубиками</div>
+            </div>
+          </div>
+          
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <div class="step-text">Добавь маслины и сыр, перемешай</div>
+            </div>
+          </div>
+          
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <div class="step-text">Заправь оливковым маслом. Дай настояться 5 минут.</div>
+              <button class="timer-btn">
+                <i class="ph-duotone ph-play"></i>
+                5:00 — Старт
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Fixed Bottom CTA -->
+    <div class="bottom-cta">
+      <button class="btn-primary">
+        Готово
+      </button>
+    </div>
+
+  </div>
+</body>
+</html>

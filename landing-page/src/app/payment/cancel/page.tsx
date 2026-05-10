@@ -1,0 +1,17 @@
+"use client";
+
+import React from "react";
+import Link from "next/link";
+
+export default function PaymentCancelPage() {
+  return (
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] flex items-center justify-center p-6">
+      <div className="max-w-md w-full bg-[var(--surface)] p-8 rounded-[32px] border border-[var(--border)] text-center">
+        <div className="w-16 h-16 bg-gray-500/20 text-gray-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-6">↩</div>
+        <h1 className="text-2xl font-bold text-white mb-2">Оплата не завершена</h1>
+        <p className="text-gray-400 mb-8">Ты можешь вернуться к выбору статуса и попробовать ещё раз.</p>
+        <Link href="/subscribe" className="px-8 py-3 w-full block border border-[#F5922B] bg-[#F5922B]/10 text-[#F5922B] font-bold rounded-xl hover:bg-[#F5922B]/20 transition-colors">Вернуться к статусам</Link>
+      </div>
+    </div>
+  );
+}

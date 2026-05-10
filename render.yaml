@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: aidiet-api
+    env: python
+    region: frankfurt
+    plan: starter  # $7/мес — без cold starts (free tier = 30-60 сек спящий режим)
+    rootDir: aidiet-backend
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: STRICT_AUTH
+        value: "true"
+      - key: ENVIRONMENT
+        value: "production"
+      - key: SENTRY_DSN
+        sync: false
+      - key: CORS_ORIGINS
+        value: "https://main-screens.vercel.app,https://aidiet-docs.vercel.app,capacitor://localhost,http://localhost"
+      - key: PYTHON_VERSION
+        value: "3.12"
+    healthCheckPath: /

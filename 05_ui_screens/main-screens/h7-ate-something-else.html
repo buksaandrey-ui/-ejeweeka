@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - Съел другое (Bottom Sheet)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .dummy-recipe-block {
+      height: 600px;
+      background: #F3F4F6;
+      border-radius: 20px;
+      margin-top: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--color-text-secondary);
+    }
+    /* New Button Hierarchy */
+    .btn-tertiary {
+      color: var(--color-text-secondary); /* Replacing rgba(255,255,255,0.5) to be visible on light theme */
+      font-size: 14px;
+      font-weight: 500;
+      background: none;
+      border: none;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: underline;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .btn-secondary {
+      width: 100%;
+      height: 48px;
+      border-radius: 16px;
+      background: transparent;
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    /* Bottom Sheet Styles */
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 40;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .bottom-sheet {
+      position: absolute;
+      bottom: -100%;
+      left: 0;
+      right: 0;
+      background: var(--color-surface);
+      border-radius: 24px 24px 0 0;
+      padding: 0 20px 40px 20px;
+      z-index: 50;
+      transition: bottom 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      display: flex;
+      flex-direction: column;
+    }
+    .bottom-sheet.active {
+      bottom: 0;
+    }
+    .drag-handle-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 12px 0 20px 0;
+    }
+    .drag-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: #D1D5DB;
+    }
+    /* States Wrapper */
+    .sheet-state { display: none; flex-direction: column; gap: 16px; }
+    .sheet-state.active { display: flex; }
+    /* Paid State (Black & Gold) */
+    .sheet-title { font-size: 20px; font-weight: 700; color: var(--color-text-primary); text-align: center; margin-bottom: 8px; }
+    .action-card {
+      background: #FFFFFF;
+      border: 1px solid var(--color-divider);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+    }
+    .action-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #F3F4F6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      color: var(--color-text-primary);
+    }
+    .action-text { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .action-title { font-size: 15px; font-weight: 600; color: var(--color-text-primary); }
+    .action-desc { font-size: 13px; color: var(--color-text-secondary); }
+    .tag-gold { font-size: 11px; font-weight: 700; background: linear-gradient(135deg, #FCDF73, #D4AF37); color: #000; padding: 2px 6px; border-radius: 4px; display: inline-block; width: max-content; margin-top: 4px;}
+    .tag-black { font-size: 11px; font-weight: 700; background: #1A1A1A; color: #FFF; padding: 2px 6px; border-radius: 4px; display: inline-block; width: max-content; margin-top: 4px;}
+    .btn-cancel {
+      width: 100%; height: 50px; background: transparent; border: none; font-size: 15px; font-weight: 600; color: var(--color-text-secondary); cursor: pointer; margin-top: 8px;
+    }
+    /* Base State */
+    .base-state-content { text-align: center; }
+    .base-icon { font-size: 48px; margin-bottom: 16px; color: var(--color-text-primary); }
+    .base-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+    .base-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 24px; }
+    /* Demo Controls */
+    .demo-controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+    .demo-btn { padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; background: white; font-size: 12px; cursor: pointer; flex: 1; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    
+    <div class="demo-controls">
+      <button class="demo-btn" onclick="setPlan('base')">Base</button>
+      <button class="demo-btn" onclick="setPlan('black')">Black</button>
+      <button class="demo-btn" onclick="setPlan('gold')">Gold</button>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="dummy-recipe-block">
+        [Контент рецепта]
+      </div>
+    </div>
+
+    <!-- Button Hierarchy -->
+    <div class="bottom-cta">
+      <button class="btn-tertiary" onclick="openSheet()">
+        <i class="ph ph-camera"></i> Съел другое
+      </button>
+      <button class="btn-secondary">Изменить порцию</button>
+      <button class="btn-primary">✓ Отметить как съеденное</button>
+      <div style="width: 134px; height: 5px; background: #E5E7EB; border-radius: 100px; margin: 4px auto 0 auto;"></div> <!-- Home indicator -->
+    </div>
+
+    <!-- Bottom Sheet Overlay -->
+    <div class="overlay" onclick="closeSheet()"></div>
+
+    <!-- Bottom Sheet -->
+    <div class="bottom-sheet" id="myBottomSheet">
+      <div class="drag-handle-wrapper" onclick="closeSheet()">
+        <div class="drag-handle"></div>
+      </div>
+
+      <!-- Paid State (Black/Gold) -->
+      <div class="sheet-state" id="state-paid">
+        <h3 class="sheet-title">Что ты съел(а) вместо этого?</h3>
+        
+        <div class="action-card">
+          <div class="action-icon"><i class="ph ph-camera"></i></div>
+          <div class="action-text">
+            <span class="action-title">Сфотографировать блюдо</span>
+            <span class="action-desc">Gemini определит состав</span>
+            <div class="tag-gold">GOLD</div>
+          </div>
+        </div>
+
+        <div class="action-card">
+          <div class="action-icon"><i class="ph ph-magnifying-glass"></i></div>
+          <div class="action-text">
+            <span class="action-title">Найти в базе или ввести вручную</span>
+            <div style="display: flex; gap: 4px;">
+              <div class="tag-black">BLACK</div>
+              <div class="tag-gold">GOLD</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-cancel" onclick="closeSheet()">Отмена</button>
+      </div>
+
+      <!-- Base State -->
+      <div class="sheet-state" id="state-base">
+        <div class="base-state-content">
+          <div class="base-icon">📊</div>
+          <h3 class="base-title">Учёт замен блюд доступен на Black и Gold</h3>
+          <p class="base-desc">
+            На базовом статусе план фиксированный.<br>
+            Это помогает придерживаться режима в начале пути.
+          </p>
+          <button class="btn-primary" style="margin-bottom: 12px; height: 50px;">Попробовать Статус Gold</button>
+          <button class="btn-cancel" onclick="closeSheet()" style="margin-top:0;">Остаться на базовом</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let currentPlan = 'gold';
+
+    function setPlan(plan) {
+      currentPlan = plan;
+      // Provide visual feedback for demo
+      document.querySelectorAll('.demo-btn').forEach(b => b.style.fontWeight = 'normal');
+      event.target.style.fontWeight = 'bold';
+    }
+
+    function openSheet() {
+      document.querySelector('.overlay').classList.add('active');
+      document.querySelector('.bottom-sheet').classList.add('active');
+      
+      document.getElementById('state-paid').classList.remove('active');
+      document.getElementById('state-base').classList.remove('active');
+
+      if (currentPlan === 'base') {
+        document.getElementById('state-base').classList.add('active');
+      } else {
+        // Both Black and Gold use the paid state view
+        document.getElementById('state-paid').classList.add('active');
+      }
+    }
+
+    function closeSheet() {
+      document.querySelector('.overlay').classList.remove('active');
+      document.querySelector('.bottom-sheet').classList.remove('active');
+    }
+    
+    // Set default demo btn
+    document.querySelectorAll('.demo-btn')[2].style.fontWeight = 'bold';
+  </script>
+</body>
+</html>

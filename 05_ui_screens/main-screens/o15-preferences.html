@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-15 Продуктовые предпочтения</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .section-label {
+      font-size: 12px; font-weight: 700; color: var(--color-text-secondary);
+      text-transform: uppercase; letter-spacing: 0.7px; margin: 22px 0 8px 0;
+    }
+    .section-question { font-size: 15px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 12px; line-height: 1.4; }
+    .chip.none-chip.active { border-color: #10B981; background: #ECFDF5; color: #10B981; }
+    .textarea {
+      width: 100%; min-height: 80px; padding: 14px 16px; border-radius: 16px;
+      border: 1.5px solid var(--color-divider); background: #FFFFFF;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+      outline: none; transition: border-color 0.2s; resize: none; color: var(--color-text-primary);
+    }
+    .textarea:focus { border-color: var(--color-primary); }
+    .textarea::placeholder { color: #9CA3AF; }
+    @media (max-width: 440px) {
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 14 из 14 — Последний шаг!</div>
+    </div>
+
+    <div class="content">
+      <h1 class="question-title">Продуктовые предпочтения</h1>
+      <p class="question-desc">План будет состоять только из тех продуктов, которые ты любишь.</p>
+
+      <!-- Блок A: Нежелательные категории -->
+      <div class="section-label">Нежелательные категории</div>
+      <div class="section-question">Есть ли категории блюд, которые ты НЕ хочешь видеть в плане?</div>
+      <div class="chip-grid" id="excludeChips">
+        <div class="chip" data-val="soups">Супы</div>
+        <div class="chip" data-val="porridge">Каши</div>
+        <div class="chip" data-val="salads">Салаты</div>
+        <div class="chip" data-val="smoothies">Смузи или коктейли</div>
+        <div class="chip" data-val="offal">Блюда из субпродуктов</div>
+        <div class="chip" data-val="other" id="otherExcludeChip">Свой вариант</div>
+        <div class="chip none-chip" data-val="none" id="noExcludeChip">Нет, ем всё из перечисленного</div>
+      </div>
+      <div class="input-wrapper" id="otherExcludeInputWrap" style="display: none;">
+        <input type="text" class="input-field" id="otherExcludeInput" placeholder="Укажи свои нежелательные категории...">
+      </div>
+
+      <!-- Блок B: Любимые продукты -->
+      <div class="section-label">Любимые продукты</div>
+      <textarea class="textarea" id="likedFoods"
+        placeholder="Например: курица, рыба, авокадо, творог, гречка, ягоды"></textarea>
+
+      <!-- Блок C: Нелюбимые продукты -->
+      <div class="section-label">Нелюбимые продукты</div>
+      <textarea class="textarea" id="dislikedFoods"
+        placeholder="Например: печень, баклажаны, кинза, манная каша"></textarea>
+
+      <div class="onboarding-tip-card">
+        <div class="onboarding-tip-icon">💡</div>
+        <div class="onboarding-tip-text">
+          Лучшая диета — та, которой ты реально следуешь. Поэтому мы не дадим план из ненавистной овсянки и варёной брокколи. Никаких правильных или неправильных ответов — только твои реальные вкусы. Пиши честно: что ты с удовольствием ешь каждый день, а что «заставляешь» себя. Исследования показывают: удовольствие от еды улучшает усвоение питательных веществ на 20–30%.
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="location.href='o14-motivation.html'">← Назад</button>
+      <button class="btn-primary disabled" id="btnNext" disabled>Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <script>
+    const excludeSelected = new Set();
+
+    document.querySelectorAll('#excludeChips .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const val = chip.dataset.val;
+
+        if (val === 'none') {
+          // "Нет, ем всё" — взаимоисключающий
+          const wasActive = chip.classList.contains('active');
+          document.querySelectorAll('#excludeChips .chip').forEach(c => c.classList.remove('active'));
+          excludeSelected.clear();
+          if (!wasActive) {
+            chip.classList.add('active');
+            excludeSelected.add('none');
+          }
+          return;
+        }
+
+        // Снять "Нет" если выбран другой
+        document.getElementById('noExcludeChip').classList.remove('active');
+        excludeSelected.delete('none');
+
+        if (chip.classList.contains('active')) {
+          chip.classList.remove('active');
+          excludeSelected.delete(val);
+        } else {
+          chip.classList.add('active');
+          excludeSelected.add(val);
+        }
+        
+        // Show/hide other input
+        const otherWrap = document.getElementById('otherExcludeInputWrap');
+        if (excludeSelected.has('other')) {
+          otherWrap.style.display = 'flex';
+        } else {
+          otherWrap.style.display = 'none';
+          document.getElementById('otherExcludeInput').value = '';
+        }
+
+        const btn = document.getElementById('btnNext');
+        const hasSelection = excludeSelected.size > 0;
+        btn.disabled = !hasSelection;
+        btn.classList.toggle('disabled', !hasSelection);
+        
+        saveO15State();
+      });
+    });
+    
+    document.getElementById('otherExcludeInput').addEventListener('input', () => {
+        saveO15State();
+    });
+    
+    document.getElementById('likedFoods').addEventListener('input', () => {
+        saveO15State();
+    });
+    
+    document.getElementById('dislikedFoods').addEventListener('input', () => {
+        saveO15State();
+    });
+
+    function saveO15State() {
+      let excluded = [...excludeSelected].filter(v => v !== 'none' && v !== 'other').map(val => {
+        const chip = document.querySelector(`#excludeChips .chip[data-val="${val}"]`);
+        return chip ? chip.textContent.trim() : val;
+      });
+      
+      if (excludeSelected.has('other')) {
+        const otherVal = document.getElementById('otherExcludeInput').value.trim();
+        if (otherVal) excluded.push(otherVal);
+      }
+      
+      const liked = document.getElementById('likedFoods').value.trim();
+      const disliked = document.getElementById('dislikedFoods').value.trim();
+
+      window.AIDiet && window.AIDiet.saveField('excluded_meal_types', excluded.join(', ') || 'Нет');
+      window.AIDiet && window.AIDiet.saveField('liked_foods', liked || 'Не указано');
+      window.AIDiet && window.AIDiet.saveField('disliked_foods', disliked || 'Не указано');
+      window.AIDiet && window.AIDiet.saveField('_o15uiState', JSON.stringify({ exclude: [...excludeSelected], otherText: document.getElementById('otherExcludeInput').value, liked, disliked }));
+    }
+
+    document.getElementById('btnNext').addEventListener('click', (e) => {
+      e.preventDefault();
+      saveO15State();
+      window.AIDiet.goNext('o16-summary-analysis.html');
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const p = window.AIDiet ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+      if (p['_o15uiState']) {
+        try {
+          const st = JSON.parse(p['_o15uiState']);
+          if (st.exclude) {
+            st.exclude.forEach(val => {
+              const chip = document.querySelector(`#excludeChips .chip[data-val="${val}"]`);
+              if (chip) chip.click();
+            });
+          }
+          if (st.otherText) {
+            const el = document.getElementById('otherExcludeInput');
+            if (el) el.value = st.otherText;
+          }
+          if (st.liked) {
+            document.getElementById('likedFoods').value = st.liked;
+          }
+          if (st.disliked) {
+            document.getElementById('dislikedFoods').value = st.disliked;
+          }
+        } catch(e) {}
+      }
+      window.__inlineHydrated = true;
+    });
+  </script>
+
+  <script src="onboarding-state.js"></script>
+</body>
+</html>

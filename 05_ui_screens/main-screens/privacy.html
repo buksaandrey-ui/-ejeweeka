@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health Code — Политика конфиденциальности</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #FAFAFA; color: #1A1A1A; line-height: 1.7; }
+    .container { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; }
+    h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .date { color: #6B7280; font-size: 14px; margin-bottom: 32px; }
+    h2 { font-size: 20px; font-weight: 600; margin: 32px 0 12px; color: #F5922B; }
+    p, ul { margin-bottom: 16px; font-size: 15px; }
+    ul { padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    a { color: #F5922B; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .highlight { background: #FFF7ED; border-left: 3px solid #F5922B; padding: 16px 20px; border-radius: 0 12px 12px 0; margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Политика конфиденциальности</h1>
+    <p class="date">Дата вступления в силу: 23 апреля 2026 г.</p>
+
+    <p>Настоящая Политика конфиденциальности описывает, как мобильное приложение <strong>Health Code</strong> (далее — «Приложение») собирает, использует и защищает вашу информацию.</p>
+
+    <div class="highlight">
+      <strong>Главное:</strong> Health Code использует архитектуру «Zero-Knowledge». Ваши медицинские данные хранятся ТОЛЬКО на вашем устройстве. Мы не имеем доступа к вашему профилю здоровья.
+    </div>
+
+    <h2>1. Какие данные мы собираем</h2>
+
+    <p><strong>Данные на устройстве (не передаются на сервер):</strong></p>
+    <ul>
+      <li>Ваш профиль: возраст, пол, рост, вес, цели питания</li>
+      <li>Медицинские данные: заболевания, аллергии, анализы крови</li>
+      <li>Пищевые предпочтения и ограничения</li>
+      <li>Дневник питания, трекер воды, трекер веса</li>
+    </ul>
+
+    <p><strong>Данные, передаваемые на сервер (анонимно):</strong></p>
+    <ul>
+      <li>Анонимный идентификатор устройства (UUID) — для привязки статуса</li>
+      <li>Обобщённый запрос к AI (без персональных данных) — для генерации плана питания</li>
+      <li>Фотографии еды (только при использовании функции «Анализ фото») — обрабатываются API Google Gemini и сразу удаляются</li>
+    </ul>
+
+    <h2>2. Как мы используем данные</h2>
+    <ul>
+      <li><strong>Генерация плана питания:</strong> ваш профиль (возраст, вес, цели) используется локально для формирования запроса к AI. Сам запрос содержит только обобщённые параметры.</li>
+      <li><strong>Фото-анализ:</strong> фотография отправляется в Google Gemini API для распознавания еды и расчёта калорий. Фото не сохраняется на наших серверах.</li>
+      <li><strong>Статус:</strong> оформляется через Telegram-бот (@healthcode_bot) и ЮKassa. Мы не храним данные платёжных карт — это делает ЮKassa напрямую.</li>
+    </ul>
+
+    <h2>3. Хранение данных</h2>
+    <ul>
+      <li><strong>На устройстве:</strong> все персональные данные хранятся в localStorage вашего устройства. При удалении приложения данные стираются.</li>
+      <li><strong>На сервере:</strong> мы храним только анонимный UUID и статус доступа. Медицинские данные на сервер не передаются.</li>
+    </ul>
+
+    <h2>4. Третьи стороны</h2>
+    <ul>
+      <li><strong>Google Gemini API</strong> — для генерации планов питания и анализа фото. <a href="https://ai.google.dev/terms" target="_blank">Условия использования</a>.</li>
+      <li><strong>ЮKassa</strong> — платёжный шлюз для оформления статусов. <a href="https://yookassa.ru/legal/privacy_policy" target="_blank">Политика конфиденциальности</a>.</li>
+      <li><strong>Supabase</strong> — для хранения базы медицинских знаний (не персональных данных). <a href="https://supabase.com/privacy" target="_blank">Политика конфиденциальности</a>.</li>
+    </ul>
+
+    <h2>5. Права пользователя</h2>
+    <ul>
+      <li><strong>Удаление данных:</strong> удалите приложение — все локальные данные удалятся автоматически.</li>
+      <li><strong>Запрос на удаление серверных данных:</strong> напишите на <a href="mailto:support@aidiet.ru">support@aidiet.ru</a> — мы удалим ваш анонимный UUID в течение 48 часов.</li>
+      <li><strong>Отказ от аналитики:</strong> приложение не использует трекеры (Facebook Pixel, Google Analytics и т.п.) в текущей версии.</li>
+    </ul>
+
+    <h2>6. Безопасность</h2>
+    <p>Все API-запросы передаются по зашифрованному каналу (HTTPS/TLS 1.3). Серверы размещены в ЕС (Франкфурт, Германия) на платформе Render.</p>
+
+    <h2>7. Дети</h2>
+    <p>Приложение не предназначено для лиц младше 16 лет. Мы не собираем данные детей намеренно.</p>
+
+    <h2>8. Медицинский дисклеймер</h2>
+    <div class="highlight">
+      Health Code <strong>не является</strong> медицинским устройством и <strong>не предоставляет</strong> медицинских рекомендаций. Информация в приложении носит исключительно ознакомительный характер. Перед изменением рациона проконсультируйтесь с лечащим врачом.
+    </div>
+
+    <h2>9. Изменения</h2>
+    <p>Мы можем обновлять настоящую Политику. Актуальная версия всегда доступна по адресу <strong>aidiet.ru/privacy</strong>.</p>
+
+    <h2>10. Контакты</h2>
+    <p>По вопросам конфиденциальности: <a href="mailto:support@aidiet.ru">support@aidiet.ru</a></p>
+  </div>
+</body>
+</html>

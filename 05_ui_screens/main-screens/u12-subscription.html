@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code — U-12 Статус</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header { padding: 16px 20px; display: flex; align-items: center; gap: 16px; position: absolute; top: 40px; left: 0; right: 0; z-index: 10; }
+    .back-btn { width: 40px; height: 40px; border-radius: 12px; background: rgba(255,255,255,0.8); border: 1px solid var(--color-divider); color: var(--color-text-primary); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; backdrop-filter: blur(4px); }
+    .hero-section { 
+      padding: 100px 24px 40px 24px; background: linear-gradient(180deg, #FFF7ED 0%, var(--color-bg-main) 100%); 
+      text-align: center;
+    }
+    .hero-title { font-size: 28px; font-weight: 800; color: var(--color-text-primary); margin-bottom: 8px; }
+    .hero-subtitle { font-size: 15px; color: var(--color-text-secondary); line-height: 1.5; }
+    .current-status { margin: 0 20px 20px; padding: 20px; border-radius: 20px; background: linear-gradient(135deg, #FFF7ED, #FFFDF0); border: 1.5px solid #FED7AA; text-align: center; }
+    .status-label { font-size: 12px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .status-value { font-size: 24px; font-weight: 800; color: var(--color-primary); margin-top: 4px; }
+    .status-trial { font-size: 13px; color: var(--color-text-secondary); margin-top: 6px; }
+    .plan-card { 
+      margin: 0 20px 16px 20px; padding: 24px; border-radius: 24px; 
+      background: #FFFFFF; border: 2px solid var(--color-divider); position: relative; transition: all 0.2s;
+    }
+    .plan-card.active { border-color: var(--color-primary); box-shadow: 0 8px 24px rgba(245,146,43,0.12); }
+    .plan-card.gold { border-color: var(--color-gold); background: linear-gradient(135deg, #FFFFFF 0%, #FFFDF0 100%); }
+    .plan-card.gold.active { box-shadow: 0 8px 24px rgba(212,175,55,0.15); }
+    .plan-badge { position: absolute; top: -12px; right: 24px; padding: 6px 12px; background: var(--color-gold-gradient); color: #FFFFFF; border-radius: 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .plan-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+    .plan-name { font-size: 20px; font-weight: 800; color: var(--color-text-primary); }
+    .plan-status-tag { font-size: 13px; font-weight: 600; color: var(--color-primary); }
+    .features-list { display: flex; flex-direction: column; gap: 10px; }
+    .feature-item { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--color-text-secondary); }
+    .feature-item i { color: #52B044; font-size: 18px; }
+    .feature-item.locked i { color: var(--color-divider); }
+    .tg-manage-btn { 
+      width: calc(100% - 40px); margin: 24px 20px 0; height: 56px; border-radius: 18px; 
+      background: linear-gradient(135deg, #2AABEE, #229ED9); color: #FFFFFF; border: none; 
+      font-size: 16px; font-weight: 700; cursor: pointer; 
+      box-shadow: 0 4px 15px rgba(42,171,238,0.35);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .legal-links { display: flex; justify-content: center; gap: 16px; margin-top: 16px; font-size: 11px; color: var(--color-text-tertiary); font-weight: 600; }
+    .legal-links a { color: inherit; text-decoration: none; }
+  </style>
+  <script src="app-config.js"></script>
+  <script src="app-utils.js"></script>
+  <script src="tg-bridge-modal.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <header class="header">
+      <button class="back-btn" onclick="history.back()" aria-label="Назад"><i class="ph ph-arrow-left"></i></button>
+    </header>
+
+    <div class="content">
+
+      <div class="hero-section">
+        <h1 class="hero-title">Твой статус</h1>
+        <p class="hero-subtitle">Разблокируй полный потенциал Health Code</p>
+      </div>
+
+      <!-- Current status -->
+      <div class="current-status">
+        <div class="status-label">Текущий статус</div>
+        <div class="status-value" id="currentStatusName">Base</div>
+        <div class="status-trial" id="trialInfo" style="display:none;"></div>
+      </div>
+
+      <!-- Status: Black -->
+      <div class="plan-card" data-tier="black">
+        <div class="plan-header">
+          <div class="plan-name">Статус Black</div>
+          <div class="plan-status-tag">Продвинутый</div>
+        </div>
+        <div class="features-list">
+          <div class="feature-item"><i class="ph ph-check-circle-fill"></i> Индивидуальный AI-рацион на 7 дней</div>
+          <div class="feature-item"><i class="ph ph-check-circle-fill"></i> Полный список покупок</div>
+          <div class="feature-item"><i class="ph ph-check-circle-fill"></i> Расписание витаминов</div>
+          <div class="feature-item"><i class="ph ph-check-circle-fill"></i> AI-отчёты за неделю</div>
+        </div>
+      </div>
+
+      <!-- Status: Gold -->
+      <div class="plan-card gold" data-tier="gold">
+        <div class="plan-badge">Рекомендуем</div>
+        <div class="plan-header">
+          <div class="plan-name" style="color: #995400;">Статус Gold</div>
+          <div class="plan-status-tag">Полный доступ</div>
+        </div>
+        <div class="features-list">
+          <div class="feature-item"><i class="ph ph-check-circle-fill"></i> Всё из Black +</div>
+          <div class="feature-item"><i class="ph ph-check-circle-fill"></i> AI-анализ фото еды</div>
+          <div class="feature-item"><i class="ph ph-check-circle-fill"></i> Чат с AI-наставником 24/7</div>
+          <div class="feature-item"><i class="ph ph-check-circle-fill"></i> План тренировок</div>
+          <div class="feature-item"><i class="ph ph-check-circle-fill"></i> Все цветовые темы</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom: Manage via Telegram -->
+    <div class="bottom-cta">
+      <button class="tg-manage-btn" id="manageTGBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M20.665 3.717l-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l.002.001-.314 4.692c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.787l3.019-14.228c.309-1.239-.473-1.8-1.282-1.432z" fill="white"/>
+        </svg>
+        Управлять статусом в Telegram
+      </button>
+      <div class="legal-links">
+        <a href="terms.html">Условия</a>
+        <a href="privacy.html">Приватность</a>
+      </div>
+    </div>
+
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const currentSub = localStorage.getItem('aidiet_subscription') || 'base';
+    const statusNameEl = document.getElementById('currentStatusName');
+    const trialInfoEl = document.getElementById('trialInfo');
+    const cards = document.querySelectorAll('.plan-card');
+
+    // Display current status
+    const statusNames = { 
+      'base': 'Base', 'trial': 'Gold (Trial)', 
+      'black': 'Black', 'gold': 'Gold', 'group_gold': 'Group Gold' 
+    };
+    statusNameEl.textContent = statusNames[currentSub] || currentSub;
+
+    // Trial info
+    if (currentSub === 'trial' && window.SubscriptionGate) {
+      const daysLeft = window.SubscriptionGate.getTrialDaysRemaining();
+      if (daysLeft > 0) {
+        trialInfoEl.style.display = 'block';
+        trialInfoEl.textContent = `Осталось ${daysLeft} дн. Gold-доступа`;
+      }
+    }
+
+    // Highlight current plan card
+    cards.forEach(card => {
+      card.classList.remove('active');
+      if (card.dataset.tier === currentSub || 
+          (currentSub === 'trial' && card.dataset.tier === 'gold')) {
+        card.classList.add('active');
+      }
+    });
+
+    // Handle App Store Review Mode
+    if (window.AppConfig && window.AppConfig.isReviewMode) {
+      document.querySelector('.hero-subtitle').textContent = 'Доступ к полному функционалу открыт';
+      cards.forEach(card => card.style.display = 'none');
+      document.querySelector('.bottom-cta').style.display = 'none';
+      statusNameEl.textContent = 'Health Code Premium';
+    } else {
+      // TG Manage button → open TG Bridge Modal
+      document.getElementById('manageTGBtn').addEventListener('click', () => {
+        if (window.TGBridge) {
+          window.TGBridge.show('Управление статусом');
+        }
+      });
+    }
+});
+</script>
+<script src="subscription-gate.js"></script>
+</body>
+</html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - Фото-Анализатор</title>
+  <meta name="description" content="AI-анализ еды по фотографии: распознавание блюд, подсчёт калорий и БЖУ с умными wellness-рекомендациями">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header { position: absolute; top: 47px; width: 100%; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+    .close-btn { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); color: #FFFFFF; border: none; display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; backdrop-filter: blur(8px); }
+    .header-badge { padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(255,215,0,0.5); color: #FFD700; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(8px); }
+    .remaining-badge { padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); color: #9CA3AF; font-size: 11px; font-weight: 600; backdrop-filter: blur(8px); }
+    /* Viewfinder */
+    .viewfinder { flex: 1; position: relative; display: flex; justify-content: center; align-items: center; background: #111; overflow: hidden; }
+    .viewfinder video { width: 100%; height: 100%; object-fit: cover; }
+    .viewfinder canvas { display: none; }
+    .viewfinder .preview-img { width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; inset: 0; z-index: 2; }
+    .scanner-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.35); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 3; pointer-events: none; }
+    .scan-frame { width: 280px; height: 280px; position: relative; }
+    .scan-corner { position: absolute; width: 40px; height: 40px; border-color: #FFFFFF; border-style: solid; }
+    .top-left { top: 0; left: 0; border-width: 3px 0 0 3px; border-top-left-radius: 16px; }
+    .top-right { top: 0; right: 0; border-width: 3px 3px 0 0; border-top-right-radius: 16px; }
+    .bottom-left { bottom: 0; left: 0; border-width: 0 0 3px 3px; border-bottom-left-radius: 16px; }
+    .bottom-right { bottom: 0; right: 0; border-width: 0 3px 3px 0; border-bottom-right-radius: 16px; }
+    .ai-laser { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: #FFD700; box-shadow: 0 0 15px 5px rgba(255,215,0,0.4); opacity: 0; }
+    @keyframes scan { 0% { top: 0; opacity: 1; } 50% { top: 100%; opacity: 1; } 100% { top: 0; opacity: 1; } }
+    .scanning-text { position: absolute; bottom: -40px; width: 100%; text-align: center; color: #FFFFFF; font-size: 14px; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s; }
+    /* Camera permission prompt */
+    .camera-prompt { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px; color: #9CA3AF; z-index: 4; text-align: center; padding: 40px; }
+    .camera-prompt i { font-size: 64px; color: #4B5563; }
+    .camera-prompt p { font-size: 15px; line-height: 1.5; }
+    .camera-prompt button { padding: 12px 32px; border-radius: 14px; background: var(--color-primary-gradient); color: white; border: none; font-size: 15px; font-weight: 700; cursor: pointer; }
+    /* Controls */
+    .controls { height: 160px; background: #000000; display: flex; justify-content: space-around; align-items: center; padding: 0 20px; z-index: 10; position: relative; }
+    .btn-side { width: 50px; height: 50px; border-radius: 50%; background: #2A2A2A; color: #FFFFFF; border: none; font-size: 24px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: background 0.2s; }
+    .btn-side:active { background: #3A3A3A; }
+    .btn-shutter-wrap { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #FFFFFF; display: flex; justify-content: center; align-items: center; padding: 4px; cursor: pointer; transition: opacity 0.2s; }
+    .btn-shutter { width: 100%; height: 100%; border-radius: 50%; background: #FFFFFF; border: none; transition: transform 0.1s; }
+    .btn-shutter-wrap:active .btn-shutter { transform: scale(0.9); }
+    .btn-shutter-wrap.disabled { opacity: 0.3; pointer-events: none; }
+    /* Hidden file input for gallery */
+    .gallery-input { display: none; }
+    /* Result Modal */
+    .result-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: #FFFFFF; border-radius: 32px 32px 0 0; padding: 24px 24px 36px 24px; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 100; display: flex; flex-direction: column; max-height: 75%; overflow-y: auto; }
+    .result-sheet.visible { transform: translateY(0); }
+    .result-title { font-size: 22px; font-weight: 800; color: #1A1A1A; margin-bottom: 4px; }
+    .result-desc { font-size: 14px; color: #6B7280; font-weight: 500; margin-bottom: 20px; }
+    .detected-meal { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+    .detected-icon { width: 50px; height: 50px; border-radius: 14px; background: #FFF7ED; color: #F5922B; display: flex; justify-content: center; align-items: center; font-size: 28px; flex-shrink: 0; }
+    .detected-info { flex: 1; }
+    .detected-name { font-size: 16px; font-weight: 700; color: #1A1A1A; }
+    .detected-cals { font-size: 14px; color: #F5922B; font-weight: 700; margin-top: 4px; }
+    .detected-portion { font-size: 12px; color: #9CA3AF; margin-top: 2px; }
+    .confidence-bar { margin-bottom: 16px; }
+    .confidence-label { font-size: 12px; color: #6B7280; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .confidence-track { height: 4px; background: #E5E7EB; border-radius: 2px; overflow: hidden; }
+    .confidence-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+    /* Macros row */
+    .macros-row { display: flex; gap: 8px; margin-bottom: 16px; }
+    .macro-chip { flex: 1; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 14px; padding: 10px 8px; text-align: center; }
+    .macro-value { font-size: 18px; font-weight: 800; color: #1A1A1A; }
+    .macro-label { font-size: 11px; color: #9CA3AF; font-weight: 600; margin-top: 2px; }
+    /* Verdict */
+    .verdict-block { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 16px; padding: 14px; margin-bottom: 12px; }
+    .verdict-block.warning { background: #FEF2F2; border-color: #FEE2E2; }
+    .verdict-title { font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .verdict-block.warning .verdict-title { color: #991B1B; }
+    .verdict-text { font-size: 13px; color: #15803D; line-height: 1.5; }
+    .verdict-block.warning .verdict-text { color: #B91C1C; }
+    /* Impact */
+    .impact-block { background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 16px; padding: 14px; margin-bottom: 16px; }
+    .impact-text { font-size: 13px; color: #1E40AF; line-height: 1.5; font-weight: 500; }
+    /* Warnings chips */
+    .warnings-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .warning-chip { padding: 4px 10px; background: #FEF3C7; border: 1px solid #FDE68A; border-radius: 8px; font-size: 11px; font-weight: 600; color: #92400E; }
+    /* Low confidence manual correction */
+    .correction-block { background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 16px; padding: 14px; margin-bottom: 16px; display: none; }
+    .correction-block.visible { display: block; }
+    .correction-title { font-size: 13px; font-weight: 700; color: #92400E; margin-bottom: 8px; }
+    .correction-input { width: 100%; padding: 10px 14px; border: 1.5px solid #FDE68A; border-radius: 12px; font-size: 14px; font-weight: 600; outline: none; font-family: inherit; }
+    .correction-input:focus { border-color: var(--color-primary); }
+    /* CTA buttons */
+    .btn-apply { width: 100%; height: 52px; border-radius: 16px; background: var(--color-primary-gradient); color: #FFFFFF; border: none; font-size: 15px; font-weight: 700; box-shadow: 0 4px 15px rgba(245,146,43,0.3); cursor: pointer; transition: transform 0.1s; }
+    .btn-apply:active { transform: scale(0.98); }
+    .btn-cancel { width: 100%; height: 48px; background: transparent; color: #6B7280; border: none; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+    /* Error state */
+    .error-block { background: #FEF2F2; border: 1px solid #FEE2E2; border-radius: 16px; padding: 20px; text-align: center; display: none; }
+    .error-block.visible { display: block; }
+    .error-block p { color: #991B1B; font-size: 14px; margin-bottom: 12px; }
+    .error-block button { padding: 10px 24px; border-radius: 12px; background: #EF4444; color: white; border: none; font-weight: 700; cursor: pointer; }
+    /* Access overlay */
+    .access-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: none; flex-direction: column; justify-content: center; align-items: center; gap: 16px; padding: 40px; text-align: center; }
+    .access-overlay.visible { display: flex; }
+    .access-overlay i { font-size: 72px; color: #F5922B; }
+    .access-overlay h2 { color: white; font-size: 22px; font-weight: 800; }
+    .access-overlay p { color: #9CA3AF; font-size: 15px; line-height: 1.5; }
+    .access-overlay button { padding: 14px 40px; border-radius: 16px; background: var(--color-primary-gradient); color: white; border: none; font-size: 16px; font-weight: 700; cursor: pointer; }
+    @media (max-width: 440px) {
+    }
+  </style>
+  <script src="app-utils.js"></script>
+  <script src="api-connector.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph-fill ph-cell-signal-full"></i>
+        <i class="ph-fill ph-wifi-high"></i>
+        <i class="ph-fill ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <button class="close-btn" id="btnClose"><i class="ph ph-x"></i></button>
+      <div class="header-badge"><i class="ph-fill ph-sparkle"></i> AI VISION</div>
+      <div class="remaining-badge" id="remainingBadge">5/5</div>
+    </div>
+
+    <!-- Viewfinder -->
+    <div class="viewfinder">
+      <!-- Camera prompt (shown before permission) -->
+      <div class="camera-prompt" id="cameraPrompt">
+        <i class="ph ph-camera"></i>
+        <p>Разрешите доступ к камере,<br>чтобы сфотографировать еду</p>
+        <button id="btnStartCamera">Включить камеру</button>
+      </div>
+
+      <!-- Live video stream -->
+      <video id="webcam" autoplay playsinline muted></video>
+      <canvas id="captureCanvas"></canvas>
+      <img class="preview-img" id="previewImg" alt="Preview">
+
+      <!-- Scanner overlay -->
+      <div class="scanner-overlay" id="scannerOverlay" style="display:none;">
+        <div class="scan-frame" id="scanFrame">
+          <div class="scan-corner top-left"></div>
+          <div class="scan-corner top-right"></div>
+          <div class="scan-corner bottom-left"></div>
+          <div class="scan-corner bottom-right"></div>
+          <div class="ai-laser" id="laser"></div>
+          <div class="scanning-text" id="scanText">Нейросеть распознаёт БЖУ…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls" id="controlsBar">
+      <button class="btn-side" id="btnGallery" title="Выбрать из галереи"><i class="ph ph-image"></i></button>
+      <div class="btn-shutter-wrap disabled" id="btnShutter">
+        <div class="btn-shutter"></div>
+      </div>
+      <button class="btn-side" id="btnFlip" title="Переключить камеру"><i class="ph ph-arrows-clockwise"></i></button>
+      <input type="file" class="gallery-input" id="galleryInput" accept="image/*">
+    </div>
+
+    <!-- Result Sheet -->
+    <div class="result-sheet" id="resultSheet">
+      <h2 class="result-title" id="rsTitle">Запись блюда</h2>
+      <p class="result-desc" id="rsDesc">AI уверенно распознал твой приём пищи.</p>
+
+      <div class="detected-meal">
+        <div class="detected-icon" id="rsIcon">🍽</div>
+        <div class="detected-info">
+          <div class="detected-name" id="rsName">—</div>
+          <div class="detected-cals" id="rsCals">— ккал</div>
+          <div class="detected-portion" id="rsPortion">—</div>
+        </div>
+      </div>
+
+      <!-- Confidence bar -->
+      <div class="confidence-bar">
+        <div class="confidence-label">
+          <span>Уверенность AI</span>
+          <span id="rsConfidence">—</span>
+        </div>
+        <div class="confidence-track">
+          <div class="confidence-fill" id="rsConfidenceFill" style="width:0%;background:#10B981;"></div>
+        </div>
+      </div>
+
+      <!-- Correction (low confidence) -->
+      <div class="correction-block" id="correctionBlock">
+        <div class="correction-title">🤔 Не уверен в распознавании. Это правильно?</div>
+        <input class="correction-input" id="correctionInput" placeholder="Введите название блюда…">
+      </div>
+
+      <!-- Macros -->
+      <div class="macros-row">
+        <div class="macro-chip"><div class="macro-value" id="rsProteins">—</div><div class="macro-label">Белки, г</div></div>
+        <div class="macro-chip"><div class="macro-value" id="rsFats">—</div><div class="macro-label">Жиры, г</div></div>
+        <div class="macro-chip"><div class="macro-value" id="rsCarbs">—</div><div class="macro-label">Углеводы, г</div></div>
+        <div class="macro-chip"><div class="macro-value" id="rsFiber">—</div><div class="macro-label">Клетчатка, г</div></div>
+      </div>
+
+      <!-- Warnings -->
+      <div class="warnings-row" id="rsWarnings"></div>
+
+      <!-- Verdict -->
+      <div class="verdict-block" id="rsVerdictBlock">
+        <div class="verdict-title"><i class="ph-fill ph-check-circle"></i> <span id="rsVerdictTitle">Вердикт</span></div>
+        <div class="verdict-text" id="rsVerdictText">—</div>
+      </div>
+
+      <!-- Impact -->
+      <div class="impact-block" id="rsImpactBlock">
+        <div class="impact-text" id="rsImpactText">—</div>
+      </div>
+
+      <!-- Error -->
+      <div class="error-block" id="rsError">
+        <p id="rsErrorText">Произошла ошибка</p>
+        <button id="btnRetry">Попробовать снова</button>
+      </div>
+
+      <button class="btn-apply" id="btnApply">Подтвердить и записать в дневник</button>
+      <button class="btn-cancel" id="btnCancel">Отмена</button>
+    </div>
+
+    <!-- Access Overlay (if not Gold) -->
+    <div class="access-overlay" id="accessOverlay">
+      <i class="ph-fill ph-lock-key"></i>
+      <h2>Фото-анализ доступен на Gold</h2>
+      <p>Распознавание блюд и подсчёт КБЖУ по фото — функция Статуса Gold и Group Gold.</p>
+      <button onclick="location.href='u12-subscription.html'">Узнать подробнее</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ============================================================
+      // ELEMENTS
+      // ============================================================
+      const webcam = document.getElementById('webcam');
+      const canvas = document.getElementById('captureCanvas');
+      const previewImg = document.getElementById('previewImg');
+      const cameraPrompt = document.getElementById('cameraPrompt');
+      const scannerOverlay = document.getElementById('scannerOverlay');
+      const laser = document.getElementById('laser');
+      const scanText = document.getElementById('scanText');
+      const controlsBar = document.getElementById('controlsBar');
+      const btnStartCamera = document.getElementById('btnStartCamera');
+      const btnShutter = document.getElementById('btnShutter');
+      const btnGallery = document.getElementById('btnGallery');
+      const btnFlip = document.getElementById('btnFlip');
+      const galleryInput = document.getElementById('galleryInput');
+      const resultSheet = document.getElementById('resultSheet');
+      const btnApply = document.getElementById('btnApply');
+      const btnCancel = document.getElementById('btnCancel');
+      const btnRetry = document.getElementById('btnRetry');
+      const btnClose = document.getElementById('btnClose');
+      const remainingBadge = document.getElementById('remainingBadge');
+      const accessOverlay = document.getElementById('accessOverlay');
+
+      let currentStream = null;
+      let facingMode = 'environment';
+      let lastAnalysisData = null;
+
+      // ============================================================
+      // ACCESS CHECK
+      // ============================================================
+      function checkAccess() {
+        const d = (window.AIDiet && window.AIDiet.getProfile) ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+        const tier = (d.chosen_tier || 'T3').toUpperCase();
+        const isGold = tier === 'T3' || tier === 'T4' || tier === 'GOLD' || tier === 'GROUP GOLD';
+        const isTrial = d.is_trial !== false; // Default: trial active
+        if (!isGold && !isTrial) {
+          accessOverlay.classList.add('visible');
+          return false;
+        }
+        return true;
+      }
+
+      // ============================================================
+      // LIMIT CHECK
+      // ============================================================
+      function updateRemainingBadge() {
+        const { remaining } = checkPhotoAnalysisLimit();
+        remainingBadge.textContent = `${remaining}/5`;
+      }
+
+      // ============================================================
+      // CAMERA
+      // ============================================================
+      async function startCamera() {
+        try {
+          if (currentStream) {
+            currentStream.getTracks().forEach(t => t.stop());
+          }
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode, width: { ideal: 1280 }, height: { ideal: 960 } }
+          });
+          currentStream = stream;
+          webcam.srcObject = stream;
+          cameraPrompt.style.display = 'none';
+          webcam.style.display = 'block';
+          btnShutter.classList.remove('disabled');
+        } catch (err) {
+          console.error('Camera error:', err);
+          cameraPrompt.querySelector('p').textContent = 'Не удалось получить доступ к камере. Используйте кнопку «Галерея» слева.';
+          btnStartCamera.style.display = 'none';
+        }
+      }
+
+      btnStartCamera.addEventListener('click', startCamera);
+
+      btnFlip.addEventListener('click', () => {
+        facingMode = facingMode === 'environment' ? 'user' : 'environment';
+        startCamera();
+      });
+
+      // ============================================================
+      // CAPTURE PHOTO
+      // ============================================================
+      function captureFrame() {
+        canvas.width = webcam.videoWidth;
+        canvas.height = webcam.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(webcam, 0, 0);
+        previewImg.src = canvas.toDataURL('image/jpeg', 0.85);
+        previewImg.style.display = 'block';
+        webcam.style.display = 'none';
+
+        canvas.toBlob(blob => {
+          if (blob) sendForAnalysis(blob);
+        }, 'image/jpeg', 0.85);
+      }
+
+      btnShutter.addEventListener('click', () => {
+        const { allowed } = checkPhotoAnalysisLimit();
+        if (!allowed) {
+          alert('Лимит анализов на сегодня исчерпан (5/5). Попробуйте завтра!');
+          return;
+        }
+        captureFrame();
+      });
+
+      // ============================================================
+      // GALLERY
+      // ============================================================
+      btnGallery.addEventListener('click', () => {
+        const { allowed } = checkPhotoAnalysisLimit();
+        if (!allowed) {
+          alert('Лимит анализов на сегодня исчерпан (5/5). Попробуйте завтра!');
+          return;
+        }
+        galleryInput.click();
+      });
+
+      galleryInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+          alert('Пожалуйста, выберите изображение.');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          previewImg.src = ev.target.result;
+          previewImg.style.display = 'block';
+          webcam.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+
+        sendForAnalysis(file);
+        galleryInput.value = '';
+      });
+
+      // ============================================================
+      // SEND TO API
+      // ============================================================
+      async function sendForAnalysis(imageBlob) {
+        // Show scanning animation
+        scannerOverlay.style.display = 'flex';
+        laser.style.animation = 'scan 1.5s ease-in-out infinite';
+        scanText.style.opacity = '1';
+        btnShutter.classList.add('disabled');
+        controlsBar.style.pointerEvents = 'none';
+
+        let dots = 0;
+        const phases = [
+          'Распознаю блюдо',
+          'Оцениваю порцию',
+          'Считаю КБЖУ',
+          'Проверяю противопоказания',
+          'Формирую вердикт'
+        ];
+        let phaseIdx = 0;
+        const scanInterval = setInterval(() => {
+          dots = (dots + 1) % 4;
+          if (dots === 0) phaseIdx = Math.min(phaseIdx + 1, phases.length - 1);
+          scanText.textContent = phases[phaseIdx] + '.'.repeat(dots);
+        }, 400);
+
+        try {
+          const result = await analyzePhotoAPI(imageBlob, (step) => {
+            scanText.textContent = step;
+          });
+
+          clearInterval(scanInterval);
+          hideScanAnimation();
+
+          if (result.status === 'success') {
+            showResult(result.data);
+            incrementPhotoAnalysisCount();
+            updateRemainingBadge();
+          } else {
+            showError('Неизвестная ошибка сервера');
+          }
+        } catch (err) {
+          clearInterval(scanInterval);
+          hideScanAnimation();
+          showError(err.message || 'Ошибка связи с сервером');
+        }
+      }
+
+      function hideScanAnimation() {
+        laser.style.animation = 'none';
+        laser.style.opacity = '0';
+        scanText.style.opacity = '0';
+        scannerOverlay.style.display = 'none';
+        btnShutter.classList.remove('disabled');
+        controlsBar.style.pointerEvents = 'auto';
+      }
+
+      // ============================================================
+      // SHOW RESULT
+      // ============================================================
+      function showResult(data) {
+        lastAnalysisData = data;
+        const foodEmojis = { 'бургер': '🍔', 'салат': '🥗', 'пицца': '🍕', 'суп': '🍲', 'рис': '🍚', 'мясо': '🥩', 'рыба': '🐟', 'фрукт': '🍎', 'каша': '🥣', 'яйц': '🥚', 'хлеб': '🍞', 'торт': '🎂', 'курица': '🍗', 'паста': '🍝', 'сэндвич': '🥪' };
+        let emoji = '🍽';
+        const nameLower = (data.food_name || '').toLowerCase();
+        for (const [key, val] of Object.entries(foodEmojis)) {
+          if (nameLower.includes(key)) { emoji = val; break; }
+        }
+
+        document.getElementById('rsIcon').textContent = emoji;
+        document.getElementById('rsName').textContent = data.food_name || 'Неизвестное блюдо';
+        document.getElementById('rsCals').textContent = `${data.calories || 0} ккал`;
+        document.getElementById('rsPortion').textContent = `~${data.portion_grams || '?'} г`;
+
+        // Confidence
+        const conf = data.confidence || 0;
+        const confPct = Math.round(conf * 100);
+        document.getElementById('rsConfidence').textContent = `${confPct}%`;
+        const confFill = document.getElementById('rsConfidenceFill');
+        confFill.style.width = `${confPct}%`;
+        confFill.style.background = conf >= 0.7 ? '#10B981' : conf >= 0.4 ? '#F59E0B' : '#EF4444';
+
+        // Low confidence correction
+        const correctionBlock = document.getElementById('correctionBlock');
+        if (conf < 0.7) {
+          correctionBlock.classList.add('visible');
+          document.getElementById('rsDesc').textContent = 'AI не совсем уверен. Проверь название блюда.';
+        } else {
+          correctionBlock.classList.remove('visible');
+          document.getElementById('rsDesc').textContent = 'AI уверенно распознал твой приём пищи.';
+        }
+
+        // Macros
+        const macros = data.macros || {};
+        document.getElementById('rsProteins').textContent = Math.round(macros.proteins || 0);
+        document.getElementById('rsFats').textContent = Math.round(macros.fats || 0);
+        document.getElementById('rsCarbs').textContent = Math.round(macros.carbs || 0);
+        document.getElementById('rsFiber').textContent = Math.round(macros.fiber || 0);
+
+        // Warnings
+        const warningsRow = document.getElementById('rsWarnings');
+        warningsRow.innerHTML = '';
+        if (data.warnings && data.warnings.length > 0) {
+          data.warnings.forEach(w => {
+            const chip = document.createElement('span');
+            chip.className = 'warning-chip';
+            chip.textContent = `⚠️ ${w}`;
+            warningsRow.appendChild(chip);
+          });
+        }
+
+        // Verdict
+        const verdictBlock = document.getElementById('rsVerdictBlock');
+        const hasWarnings = data.warnings && data.warnings.length > 0;
+        verdictBlock.className = 'verdict-block' + (hasWarnings ? ' warning' : '');
+        document.getElementById('rsVerdictTitle').textContent = hasWarnings ? 'Внимание' : 'Вердикт';
+        document.getElementById('rsVerdictText').textContent = data.verdict || '—';
+
+        // Impact
+        document.getElementById('rsImpactText').textContent = data.impact || `${data.calories || 0} ккал добавлено к дневнику.`;
+
+        // Hide error, show result
+        document.getElementById('rsError').classList.remove('visible');
+        resultSheet.classList.add('visible');
+      }
+
+      function showError(message) {
+        document.getElementById('rsErrorText').textContent = message;
+        document.getElementById('rsError').classList.add('visible');
+        resultSheet.classList.add('visible');
+      }
+
+      // ============================================================
+      // ACTIONS
+      // ============================================================
+      btnApply.addEventListener('click', () => {
+        if (!lastAnalysisData) return;
+        const d = lastAnalysisData;
+        const macros = d.macros || {};
+
+        addFoodLogEntry({
+          food_name: d.food_name,
+          calories: d.calories || 0,
+          proteins: macros.proteins || 0,
+          fats: macros.fats || 0,
+          carbs: macros.carbs || 0,
+          fiber: macros.fiber || 0,
+          portion_grams: d.portion_grams || 0,
+          source: 'photo_analysis'
+        });
+
+        // Visual feedback
+        btnApply.textContent = '✅ Записано!';
+        btnApply.style.background = '#10B981';
+        setTimeout(() => {
+          location.href = 'h1-dashboard.html';
+        }, 800);
+      });
+
+      btnCancel.addEventListener('click', () => {
+        resultSheet.classList.remove('visible');
+        lastAnalysisData = null;
+        resetViewfinder();
+      });
+
+      btnRetry.addEventListener('click', () => {
+        resultSheet.classList.remove('visible');
+        document.getElementById('rsError').classList.remove('visible');
+        lastAnalysisData = null;
+        resetViewfinder();
+      });
+
+      btnClose.addEventListener('click', () => {
+        if (currentStream) currentStream.getTracks().forEach(t => t.stop());
+        history.back();
+      });
+
+      function resetViewfinder() {
+        previewImg.style.display = 'none';
+        if (currentStream) {
+          webcam.style.display = 'block';
+        } else {
+          cameraPrompt.style.display = 'flex';
+        }
+      }
+
+      // ============================================================
+      // INIT
+      // ============================================================
+      if (checkAccess()) {
+        updateRemainingBadge();
+        // Try auto-starting camera
+        startCamera();
+      }
+    });
+  </script>
+<script src="onboarding-state.js"></script>
+</body>
+</html>

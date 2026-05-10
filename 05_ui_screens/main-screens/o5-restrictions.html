@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-5 Ограничения и аллергии</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .subtitle {
+      font-size: 12px; font-weight: 700; color: var(--color-text-secondary);
+      margin: 24px 0 12px 0; text-transform: uppercase; letter-spacing: 0.8px;
+    }
+
+    /* === Disabled chip === */
+    .chip.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* === Аллергия: тоггл-секция === */
+    .toggle-section {
+      margin-top: 20px; display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 20px; background: #FFFFFF; border-radius: 18px; border: 1px solid var(--color-divider);
+    }
+    .toggle-info { display: flex; flex-direction: column; gap: 3px; }
+    .toggle-title { font-size: 15px; font-weight: 700; color: var(--color-text-primary); }
+    .toggle-desc { font-size: 12px; color: var(--color-text-secondary); }
+    .toggle-switch { width: 52px; height: 28px; background: #E5E7EB; border-radius: 14px; position: relative; cursor: pointer; flex-shrink: 0; }
+    .toggle-switch.active { background: var(--color-primary); }
+    .toggle-circle { width: 22px; height: 22px; background: #fff; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: transform 0.2s; }
+    .toggle-switch.active .toggle-circle { transform: translateX(24px); }
+
+    /* === Список аллергенов === */
+    .allergy-list {
+      display: flex; flex-direction: column;
+      background: #FFFFFF; border-radius: 18px;
+      border: 1px solid var(--color-divider);
+      overflow: hidden; margin-top: 12px;
+    }
+    .allergy-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--color-divider);
+      cursor: pointer; transition: background 0.15s; gap: 12px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .allergy-row:last-child { border-bottom: none; }
+    .allergy-row:active { background: #f7f7f7; }
+    .allergy-row.active { background: #FFF9F5; }
+    .allergy-row-label {
+      font-size: 15px; font-weight: 500;
+      color: var(--color-text-primary); flex: 1;
+    }
+    .allergy-row-check {
+      width: 22px; height: 22px; border-radius: 6px;
+      border: 2px solid #D1D5DB;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s;
+    }
+    .allergy-row.active .allergy-row-check {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+    .allergy-check-icon {
+      display: none; color: #fff; font-size: 13px; font-weight: 700;
+    }
+    .allergy-row.active .allergy-check-icon { display: block; }
+
+    /* === Tip === */
+    .onboarding-tip-card {
+      background-color: #E8F5E9; border-radius: 16px; padding: 18px;
+      display: flex; gap: 12px; margin-top: 24px; border: 1px solid #C8E6C9;
+    }
+    .onboarding-tip-icon { font-size: 20px; flex-shrink: 0; }
+    .onboarding-tip-text { font-size: 13px; color: #2E7D32; line-height: 1.5; font-weight: 500; }
+  </style>
+
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 4 из 14</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <h1 class="question-title">Ограничения и аллергии</h1>
+      <p class="question-desc">Уберём нежелательные продукты и защитим от аллергенов.</p>
+
+      <!-- Блок: Тип питания -->
+      <div class="subtitle">Есть ли ограничения в еде или особый формат питания?</div>
+      <div class="chip-grid" id="restrictionChips">
+        <div class="chip active" id="noRestrChip">Нет ограничений</div>
+        <div class="chip">Вегетарианство</div>
+        <div class="chip">Веганство</div>
+        <div class="chip">Не ем красное мясо</div>
+        <div class="chip">Не ем мясо, но ем рыбу</div>
+        <div class="chip">Не ем молочные продукты</div>
+        <div class="chip">Не ем глютен</div>
+        <div class="chip">Не ем сахар или стараюсь избегать</div>
+        <div class="chip">Халяль</div>
+        <div class="chip">Кошерное питание</div>
+      </div>
+
+      <!-- Поле «Другое ограничение» — всегда видимо -->
+      <div class="input-wrapper" style="margin-top:12px;">
+        <input type="text" class="input-field" id="otherRestrText"
+          autocomplete="off" data-no-hydrate="true"
+          placeholder="Другое ограничение...">
+      </div>
+
+      <!-- Блок: Аллергия — тоггл -->
+      <div class="toggle-section">
+        <div class="toggle-info">
+          <span class="toggle-title">Есть аллергия на продукты?</span>
+          <span class="toggle-desc">Орехи, молоко, яйца и др.</span>
+        </div>
+        <div class="toggle-switch" id="allergyToggle"><div class="toggle-circle"></div></div>
+      </div>
+
+      <!-- Список аллергенов — появляется при Да -->
+      <div id="allergySection" style="display:none;">
+        <div class="subtitle">Выбери аллергены</div>
+        <div class="allergy-list" id="allergyList">
+          <div class="allergy-row" data-value="Орехи">
+            <span class="allergy-row-label">Орехи</span>
+            <div class="allergy-row-check"><span class="allergy-check-icon">✓</span></div>
+          </div>
+          <div class="allergy-row" data-value="Арахис">
+            <span class="allergy-row-label">Арахис</span>
+            <div class="allergy-row-check"><span class="allergy-check-icon">✓</span></div>
+          </div>
+          <div class="allergy-row" data-value="Молоко и молочные">
+            <span class="allergy-row-label">Молоко и молочные</span>
+            <div class="allergy-row-check"><span class="allergy-check-icon">✓</span></div>
+          </div>
+          <div class="allergy-row" data-value="Яйца">
+            <span class="allergy-row-label">Яйца</span>
+            <div class="allergy-row-check"><span class="allergy-check-icon">✓</span></div>
+          </div>
+          <div class="allergy-row" data-value="Рыба">
+            <span class="allergy-row-label">Рыба</span>
+            <div class="allergy-row-check"><span class="allergy-check-icon">✓</span></div>
+          </div>
+          <div class="allergy-row" data-value="Морепродукты">
+            <span class="allergy-row-label">Морепродукты</span>
+            <div class="allergy-row-check"><span class="allergy-check-icon">✓</span></div>
+          </div>
+          <div class="allergy-row" data-value="Пшеница (глютен)">
+            <span class="allergy-row-label">Пшеница (глютен)</span>
+            <div class="allergy-row-check"><span class="allergy-check-icon">✓</span></div>
+          </div>
+          <div class="allergy-row" data-value="Соя">
+            <span class="allergy-row-label">Соя</span>
+            <div class="allergy-row-check"><span class="allergy-check-icon">✓</span></div>
+          </div>
+          <div class="allergy-row" data-value="Цитрусовые">
+            <span class="allergy-row-label">Цитрусовые</span>
+            <div class="allergy-row-check"><span class="allergy-check-icon">✓</span></div>
+          </div>
+          <div class="allergy-row" data-value="Мёд">
+            <span class="allergy-row-label">Мёд</span>
+            <div class="allergy-row-check"><span class="allergy-check-icon">✓</span></div>
+          </div>
+        </div>
+
+        <!-- Другое → текстовое поле (по спеке screens-map) -->
+        <div class="input-wrapper" style="margin-top:10px;">
+          <input type="text" class="input-field" id="otherAllergyText"
+            autocomplete="off" data-no-hydrate="true"
+            placeholder="Другой аллерген...">
+        </div>
+      </div>
+
+      <!-- Motivation Block -->
+      <div class="onboarding-tip-card">
+        <div class="onboarding-tip-icon">💡</div>
+        <div class="onboarding-tip-text">
+          Это вопрос твоей безопасности. Даже самый полезный продукт может навредить при аллергии или противоречить убеждениям. Мы полностью исключим всё, что тебе не подходит — и найдём полноценные замены по белкам, жирам и микроэлементам, чтобы рацион остался сбалансированным. Многие не знают, что глютен есть не только в хлебе, а лактоза — не только в молоке. Соевый соус, колбасы, магазинные соусы — там прячется то, что ты стараешься избегать. Мы учтём ограничения системно — не только в очевидных продуктах.
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-cta">
+      <button class="btn-back" id="btnBackO5">← Назад</button>
+      <button class="btn-primary" id="btnNextO5">Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+
+  </div>
+
+  <script src="onboarding-state.js"></script>
+  <script>
+    // === BACK BUTTON ROUTING ===
+    (function() {
+      const p = window.AIDiet ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+      const goal = (p['Главная цель'] || '').toLowerCase();
+      const addLoss = p['Доп. Снижение веса'] === 'Да';
+      const needsO4 = goal.includes('снизить вес') || addLoss;
+      document.getElementById('btnBackO5').onclick = () => { location.href = needsO4 ? 'o4-weight-loss.html' : 'o3-profile.html'; };
+    })();
+
+    // === RESTRICTIONS LOGIC ===
+    const restrChips = document.querySelectorAll('#restrictionChips .chip');
+    const noRestrChip = document.getElementById('noRestrChip');
+    const otherRestrText = document.getElementById('otherRestrText');
+
+    // Сбрасываем ghost-значения
+    otherRestrText.value = '';
+
+    // === ГИДРАТАЦИЯ — восстанавливаем всё из localStorage ===
+    try {
+      const saved = JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+
+      // 1. Ограничения в питании — чипы
+      const savedRestr = saved['Тип питания'] || '';
+      if (savedRestr) {
+        const savedSet = savedRestr.split(',').map(s => s.trim());
+        restrChips.forEach(chip => {
+          if (savedSet.includes(chip.innerText.trim())) {
+            chip.classList.add('active');
+            if (chip !== noRestrChip) noRestrChip.classList.remove('active');
+          }
+        });
+      }
+
+      // 2. Другое ограничение — поле
+      if (saved['Ограничение_другое']) {
+        otherRestrText.value = saved['Ограничение_другое'];
+      }
+
+      // 3. Аллергия — тоггл
+      if (saved['Есть аллергия'] === 'Да') {
+        const toggle = document.getElementById('allergyToggle');
+        toggle.classList.add('active');
+        document.getElementById('allergySection').style.display = 'block';
+
+        // 4. Аллергены — список
+        const savedAllergy = saved['Аллергены'] || '';
+        if (savedAllergy) {
+          const allergySet = savedAllergy.split(',').map(s => s.trim());
+          document.querySelectorAll('#allergyList .allergy-row').forEach(row => {
+            if (allergySet.includes(row.dataset.value)) {
+              row.classList.add('active');
+            }
+          });
+        }
+
+        // 5. Другой аллерген — поле
+        const otherAllergyText = document.getElementById('otherAllergyText');
+        if (saved['Аллергия_другое']) {
+          otherAllergyText.value = saved['Аллергия_другое'];
+        }
+      }
+    } catch(e) {}
+
+    // После гидратации применяем конфликты
+    setTimeout(() => {
+      otherRestrText.value = otherRestrText.value; // keep restored value
+      applyConflicts();
+    }, 50);
+
+    restrChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (chip === noRestrChip) {
+          restrChips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          // BUG-F2-14: Clear «Другое» field to prevent conflicting data
+          otherRestrText.value = '';
+          window.AIDiet && window.AIDiet.saveField('diet_restrictions_other', '');
+        } else {
+          noRestrChip.classList.remove('active');
+          chip.classList.toggle('active');
+        }
+        applyConflicts();
+        saveRestrictions();
+      });
+    });
+
+    // Матрица конфликтов
+    const CONFLICTS = {
+      'Веганство':            ['Вегетарианство', 'Не ем красное мясо', 'Не ем мясо, но ем рыбу', 'Не ем молочные продукты'],
+      'Вегетарианство':      ['Веганство', 'Не ем красное мясо', 'Не ем мясо, но ем рыбу'],
+      'Не ем мясо, но ем рыбу': ['Веганство', 'Вегетарианство'],
+    };
+
+    function applyConflicts() {
+      // Сбрасываем disabled
+      restrChips.forEach(c => c.classList.remove('disabled'));
+
+      // Собираем активные лейблы
+      const activeLabels = Array.from(restrChips)
+        .filter(c => c.classList.contains('active'))
+        .map(c => c.innerText.trim());
+
+      // Строим множество заблокированных
+      const blocked = new Set();
+      activeLabels.forEach(label => {
+        (CONFLICTS[label] || []).forEach(b => blocked.add(b));
+      });
+
+      // Применяем disabled + снимаем active у заблокированных
+      restrChips.forEach(chip => {
+        if (blocked.has(chip.innerText.trim())) {
+          chip.classList.add('disabled');
+          chip.classList.remove('active');
+        }
+      });
+    }
+
+    function saveRestrictions() {
+      const active = Array.from(restrChips)
+        .filter(c => c.classList.contains('active'))
+        .map(c => c.innerText.trim());
+      const other = otherRestrText.value.trim();
+      if (other) active.push(other);
+      window.AIDiet && window.AIDiet.saveField('diet_restrictions', active.join(', '));
+    }
+
+    otherRestrText.addEventListener('input', () => {
+      window.AIDiet && window.AIDiet.saveField('diet_restrictions_other', otherRestrText.value.trim());
+      saveRestrictions();
+    });
+
+    // === ALLERGY TOGGLE ===
+    const allergyToggle = document.getElementById('allergyToggle');
+    const allergySection = document.getElementById('allergySection');
+    const otherAllergyText = document.getElementById('otherAllergyText');
+
+    // Сбрасываем ghost (hydration восстановит корректные данные)
+    otherAllergyText.value = '';
+
+    allergyToggle.addEventListener('click', () => {
+      allergyToggle.classList.toggle('active');
+      const on = allergyToggle.classList.contains('active');
+      allergySection.style.display = on ? 'block' : 'none';
+      if (!on) {
+        // Снимаем все чекбоксы
+        document.querySelectorAll('#allergyList .allergy-row').forEach(r => r.classList.remove('active'));
+        otherAllergyText.value = '';
+      }
+      window.AIDiet && window.AIDiet.saveField('has_allergies', on ? 'Да' : 'Нет');
+    });
+
+    // === ALLERGEN LIST (множественный выбор) ===
+    document.querySelectorAll('#allergyList .allergy-row').forEach(row => {
+      row.addEventListener('click', () => {
+        row.classList.toggle('active');
+        saveAllergies();
+      });
+    });
+
+    function saveAllergies() {
+      const selected = Array.from(document.querySelectorAll('#allergyList .allergy-row.active'))
+        .map(r => r.dataset.value);
+      const other = otherAllergyText.value.trim();
+      if (other) selected.push(other);
+      window.AIDiet && window.AIDiet.saveField('allergies', selected.join(', '));
+    }
+
+    otherAllergyText.addEventListener('input', () => {
+      window.AIDiet && window.AIDiet.saveField('allergies_other', otherAllergyText.value.trim());
+      saveAllergies();
+    });
+
+    // === O5-01: ДАЛЕЕ — гарантированное сохранение перед навигацией ===
+    document.getElementById('btnNextO5').addEventListener('click', (e) => {
+      e.preventDefault();
+      saveRestrictions();
+      if (allergyToggle.classList.contains('active')) {
+        saveAllergies();
+      } else {
+        window.AIDiet && window.AIDiet.saveField('has_allergies', 'Нет');
+      }
+      window.AIDiet.goNext('o6-health-core.html');
+    });
+  </script>
+</body>
+</html>

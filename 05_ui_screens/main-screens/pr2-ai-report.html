@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - PR-2 AI-отчёт</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header { padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+    .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid var(--color-divider); color: var(--color-text-primary); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; }
+    .header-title { font-size: 20px; font-weight: 700; color: var(--color-text-primary); }
+    /* Score Circle */
+    .score-hero { background: #FFFFFF; border: 1px solid var(--color-divider); border-radius: 24px; padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+    .score-circle-container { position: relative; width: 140px; height: 140px; }
+    .score-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+    .score-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+    .score-val { font-size: 36px; font-weight: 800; color: var(--color-success); line-height: 1; }
+    .score-label { font-size: 11px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; margin-top: 4px; }
+    .score-summary-text { font-size: 15px; font-weight: 600; color: var(--color-text-primary); text-align: center; line-height: 1.4; }
+    /* Category list */
+    .categories { display: flex; flex-direction: column; gap: 16px; }
+    .cat-item { display: flex; flex-direction: column; gap: 8px; }
+    .cat-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; }
+    .cat-label { color: var(--color-text-primary); }
+    .cat-score { color: var(--color-text-secondary); }
+    .cat-bar { height: 8px; background: #F3F4F6; border-radius: 4px; overflow: hidden; }
+    .cat-fill { height: 100%; border-radius: 4px; }
+    /* AI Insight Box */
+    .insight-card { background: linear-gradient(135deg, #FFF9F3 0%, #FFF1E5 100%); border: 1px solid #FFE4CC; border-radius: 20px; padding: 20px; }
+    .insight-header { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 700; color: #995400; margin-bottom: 12px; }
+    .insight-text { font-size: 14px; line-height: 1.5; color: #B36200; font-weight: 500; }
+    /* Recommendations */
+    .rec-section h2 { font-size: 18px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 16px; }
+    .rec-list { display: flex; flex-direction: column; gap: 12px; }
+    .rec-item { background: #FFFFFF; border: 1px solid var(--color-divider); border-radius: 16px; padding: 16px; display: flex; gap: 16px; align-items: flex-start; }
+    .rec-icon { width: 36px; height: 36px; border-radius: 10px; background: #F3F4F6; display: flex; justify-content: center; align-items: center; font-size: 18px; color: var(--color-primary); flex-shrink: 0; }
+    .rec-content { font-size: 14px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; }
+    .btn-share { width: 100%; height: 56px; border-radius: 16px; background: #FFFFFF; border: 2px solid var(--color-primary); color: var(--color-primary); font-size: 16px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
+    /* Tab Bar */
+    .tab-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 84px; background-color: #FFFFFF; border-top: 1px solid var(--color-divider); display: flex; justify-content: space-around; padding: 12px 12px 30px 12px; z-index: 100; }
+    .tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--color-text-tertiary); text-decoration: none; flex: 1; }
+    .tab-item.active { color: var(--color-primary); }
+    .tab-item i { font-size: 24px; }
+    .tab-label { font-size: 10px; font-weight: 600; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <button class="back-btn" onclick="history.back()" aria-label="Назад"><i class="ph ph-arrow-left"></i></button>
+      <h1 class="header-title">Отчёт AI за неделю</h1>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      
+      <!-- Overall Score -->
+      <section class="score-hero">
+        <div class="score-circle-container">
+          <svg class="score-svg" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" fill="none" stroke="#F3F4F6" stroke-width="12" />
+            <circle cx="60" cy="60" r="54" fill="none" stroke="#52B044" stroke-width="12" 
+              stroke-dasharray="339.29" stroke-dashoffset="50" stroke-linecap="round" />
+          </svg>
+          <div class="score-text">
+            <div class="score-val">84</div>
+            <div class="score-label">баллов</div>
+          </div>
+        </div>
+        <p class="score-summary-text">Отличный результат! План соблюдался на 84%, вес снизился на 1.2 кг за неделю.</p>
+      </section>
+
+      <!-- Detailed Metrics -->
+      <section class="categories">
+        <div class="cat-item">
+          <div class="cat-info"><span class="cat-label">Питание</span><span class="cat-score">88/100</span></div>
+          <div class="cat-bar"><div class="cat-fill" style="width: 88%; background-color: var(--color-success);"></div></div>
+        </div>
+        <div class="cat-item">
+            <div class="cat-info"><span class="cat-label">Активность</span><span class="cat-score">65/100</span></div>
+            <div class="cat-bar"><div class="cat-fill" style="width: 65%; background-color: var(--color-warning);"></div></div>
+        </div>
+        <div class="cat-item">
+            <div class="cat-info"><span class="cat-label">Сон</span><span class="cat-score">92/100</span></div>
+            <div class="cat-bar"><div class="cat-fill" style="width: 92%; background-color: var(--color-info);"></div></div>
+        </div>
+      </section>
+
+      <!-- AI Insight -->
+      <section class="insight-card">
+        <div class="insight-header"><i class="ph ph-sparkle-fill"></i> AI Анализ</div>
+        <p class="insight-text">Твой вес снижается стабильно, но мы заметили, что в среду и четверг был дефицит белка. Это может привести к потере мышечной массы вместо жира. Постарайся добавить больше творога или рыбы во второй половине дня.</p>
+      </section>
+
+      <!-- Recommendations -->
+      <section class="rec-section">
+        <h2>Советы на неделю</h2>
+        <div class="rec-list">
+          <div class="rec-item">
+            <div class="rec-icon"><i class="ph ph-sneaker"></i></div>
+            <div class="rec-content">Добавь хотя бы одну 20-минутную прогулку в середине дня, чтобы улучшить метаболизм.</div>
+          </div>
+          <div class="rec-item">
+            <div class="rec-icon"><i class="ph ph-drop"></i></div>
+            <div class="rec-content">Пей на 2 стакана больше воды — это поможет снизить тягу к сладкому по вечерам.</div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Bottom Action -->
+    <div class="bottom-cta">
+      <button class="btn-share"><i class="ph ph-share-network"></i> Поделиться прогрессом</button>
+    </div>
+
+    <!-- Tab Bar -->
+    <nav class="tab-bar">
+      <a href="h1-dashboard.html" class="tab-item">
+        <i class="ph ph-house"></i>
+        <span class="tab-label">Главная</span>
+      </a>
+      <a href="p1-weekly-plan.html" class="tab-item">
+        <i class="ph ph-calendar-blank"></i>
+        <span class="tab-label">План</span>
+      </a>
+      <a href="s1-shopping-list.html" class="tab-item">
+        <i class="ph ph-shopping-cart"></i>
+        <span class="tab-label">Покупки</span>
+      </a>
+      <a href="pr1-progress.html" class="tab-item active">
+        <i class="ph ph-chart-line-up"></i>
+        <span class="tab-label">Прогресс</span>
+      </a>
+      <a href="u1-profile-main.html" class="tab-item">
+        <i class="ph ph-user"></i>
+        <span class="tab-label">Профиль</span>
+      </a>
+    </nav>
+  </div>
+  <script src="api-connector.js"></script>
+  <script src="subscription-gate.js"></script>
+  <script src="health-analytics.js"></script>
+<script src="ai-report-state.js"></script>
+</body>
+</html>

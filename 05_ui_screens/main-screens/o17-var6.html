@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>O-17 Variant 6</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .table-container { margin-top: 24px; border: 1.5px solid var(--color-divider); border-radius: 16px; overflow: hidden; background: #FFF; }
+    .row { display: flex; border-bottom: 1px solid var(--color-divider); }
+    .row:last-child { border-bottom: none; }
+    .col-feat { flex: 1; padding: 12px; font-size: 11px; font-weight: 600; color: var(--color-text-primary); display: flex; align-items: center; }
+    .col { width: 50px; display: flex; align-items: center; justify-content: center; border-left: 1px solid var(--color-divider); font-size: 16px; }
+    .col.base { background: #F9FAFB; }
+    .col.black { background: #F3F4F6; }
+    .col.gold { background: #FFF7ED; position: relative; }
+    .col.gold::after { content: ''; position: absolute; inset: 0; border: 2px solid var(--color-primary); pointer-events: none; }
+    .col.family { background: #FEF2F2; }
+    
+    .header-row { background: var(--color-surface); font-size: 10px; font-weight: 800; text-align: center; }
+    .header-row .col { padding: 12px 0; flex-direction: column; gap: 4px; }
+    .header-row .col span { writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 8px; letter-spacing: 1px; }
+    
+    i.yes { color: var(--color-primary); }
+    i.no { color: #E5E7EB; }
+    
+    .gold-highlight { font-size: 14px; text-align: center; margin-top: 24px; font-weight: 600; color: var(--color-primary); background: #FFF7ED; padding: 12px; border-radius: 12px; }
+  </style>
+</head>
+<body>
+  <div class="phone" style="overflow-y: auto;">
+    <div class="status-bar" style="position: sticky; top: 0; background: var(--color-background); z-index: 10;"><span>9:41</span><div><i class="ph ph-wifi-high"></i> <i class="ph ph-battery-full"></i></div></div>
+    <div class="content" style="padding-bottom: 100px;">
+      
+      <h1 style="font-size: 26px; font-weight: 800; margin-bottom: 8px; text-align: center;">Сравнение уровней</h1>
+      <p style="color: var(--color-text-secondary); font-size: 13px; text-align: center;">Все возможности умного наставника</p>
+
+      <div class="table-container">
+        <div class="row header-row">
+          <div class="col-feat" style="justify-content: center; font-size: 12px;">Функция</div>
+          <div class="col base"><span>BASE</span></div>
+          <div class="col black"><span>BLACK</span></div>
+          <div class="col gold" style="color: var(--color-primary);"><span>GOLD</span></div>
+          <div class="col family" style="color: #EF4444;"><span>FAMILY</span></div>
+        </div>
+
+        <div class="row">
+          <div class="col-feat">Трекер воды и веса</div>
+          <div class="col base"><i class="ph ph-check yes"></i></div>
+          <div class="col black"><i class="ph ph-check yes"></i></div>
+          <div class="col gold"><i class="ph ph-check yes"></i></div>
+          <div class="col family"><i class="ph ph-check yes"></i></div>
+        </div>
+        
+        <div class="row">
+          <div class="col-feat">Индивидуальный план питания</div>
+          <div class="col base"><i class="ph ph-minus no"></i></div>
+          <div class="col black"><i class="ph ph-check yes"></i></div>
+          <div class="col gold"><i class="ph ph-check yes"></i></div>
+          <div class="col family"><i class="ph ph-check yes"></i></div>
+        </div>
+
+        <div class="row">
+          <div class="col-feat">Рецепты и список покупок</div>
+          <div class="col base"><i class="ph ph-minus no"></i></div>
+          <div class="col black"><i class="ph ph-check yes"></i></div>
+          <div class="col gold"><i class="ph ph-check yes"></i></div>
+          <div class="col family"><i class="ph ph-check yes"></i></div>
+        </div>
+
+        <div class="row">
+          <div class="col-feat">Умный сканер еды по фото</div>
+          <div class="col base"><i class="ph ph-minus no"></i></div>
+          <div class="col black"><i class="ph ph-minus no"></i></div>
+          <div class="col gold"><i class="ph ph-check yes"></i></div>
+          <div class="col family"><i class="ph ph-check yes"></i></div>
+        </div>
+
+        <div class="row">
+          <div class="col-feat">Персональные тренировки</div>
+          <div class="col base"><i class="ph ph-minus no"></i></div>
+          <div class="col black"><i class="ph ph-minus no"></i></div>
+          <div class="col gold"><i class="ph ph-check yes"></i></div>
+          <div class="col family"><i class="ph ph-check yes"></i></div>
+        </div>
+
+        <div class="row">
+          <div class="col-feat">Доступ для 4 членов семьи</div>
+          <div class="col base"><i class="ph ph-minus no"></i></div>
+          <div class="col black"><i class="ph ph-minus no"></i></div>
+          <div class="col gold"><i class="ph ph-minus no"></i></div>
+          <div class="col family"><i class="ph ph-check yes" style="color:#EF4444"></i></div>
+        </div>
+      </div>
+
+      <div class="gold-highlight">
+        🎉 У тебя активирован Статус Gold на 3 дня в подарок!
+      </div>
+
+    </div>
+    
+    <div style="position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 24px 34px; background: var(--color-background); border-top: 1px solid var(--color-divider);">
+      <button class="btn-primary" style="width: 100%;">Приступить <i class="ph ph-arrow-right"></i></button>
+    </div>
+  </div>
+
+<script>
+// Универсальный фильтр фичей статуса
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const raw = localStorage.getItem('aidiet_profile');
+        if (!raw) return;
+        const p = JSON.parse(raw);
+        
+        const _meds = p['takes_medications'] || p['takes_medication']; const noMeds = (!_meds || _meds === 'Нет' || _meds === 'false');
+        const _supps = p['currently_takes_supplements'] || p['takes_supplements']; const noSupps = (!_supps || _supps === 'Нет' || _supps === 'false');
+        const actFreq = p['activity_frequency'];
+        const noTrain = (!actFreq || actFreq === 'Не готов(а) сейчас' || actFreq === 'Не готов сейчас');
+
+        const walkDOM = (node, func) => {
+            func(node);
+            node = node.firstChild;
+            while (node) {
+                walkDOM(node, func);
+                node = node.nextSibling;
+            }
+        };
+
+        walkDOM(document.body, (node) => {
+            if (node.nodeType === 3) { // Text node
+                const text = node.nodeValue.toLowerCase();
+                
+                // Лекарства -> заменяем
+                if (noMeds && text.includes('лекарств') && text.includes('совместимость')) {
+                    node.nodeValue = 'Интеграция с Health Connect и трекерами активности';
+                }
+                
+                // Витамины -> скрываем родителя
+                if (noSupps && (text.includes('витаминов') || text.includes('бадов')) && !node.parentElement.closest('#dynamicPlanBullet')) {
+                    // Ищем ближайший контейнер-строку (обычно div)
+                    const row = node.parentElement.closest('div');
+                    if (row && row.children.length > 0 && row.innerText.length < 100) {
+                        row.style.display = 'none';
+                    }
+                }
+                
+                // Тренировки -> скрываем родителя
+                if (noTrain && text.includes('тренировк') && !node.parentElement.closest('#dynamicPlanBullet')) {
+                    const row = node.parentElement.closest('div');
+                    if (row && row.children.length > 0 && row.innerText.length < 100) {
+                        row.style.display = 'none';
+                    }
+                }
+            }
+        });
+    } catch(e) {
+        console.warn('Error in status feature filter', e);
+    }
+});
+</script>
+</body>
+</html>

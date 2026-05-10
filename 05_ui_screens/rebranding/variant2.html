@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variant 2 - ejeweeka: Premium Dark</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #1A1A24; color: white; }
+        .phone-mockup { 
+            width: 390px; height: 844px; border-radius: 40px; 
+            border: 14px solid #000000; background-color: var(--app-bg);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            position: relative; overflow-y: auto; scroll-behavior: smooth;
+            flex-shrink: 0; scroll-snap-align: center;
+        }
+        .phone-mockup::-webkit-scrollbar { display: none; }
+        .notch {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 150px; height: 28px; background-color: #000000;
+            border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; z-index: 50;
+        }
+        
+        /* Variant 2 Specifics */
+        :root {
+            --primary: #4C1D95; /* Deep Blackberry */
+            --secondary: #F3E8FF; /* Light purple for badges */
+            --dark-bg: #0F0A1A; /* Very dark purple/black */
+            --app-bg: #FDFBFF; /* Frosted white */
+            --gold: #F5922B;
+        }
+    </style>
+</head>
+<body class="pb-20">
+    <!-- Description -->
+    <div class="max-w-7xl mx-auto pt-16 px-8 mb-12">
+        <h1 class="text-4xl font-extrabold text-white mb-4">Вариант 2: ejeweeka (Premium Dark)</h1>
+        <p class="text-xl text-gray-400 mb-6">Дорогой, статусный продукт (клубная система).</p>
+        <div class="flex flex-wrap gap-6 text-gray-900">
+            <div class="flex items-center gap-3 bg-white/10 backdrop-blur p-3 rounded-2xl shadow-sm border border-white/5 text-white">
+                <div class="w-10 h-10 rounded-full" style="background-color: var(--primary);"></div>
+                <div><div class="text-xs text-gray-400 uppercase font-bold tracking-wider">Primary</div><div class="font-mono text-sm">#4C1D95</div></div>
+            </div>
+            <div class="flex items-center gap-3 bg-white/10 backdrop-blur p-3 rounded-2xl shadow-sm border border-white/5 text-white">
+                <div class="w-10 h-10 rounded-full" style="background-color: var(--secondary);"></div>
+                <div><div class="text-xs text-gray-400 uppercase font-bold tracking-wider">Secondary</div><div class="font-mono text-sm">#F3E8FF</div></div>
+            </div>
+            <div class="flex items-center gap-3 bg-white/10 backdrop-blur p-3 rounded-2xl shadow-sm border border-white/5 text-white">
+                <div class="w-10 h-10 rounded-full" style="background: linear-gradient(135deg, var(--primary), var(--gold));"></div>
+                <div><div class="text-xs text-gray-400 uppercase font-bold tracking-wider">Status Gradient</div><div class="font-mono text-sm">#4C1D95 → #F5922B</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Landing Preview -->
+    <div class="max-w-7xl mx-auto px-8 mb-20">
+        <h2 class="text-2xl font-bold text-white mb-6">Лендинг (Hero Block)</h2>
+        <div class="rounded-[40px] overflow-hidden shadow-2xl relative flex items-center justify-center p-12 border border-white/5" style="background-color: var(--dark-bg); min-height: 500px;">
+            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(circle at 50% 0%, var(--primary) 0%, transparent 60%);"></div>
+            
+            <div class="relative z-10 text-center max-w-3xl">
+                <div class="inline-flex items-center gap-2 mb-6 opacity-70">
+                    <i class="ph-fill ph-diamonds-four text-2xl" style="color: var(--secondary);"></i>
+                    <span class="text-white tracking-[0.3em] uppercase text-sm font-bold">ejeweeka</span>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-8 leading-tight tracking-tight">
+                    Твой премиальный <br><span style="color: var(--secondary);">wellness-наставник</span>
+                </h1>
+                <p class="text-lg text-white/50 mb-10 max-w-xl mx-auto leading-relaxed">
+                    Закрытый клуб для тех, кто ценит свое время и здоровье. Идеальный план на каждый день.
+                </p>
+                <button class="px-10 py-5 rounded-full text-white font-bold text-lg transition-transform hover:scale-105" style="background-color: var(--primary); box-shadow: 0 10px 30px rgba(76,29,149,0.5);">
+                    Присоединиться
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Screens -->
+    <div class="max-w-7xl mx-auto px-8">
+        <h2 class="text-2xl font-bold text-white mb-6">Экраны приложения</h2>
+        <div class="flex gap-10 overflow-x-auto pb-12 pt-4 px-4 -mx-4 text-gray-900" style="scroll-snap-type: x mandatory;">
+            
+            <!-- Screen 1: Dashboard -->
+            <div class="phone-mockup">
+                <div class="notch"></div>
+                <div class="pt-14 px-6 pb-6">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <div class="text-sm text-gray-400 font-medium tracking-wide">Среда, 24 Июля</div>
+                            <div class="text-2xl font-extrabold text-[#0F0A1A]">Привет, Андрей.</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-gray-200 border-2" style="border-color: var(--primary);"></div>
+                    </div>
+
+                    <!-- Calorie Ring -->
+                    <div class="bg-white rounded-3xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-6 flex flex-col items-center">
+                        <div class="relative w-40 h-40 flex items-center justify-center mb-6">
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#F8F9FA" stroke-width="8"></circle>
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--primary)" stroke-width="8" stroke-dasharray="314" stroke-dashoffset="100" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute text-center">
+                                <div class="text-3xl font-black text-[#0F0A1A]">1840</div>
+                                <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">ккал осталось</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Macros -->
+                        <div class="flex justify-between w-full gap-3">
+                            <div class="flex-1">
+                                <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-1.5"><span>Б</span><span class="text-[#0F0A1A]">60g</span></div>
+                                <div class="h-1 w-full bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-blue-900 w-[60%]"></div></div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-1.5"><span>Ж</span><span class="text-[#0F0A1A]">45g</span></div>
+                                <div class="h-1 w-full bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-yellow-600 w-[40%]"></div></div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-1.5"><span>У</span><span class="text-[#0F0A1A]">120g</span></div>
+                                <div class="h-1 w-full bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-rose-800 w-[70%]"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <h3 class="font-bold text-[#0F0A1A] mb-3 text-sm tracking-wide uppercase">Действия</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <button class="bg-white shadow-[0_4px_20px_rgb(0,0,0,0.03)] p-4 rounded-2xl flex items-center gap-3 text-left">
+                            <div class="w-10 h-10 rounded-xl flex justify-center items-center text-xl" style="background-color: var(--secondary); color: var(--primary);"><i class="ph-fill ph-camera"></i></div>
+                            <span class="text-sm font-bold text-[#0F0A1A]">Скан еды</span>
+                        </button>
+                        <button class="bg-white shadow-[0_4px_20px_rgb(0,0,0,0.03)] p-4 rounded-2xl flex items-center gap-3 text-left">
+                            <div class="w-10 h-10 rounded-xl flex justify-center items-center text-xl bg-gray-50 text-gray-600"><i class="ph-fill ph-drop"></i></div>
+                            <span class="text-sm font-bold text-[#0F0A1A]">Вода</span>
+                        </button>
+                    </div>
+
+                    <!-- Plan Teaser -->
+                    <div class="bg-white border border-gray-100 rounded-3xl p-5 relative overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+                        <div class="absolute right-[-10px] top-[-10px] w-24 h-24 rounded-full opacity-10" style="background-color: var(--primary);"></div>
+                        <div class="text-[10px] font-bold uppercase tracking-widest mb-2" style="color: var(--primary);">Следующий прием</div>
+                        <div class="font-bold text-lg mb-1 text-[#0F0A1A]">Лосось на гриле с аспарагусом</div>
+                        <div class="text-sm text-gray-400">420 ккал • 20 мин</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 2: Weekly Plan -->
+            <div class="phone-mockup">
+                <div class="notch"></div>
+                <!-- Header bg -->
+                <div class="bg-transparent pt-14 pb-4 px-6 mb-4 relative z-10">
+                    <h2 class="text-2xl font-extrabold text-[#0F0A1A] mb-6">План питания</h2>
+                    
+                    <!-- Week selector -->
+                    <div class="flex justify-between items-center px-2">
+                        <div class="flex flex-col items-center gap-2 opacity-40"><span class="text-[10px] uppercase font-bold tracking-wider">Пн</span><span class="text-sm font-bold">22</span></div>
+                        <div class="flex flex-col items-center gap-2 opacity-40"><span class="text-[10px] uppercase font-bold tracking-wider">Вт</span><span class="text-sm font-bold">23</span></div>
+                        <div class="flex flex-col items-center gap-2" style="color: var(--primary);"><span class="text-[10px] uppercase font-bold tracking-wider">Ср</span><span class="text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full text-white" style="background-color: var(--primary); box-shadow: 0 4px 12px rgba(76,29,149,0.3);">24</span></div>
+                        <div class="flex flex-col items-center gap-2 opacity-40"><span class="text-[10px] uppercase font-bold tracking-wider">Чт</span><span class="text-sm font-bold">25</span></div>
+                        <div class="flex flex-col items-center gap-2 opacity-40"><span class="text-[10px] uppercase font-bold tracking-wider">Пт</span><span class="text-sm font-bold">26</span></div>
+                    </div>
+                </div>
+
+                <div class="px-6 pb-10">
+                    <!-- Meal Card -->
+                    <div class="bg-white rounded-3xl p-3 shadow-[0_4px_20px_rgb(0,0,0,0.04)] mb-4 flex gap-4 items-center pr-4">
+                        <div class="w-20 h-20 bg-gray-200 rounded-2xl flex-shrink-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1493770348161-369560ae357d?auto=format&fit=crop&w=200&q=80')"></div>
+                        <div class="flex-1">
+                            <div class="text-[9px] font-bold uppercase tracking-widest mb-1" style="color: var(--primary);">Завтрак</div>
+                            <div class="font-bold text-[#0F0A1A] text-sm leading-tight mb-1">Овсянка с ягодами</div>
+                            <div class="text-xs font-semibold text-gray-400">320 ккал</div>
+                        </div>
+                        <div class="flex items-center">
+                            <button class="w-8 h-8 rounded-full flex items-center justify-center text-white" style="background-color: var(--primary);"><i class="ph-bold ph-check text-sm"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Vitamin -->
+                    <div class="bg-transparent rounded-2xl py-2 px-1 mb-4 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style="background-color: var(--secondary); color: var(--primary);"><i class="ph-fill ph-pill"></i></div>
+                        <div class="flex-1">
+                            <div class="font-bold text-[#0F0A1A] text-sm">Витамин D3</div>
+                            <div class="text-xs font-semibold text-gray-400">Во время еды</div>
+                        </div>
+                        <button class="w-6 h-6 rounded-full border-2 border-gray-300"></button>
+                    </div>
+
+                     <!-- Meal Card -->
+                     <div class="bg-white rounded-3xl p-3 shadow-[0_4px_20px_rgb(0,0,0,0.04)] mb-4 flex gap-4 items-center pr-4">
+                        <div class="w-20 h-20 bg-gray-200 rounded-2xl flex-shrink-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=200&q=80')"></div>
+                        <div class="flex-1">
+                            <div class="text-[9px] font-bold uppercase tracking-widest mb-1" style="color: var(--primary);">Обед</div>
+                            <div class="font-bold text-[#0F0A1A] text-sm leading-tight mb-1">Салат с киноа и авокадо</div>
+                            <div class="text-xs font-semibold text-gray-400">450 ккал</div>
+                        </div>
+                        <div class="flex items-center">
+                            <button class="w-6 h-6 rounded-full border-2 border-gray-300"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 3: Statuswall -->
+            <div class="phone-mockup relative text-white" style="background-color: var(--dark-bg);">
+                <div class="notch bg-[#0F0A1A]"></div>
+                <!-- Subtle glowing orb -->
+                <div class="absolute top-0 right-0 w-64 h-64 rounded-full opacity-30 blur-3xl" style="background-color: var(--primary);"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-20 blur-3xl" style="background-color: var(--gold);"></div>
+                
+                <div class="relative z-10 pt-20 px-6 pb-10 flex flex-col h-full">
+                    <button class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-8 text-white/50"><i class="ph ph-x"></i></button>
+                    
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border mb-6" style="background-color: rgba(245,146,43,0.1); border-color: rgba(245,146,43,0.3); color: var(--gold);">
+                        <i class="ph-fill ph-crown"></i>
+                        <span class="text-xs font-bold uppercase tracking-widest">Status Gold</span>
+                    </div>
+
+                    <h2 class="text-4xl font-black leading-tight mb-4 tracking-tight">Полный контроль. <br><span class="text-white/50">Без компромиссов.</span></h2>
+                    <p class="text-white/50 mb-10 text-lg leading-relaxed">Премиальный доступ к AI-анализу еды и персональным тренировкам.</p>
+
+                    <div class="flex flex-col gap-4 mb-auto">
+                        <div class="flex items-start gap-4 p-4 border-b border-white/10">
+                            <div class="mt-1 text-2xl" style="color: var(--gold);"><i class="ph-fill ph-camera"></i></div>
+                            <div>
+                                <div class="font-bold text-lg mb-1">AI-Сканер еды</div>
+                                <div class="text-white/50 text-sm">Нейросеть распознает блюдо по фото и сама посчитает калории.</div>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 p-4">
+                            <div class="mt-1 text-2xl" style="color: var(--gold);"><i class="ph-fill ph-barbell"></i></div>
+                            <div>
+                                <div class="font-bold text-lg mb-1">Умные тренировки</div>
+                                <div class="text-white/50 text-sm">План занятий, адаптированный под твой пульс и энергию.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <button class="w-full py-5 rounded-2xl font-bold text-lg transition-transform hover:scale-105" style="background: linear-gradient(135deg, var(--gold), #D97706); color: #0F0A1A;">
+                            Перейти на Gold (990 ₽/мес)
+                        </button>
+                        <p class="text-center text-xs text-white/40 mt-4">Отменить можно в настройках телефона</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

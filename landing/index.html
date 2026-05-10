@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Code | Premium AI Wellness</title>
+    <script>
+        // Force dark mode for all app prototypes displayed in iframes on this landing page
+        try {
+            const profile = JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+            profile.selected_theme = 'dark';
+            localStorage.setItem('aidiet_profile', JSON.stringify(profile));
+        } catch(e) {}
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange: #F5922B;
+            --orange-glow: rgba(245, 146, 43, 0.2);
+            --bg: #050505;
+            --surface: rgba(20, 20, 22, 0.6);
+            --text-main: #FFFFFF;
+            --text-muted: #A1A1A6;
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(245, 146, 43, 0.3);
+            --radius-md: 24px;
+            --radius-lg: 32px;
+        }
+
+        /* All sections dark by default now */
+        .dark-section {
+            --bg: #050505;
+            --surface: rgba(20, 20, 22, 0.6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 1.5rem; }
+        h2 { font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1.2rem; }
+        h3 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.8rem; }
+        p { font-size: 1.125rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .section { padding: 7rem 0; }
+        
+        .badge {
+            display: inline-block; padding: 8px 16px; border-radius: 100px;
+            background: linear-gradient(135deg, rgba(245,149,32,0.15), rgba(217,106,17,0.05));
+            color: #F5922B;
+            font-size: 0.875rem; font-weight: 700; margin-bottom: 1.5rem;
+            border: 1px solid rgba(245, 146, 43, 0.3); text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(245, 146, 43, 0.1), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        /* Nav */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; height: 100px; }
+        .logo { display: flex; align-items: center; gap: 16px; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; }
+        .logo img { height: 72px; width: auto; filter: drop-shadow(0 2px 4px rgba(245,146,43,0.4)); }
+        .logo span { color: var(--orange); }
+        
+        .footer-logo { display: flex; align-items: center; justify-content: center; gap: 20px; font-size: 2rem; font-weight: 800; margin-bottom: 2rem; }
+        .footer-logo img { height: 100px; width: auto; filter: drop-shadow(0 4px 12px rgba(245,146,43,0.4)); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 16px 32px; border-radius: 100px; font-size: 1rem; font-weight: 600; text-decoration: none;
+            transition: all 0.3s; cursor: pointer;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #F59520, #D96A11);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(245, 146, 43, 0.4), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -4px 0 rgba(0,0,0,0.15);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 12px 32px rgba(245, 146, 43, 0.6), inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -4px 0 rgba(0,0,0,0.2);
+        }
+        .btn-primary:active {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 4px 12px rgba(245, 146, 43, 0.3), inset 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #F59520, #E07018);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 12px rgba(245, 146, 43, 0.3));
+        }
+        
+        /* Hero */
+        .hero { position: relative; padding-top: 12rem; text-align: center; }
+        .hero-glow {
+            position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
+            width: 800px; height: 800px; background: radial-gradient(circle, rgba(245,146,43,0.12) 0%, transparent 60%);
+            filter: blur(60px); z-index: -1;
+        }
+        .hero-mockup { max-width: 320px; width: 100%; border-radius: 40px; margin-top: 4rem; box-shadow: 0 30px 80px rgba(0,0,0,0.1); }
+
+        /* Clean Text Section */
+        .text-section { text-align: center; max-width: 800px; margin: 0 auto; }
+        
+        /* Scenarios (Alternating layout) */
+        .scenario-row { display: flex; align-items: center; gap: 6rem; margin-bottom: 8rem; }
+        .scenario-row:nth-child(even) { flex-direction: row-reverse; }
+        .scenario-content { flex: 1; }
+        .scenario-visual { 
+            flex: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            position: relative;
+            perspective: 1400px;
+        }
+        .hero .reveal { perspective: 1400px; }
+
+        /* iPhone Mockup iframe wrapper */
+        .iphone-frame {
+            width: 320px;
+            height: 680px;
+            border-radius: 48px;
+            border: 14px solid #1A1A1A;
+            background: #000;
+            overflow: hidden;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(255,255,255,0.1);
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease;
+            will-change: transform;
+        }
+        .iphone-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none; /* Make it act like a static image */
+        }
+        
+        /* 3D Rotations with Parallax */
+        .scenario-row:nth-child(odd) .iphone-frame {
+            transform: translateY(var(--parallax-y, 0px)) rotateY(-18deg) rotateX(8deg) scale(1.05);
+            box-shadow: 20px 40px 80px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(255,255,255,0.1);
+        }
+        .scenario-row:nth-child(even) .iphone-frame {
+            transform: translateY(var(--parallax-y, 0px)) rotateY(18deg) rotateX(8deg) scale(1.05);
+            box-shadow: -20px 40px 80px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(255,255,255,0.1);
+        }
+        .hero .iphone-frame {
+            transform: translateY(var(--parallax-y, 0px)) rotateY(0deg) rotateX(12deg) scale(1.15);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8), inset 0 0 0 2px rgba(255,255,255,0.1);
+        }
+
+        /* Hover effect to flatten it */
+        .iphone-frame:hover {
+            transform: translateY(var(--parallax-y, 0px)) rotateY(0) rotateX(0) scale(1.15) !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 2px rgba(255,255,255,0.1) !important;
+        }
+        /* Dynamic glow behind iPhone */
+        .iphone-glow {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 120%; height: 120%;
+            background: radial-gradient(circle, rgba(245,146,43,0.08) 0%, transparent 60%);
+            filter: blur(40px); z-index: -1;
+        }
+
+        /* Timeline / One Day */
+        .timeline { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-top: 3rem; }
+        .time-card { background: var(--surface); padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--border); }
+        .time-badge { font-weight: 800; color: var(--orange); margin-bottom: 12px; display: block; }
+
+        /* Dark Section */
+        .dark-section { background: #0A0A0A; color: #fff; }
+        .dark-section h2, .dark-section h3 { color: #fff; }
+        .synergy-list { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 2rem; }
+        .synergy-pill { padding: 12px 24px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; font-weight: 500; }
+
+        /* Footer */
+        footer { padding: 4rem 24px; text-align: center; font-size: 0.875rem; color: var(--text-muted); border-top: 1px solid var(--border); }
+        .disclaimer { 
+            max-width: 800px; margin: 0 auto 2rem; padding: 24px; 
+            background: rgba(0,0,0,0.03); border-radius: 16px; 
+            font-size: 0.85rem; line-height: 1.5; color: #888;
+        }
+
+        /* Split Layout for Sections */
+        .split-section {
+            display: flex; align-items: center; gap: 4rem; max-width: 1200px; margin: 0 auto;
+        }
+        .split-section > div { flex: 1; }
+        
+        /* Chaos Visual */
+        .chaos-visual {
+            position: relative; height: 400px; display: flex; align-items: center; justify-content: center;
+        }
+        .chaos-orb {
+            position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(245, 66, 66, 0.15) 0%, transparent 60%);
+            filter: blur(40px); z-index: 0;
+        }
+        .chaos-pill {
+            position: absolute; background: rgba(30, 30, 35, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05);
+            padding: 16px 24px; border-radius: 100px; font-weight: 500; font-size: 0.95rem; color: #ccc;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1;
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(var(--r)); }
+            50% { transform: translateY(-10px) rotate(var(--r)); }
+            100% { transform: translateY(0px) rotate(var(--r)); }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 3rem;
+        }
+        .stat-card {
+            background: rgba(20, 20, 22, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05);
+            padding: 32px; border-radius: 24px; text-align: left;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .stat-card:hover { transform: translateY(-5px); border-color: rgba(245, 146, 43, 0.3); }
+        .stat-number { font-size: 3rem; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1; background: var(--color-primary-gradient, linear-gradient(135deg, #FFF, #A1A1A6)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stat-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+
+        @media (max-width: 900px) {
+            .split-section { flex-direction: column; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 768px) {
+            .scenario-row { flex-direction: column !important; gap: 2rem; }
+            .scenario-visual { height: 300px; width: 100%; }
+        }
+        /* Bento Grid System */
+        .bento-section {
+            position: relative;
+            padding: 8rem 0;
+            overflow: hidden;
+            background: var(--bg);
+        }
+        .bento-glow-1 {
+            position: absolute; top: 10%; left: 0%; width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(245,146,43,0.12) 0%, transparent 60%);
+            filter: blur(80px); z-index: 0; pointer-events: none;
+        }
+        .bento-glow-2 {
+            position: absolute; bottom: 0%; right: 0%; width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(146,43,245,0.08) 0%, transparent 60%);
+            filter: blur(80px); z-index: 0; pointer-events: none;
+        }
+        
+        .bento-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: minmax(340px, auto);
+            gap: 24px;
+            margin-top: 60px;
+            text-align: left;
+            grid-auto-flow: dense;
+        }
+        
+        .bento-card {
+            background: rgba(24, 24, 27, 0.4);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .bento-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(245, 146, 43, 0.4);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(245,146,43,0.1);
+        }
+        
+        .bento-card.span-2 { grid-column: span 2; }
+        .bento-card.span-3 { grid-column: span 3; }
+        
+        .bento-icon {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, rgba(245,149,32,0.15), rgba(217,106,17,0.05));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #F5922B;
+            border: 1px solid rgba(245, 146, 43, 0.3);
+            box-shadow: 0 8px 16px rgba(245, 146, 43, 0.1), inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -2px 4px rgba(0,0,0,0.05);
+            filter: drop-shadow(0 2px 4px rgba(245,146,43,0.4));
+        }
+        
+        .bento-card h3 {
+            font-size: 1.5rem;
+            margin-top: 80px; /* Prevents text from overlapping the absolute icon */
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: #fff;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .bento-card p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .bento-bg-text {
+            position: absolute;
+            right: -10px;
+            bottom: -20px;
+            font-size: 160px;
+            font-weight: 800;
+            color: rgba(255, 255, 255, 0.02);
+            line-height: 1;
+            z-index: 0;
+            letter-spacing: -0.05em;
+            user-select: none;
+            transition: color 0.4s ease;
+        }
+        .bento-card:hover .bento-bg-text {
+            color: rgba(245, 146, 43, 0.05);
+        }
+
+        .bento-bg-gradient {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+            z-index: 1;
+        }
+
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: repeat(2, 1fr); }
+            .bento-card.span-2 { grid-column: span 2; }
+        }
+        @media (max-width: 640px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-card.span-2 { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">
+                <img src="logo-transparent.png" alt="Health Code">
+                <div>Health<span>Code</span></div>
+            </div>
+            <a href="#cta" class="btn btn-primary" style="padding: 10px 24px;">Скачать</a>
+        </div>
+    </nav>
+
+    <!-- БЛОК 1: Hero -->
+    <section class="hero section">
+        <div class="hero-glow"></div>
+        <div class="container reveal">
+            <h1>Архитектура вашего тела. <br><span class="text-gradient">Идеально рассчитана.</span></h1>
+            <p class="text-section" style="margin-bottom: 2.5rem; font-size: 1.25rem;">
+                Ваша энергия, продуктивность и физическая форма больше не зависят от случайностей. Health Code объединяет питание, восстановление, тренировки и графики добавок в единый смарт-план.
+            </p>
+            <a href="#cta" class="btn btn-primary">Активировать Status Gold</a>
+            <p style="font-size: 0.85rem; margin-top: 1rem; margin-bottom: 4rem;">Управление доступом через приватного Telegram-консьержа</p>
+            
+            <div style="display: flex; justify-content: center;" class="reveal">
+                <div class="iphone-glow"></div>
+                <div class="iphone-frame" style="width: 320px; height: 680px;">
+                    <iframe src="../05_ui_screens/main-screens/h1-dashboard.html" title="Health Code Main Dashboard"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- БЛОК 2: Проблема -->
+    <section class="section" style="background: var(--surface); overflow: hidden;">
+        <div class="container reveal">
+            <div class="split-section">
+                <div>
+                    <div class="badge">Иллюзия контроля</div>
+                    <h2>Вы тратите усилия. <br>А результата нет.</h2>
+                    <p class="text-section" style="text-align: left; margin: 0; margin-bottom: 1rem;">Большинство пытаются взломать свою биологию вслепую. Скачивают трекеры калорий, копируют диеты и пьют витамины, не понимая их взаимодействия.</p>
+                    <p class="text-section" style="text-align: left; margin: 0;">Результат? Жесткие срывы, утренняя разбитость и плато в тренировках. Ваш организм — это сложнейшая экосистема. Вам не нужен еще один дневник питания. Вам нужен единый управляющий центр.</p>
+                </div>
+                <div class="chaos-visual">
+                    <div class="chaos-orb"></div>
+                    <div class="chaos-pill" style="top: 15%; left: 5%; --r: -5deg;">Трекеры калорий</div>
+                    <div class="chaos-pill" style="top: 45%; right: 0%; --r: 8deg;">Модные диеты</div>
+                    <div class="chaos-pill" style="top: 75%; left: 15%; --r: -3deg;">Базовые витамины</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- БЛОК 3: Смарт-ядро -->
+    <section class="section">
+        <div class="container reveal text-center">
+            <div class="badge">Технология</div>
+            <h2>Конец эпохи мифов. <br>Только чистые данные.</h2>
+            <p class="text-section" style="margin-bottom: 2rem;">
+                Обычные поисковики выдают усредненные советы. Фитнес-блогеры раздают рекомендации, которые работают только для них. Мы пошли другим путем. Health Code работает на базе вычислительного ядра, не имеющего аналогов.
+            </p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">16k+</div>
+                    <div class="stat-desc">Закрытых медицинских протоколов и исследований в базе.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-desc">Докторов наук и врачей доказательной медицины в комитете.</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">40+</div>
+                    <div class="stat-desc">Био-параметров анализируется в реальном времени.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- СЦЕНАРИИ -->
+    <section class="section" style="background: var(--surface); overflow: hidden;">
+        <div class="container">
+            <!-- БЛОК 4: Сценарий 1 -->
+            <div class="scenario-row reveal">
+                <div class="scenario-content">
+                    <div class="badge">Сценарий 1: Снижение веса</div>
+                    <h2>Снизить вес без срывов.</h2>
+                    <p><em>Вы перепробовали десятки диет. Вес уходит и возвращается с плюсом, а постоянное чувство голода ломает мотивацию.</em></p>
+                    <p><strong>Как это работает:</strong> Алгоритм не просто урезает калории, а рассчитывает научно обоснованный дефицит. План базируется на ваших любимых продуктах (никакой сухой грудки, если вы её не любите). Высокая нутритивная плотность избавит от голода, а если случился незапланированный перекус — система мягко адаптирует следующий день без чувства вины.</p>
+                </div>
+                <div class="scenario-visual">
+                    <div class="iphone-glow"></div>
+                    <div class="iphone-frame">
+                        <iframe src="../05_ui_screens/main-screens/p1-weekly-plan.html" title="Weekly Meal Plan"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- БЛОК 5: Сценарий 2 -->
+            <div class="scenario-row reveal">
+                <div class="scenario-content">
+                    <div class="badge">Сценарий 2: Возраст и здоровье</div>
+                    <h2>Безопасность после 50.</h2>
+                    <p><em>Давление, подагра или диабет 2 типа. Вы принимаете лекарства на постоянной основе, и диеты из интернета для вас потенциально опасны.</em></p>
+                    <p><strong>Как это работает:</strong> Аналитическое ядро учитывает ваши диагнозы. Система безжалостно исключит опасные триггеры (например, пурины при подагре) и синхронизирует приемы пищи с расписанием ваших лекарств. Математически точный и клинически безопасный рацион.</p>
+                </div>
+                <div class="scenario-visual">
+                    <div class="iphone-glow"></div>
+                    <div class="iphone-frame">
+                        <iframe src="../05_ui_screens/main-screens/pr2-ai-report.html" title="Medical AI Report"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- БЛОК 6: Сценарий 3 (Семейный) -->
+            <div class="scenario-row reveal">
+                <div class="scenario-content">
+                    <div class="badge">Сценарий 3: Семья</div>
+                    <h2>Одно блюдо. Разные результаты.</h2>
+                    <p><em>Вы на сушке, партнер набирает массу, у ребенка непереносимость лактозы. Три разные сковородки каждый вечер — это выматывает.</em></p>
+                    <p><strong>Как это работает:</strong> Смарт-алгоритм анализирует профили всей семьи и находит "общий знаменатель". Он предложит блюдо на всех, адаптировав порции под КБЖУ каждого. Система сама соберет единый умный список покупок на неделю. Никакого стресса на кухне.</p>
+                </div>
+                <div class="scenario-visual">
+                    <div class="iphone-glow"></div>
+                    <div class="iphone-frame">
+                        <iframe src="../05_ui_screens/main-screens/f1-family-group.html" title="Family Plan App Screen"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- БЛОК 7: Сценарий 4 -->
+            <div class="scenario-row reveal">
+                <div class="scenario-content">
+                    <div class="badge">Сценарий 4: Предприниматель</div>
+                    <h2>Чистая энергия и 100% фокус.</h2>
+                    <p><em>У вас нет времени взвешивать еду и изучать составы. Вы обедаете в ресторанах и часто летаете.</em></p>
+                    <p><strong>Как это работает:</strong> Просто наведите камеру на тарелку — визуальный движок мгновенно распознает блюдо и рассчитает макронутриенты. При смене часовых поясов система скорректирует фазы отдыха и напомнит выпить магний для глубокого восстановления. Ваша продуктивность больше не падает после 15:00.</p>
+                </div>
+                <div class="scenario-visual">
+                    <div class="iphone-glow"></div>
+                    <div class="iphone-frame">
+                        <iframe src="../05_ui_screens/main-screens/ph1-photo-analysis.html" title="Photo Analysis App Screen"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- БЛОК 8: Сценарий 5 -->
+            <div class="scenario-row reveal">
+                <div class="scenario-content">
+                    <div class="badge">Сценарий 5: Построение формы</div>
+                    <h2>Рельеф и физическое превосходство.</h2>
+                    <p><em>Вы тренируетесь, но прогресс остановился. Шаблонные программы не работают.</em></p>
+                    <p><strong>Как это работает:</strong> Алгоритм выстраивает план тренировок, синхронизируя нагрузки с вашим циркадным ритмом и потреблением белка. Забыли о перекусе? Система на лету пересчитает норму и предложит идеальный ужин. Каждое движение сопровождается видеоинструкцией. 100% КПД ваших усилий.</p>
+                </div>
+                <div class="scenario-visual">
+                    <div class="iphone-glow"></div>
+                    <div class="iphone-frame">
+                        <iframe src="../05_ui_screens/main-screens/pr1-activity-detail.html" title="Workout Tracking App Screen"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- БЛОК 7: Микро-менеджмент (Dark Section) -->
+    <section class="section dark-section">
+        <div class="container text-section reveal">
+            <div class="badge" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #fff;">Киллер-фича</div>
+            <h2>Синхронизация на микроуровне.</h2>
+            <p style="color: #ccc;">Запиваете железо утренним кофе? Значит, оно просто не усваивается. Принимаете витамин D₃ без правильных жиров? Это пустая трата времени.</p>
+            <p style="color: #ccc;">Health Code досконально знает законы синергии и антагонизма элементов. Алгоритм автоматически разведет конфликтующие элементы по разным часам и объединит те, что усиливают друг друга.</p>
+            
+            <div class="synergy-list" style="justify-content: center;">
+                <div class="synergy-pill">Железо ≠ Кофе</div>
+                <div class="synergy-pill">D₃ + Жиры</div>
+                <div class="synergy-pill">Магний + B₆</div>
+                <div class="synergy-pill">Циркадная синхронизация</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- БЛОК 8: Один день -->
+    <section class="section">
+        <div class="container reveal">
+            <h2 class="text-section">Ваша экосистема. 24/7.</h2>
+            <div class="timeline">
+                <div class="time-card">
+                    <span class="time-badge">07:00 | Утро</span>
+                    <h3>Дашборд и План</h3>
+                    <p>Один взгляд на экран — норма на день рассчитана, расписание добавок готово.</p>
+                </div>
+                <div class="time-card">
+                    <span class="time-badge">13:00 | Обед</span>
+                    <h3>Фото-анализ</h3>
+                    <p>Еда в ресторане распознана по фотографии за долю секунды. Макросы учтены.</p>
+                </div>
+                <div class="time-card">
+                    <span class="time-badge">16:00 | Перекус</span>
+                    <h3>Адаптация</h3>
+                    <p>Выпили латте? Система мгновенно пересчитала оставшийся баланс до конца дня.</p>
+                </div>
+                <div class="time-card">
+                    <span class="time-badge">20:00 | Вечер</span>
+                    <h3>Нагрузки</h3>
+                    <p>Тренировка, адаптированная под ваш уровень энергии и цель именно сегодня.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- БЛОК 8.5: Premium Bento Grid -->
+    <section class="bento-section">
+        <div class="bento-glow-1"></div>
+        <div class="bento-glow-2"></div>
+        <div class="container reveal text-center">
+            <div class="badge">Всё в одном приложении</div>
+            <h2>6 причин навсегда удалить другие трекеры.</h2>
+            
+            <div class="bento-grid">
+                
+                <!-- Card 1: Family (Span 2) -->
+                <div class="bento-card span-2">
+                    <div class="bento-bg-gradient"></div>
+                    <div class="bento-bg-text">FAMILY</div>
+                    <div class="bento-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 256 256"><path d="M128,136a40,40,0,1,0-40-40A40,40,0,0,0,128,136Zm0-64a24,24,0,1,1-24,24A24,24,0,0,1,128,72ZM84,200a4,4,0,0,1-4,4H24a4,4,0,0,1-4-4V168a40,40,0,0,1,40-40h8a4,4,0,0,1,0,8H60a32,32,0,0,0-32,32v28H80A4,4,0,0,1,84,200Zm148-72h-8a4,4,0,0,0,0,8h8a32,32,0,0,1,32,32v28H176a4,4,0,0,0,0,8h60a4,4,0,0,0,4-4V168A40,40,0,0,0,232,128Zm-52,80H76a4,4,0,0,1-4-4V176a40,40,0,0,1,40-40h32a40,40,0,0,1,40,40v28A4,4,0,0,1,180,208ZM80,176v24h96V176a32,32,0,0,0-32-32H112A32,32,0,0,0,80,176ZM76,104A32,32,0,1,1,44,72,32,32,0,0,1,76,104Zm-8,0a24,24,0,1,0-24-24A24,24,0,0,0,68,104Zm144,0a32,32,0,1,1-32-32A32,32,0,0,1,212,104Zm-8,0a24,24,0,1,0-24-24A24,24,0,0,0,204,104Z"></path></svg>
+                    </div>
+                    <h3>Семейный автопилот</h3>
+                    <p>Алгоритм найдет "общий знаменатель" для всей семьи. Одно блюдо на всех с адаптацией порций под индивидуальные КБЖУ. Единый смарт-список покупок для супермаркета.</p>
+                </div>
+
+                <!-- Card 2: Micro-management (Span 1) -->
+                <div class="bento-card">
+                    <div class="bento-bg-gradient"></div>
+                    <div class="bento-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 256 256"><path d="M226.83,57.17l-28-28a16,16,0,0,0-22.63,0l-120,120a16,16,0,0,0,0,22.63l28,28a16,16,0,0,0,22.63,0l120-120A16,16,0,0,0,226.83,57.17ZM84.69,188.69,67.31,171.31l44-44,17.38,17.38ZM140,133.66,122.34,116,166.34,72,184,89.66Zm75.52-65.18-19.86,19.86L178.28,71l19.86-19.86a2,2,0,0,1,2.83,0l14.55,14.55A2,2,0,0,1,215.52,68.48Z"></path></svg>
+                    </div>
+                    <h3>Микроменеджмент</h3>
+                    <p>Железо не усваивается с кофе. Система автоматически разнесет конфликтующие нутриенты по времени суток.</p>
+                </div>
+
+                <!-- Card 3: Privacy (Span 1) -->
+                <div class="bento-card">
+                    <div class="bento-bg-gradient"></div>
+                    <div class="bento-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 256 256"><path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Zm-68-56a12,12,0,1,1-12-12A12,12,0,0,1,140,152Z"></path></svg>
+                    </div>
+                    <h3>Тотальная анонимность</h3>
+                    <p>Без почты и паролей. Диагнозы и мед-карта хранятся только на чипе вашего iPhone.</p>
+                </div>
+
+                <!-- Card 4: Recalculation (Span 1) -->
+                <div class="bento-card">
+                    <div class="bento-bg-gradient"></div>
+                    <div class="bento-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a96,96,0,1,1-96-96V8a8,8,0,0,1,13.66-5.66l24,24a8,8,0,0,1,0,11.32l-24,24A8,8,0,0,1,128,56V32a80,80,0,1,0,80,80,8,8,0,0,1,16,0Z"></path></svg>
+                    </div>
+                    <h3>Адаптация "на лету"</h3>
+                    <p>Никакого чувства вины за торт. Система незаметно адаптирует ужин, чтобы удержать баланс.</p>
+                </div>
+
+                <!-- Card 5: Medical Core (Span 2) -->
+                <div class="bento-card span-2">
+                    <div class="bento-bg-gradient"></div>
+                    <div class="bento-bg-text" style="font-size: 180px;">16k+</div>
+                    <div class="bento-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 256 256"><path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48ZM40,64H216v24H40Zm176,128H40V104H216V192ZM88,144a8,8,0,0,1,8-8h24V112a8,8,0,0,1,16,0v24h24a8,8,0,0,1,0,16H136v24a8,8,0,0,1-16,0V152H96A8,8,0,0,1,88,144Z"></path></svg>
+                    </div>
+                    <h3>Медицинское ядро</h3>
+                    <p>Никаких галлюцинаций LLM и советов из блогов. Векторная база бота построена исключительно на 16 000+ закрытых протоколах от 30+ докторов наук доказательной медицины.</p>
+                </div>
+
+                <!-- Card 6: Ecosystem (Span 1) -->
+                <div class="bento-card">
+                    <div class="bento-bg-gradient"></div>
+                    <div class="bento-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM215.81,120H175.47a241.1,241.1,0,0,0-13.68-68.53A88.08,88.08,0,0,1,215.81,120ZM128,40.11A225.59,225.59,0,0,1,159.08,120H96.92A225.59,225.59,0,0,1,128,40.11ZM40.19,120H80.53A241.1,241.1,0,0,0,94.21,51.47,88.08,88.08,0,0,1,40.19,120ZM40.19,136A88.08,88.08,0,0,1,94.21,204.53,241.1,241.1,0,0,0,80.53,136Zm121.6,79.89A225.59,225.59,0,0,1,96.92,136h62.16A225.59,225.59,0,0,1,161.79,215.89Zm54-79.89a88.08,88.08,0,0,1-54,68.53A241.1,241.1,0,0,0,175.47,136Z"></path></svg>
+                    </div>
+                    <h3>Экосистема</h3>
+                    <p>Замените трекер калорий, дневник давления, таблетницу и тренера одним приложением.</p>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+
+    <!-- БЛОК 9: CTA -->
+    <section id="cta" class="section" style="background: var(--surface); text-align: center;">
+        <div class="container reveal">
+            <h2>Добро пожаловать в клуб.</h2>
+            <p class="text-section" style="margin-bottom: 3rem;">Управление своим телом — это вопрос статуса. Вы можете использовать базовую версию Health Code без ограничений по времени. Но для тех, кто не согласен на компромиссы, мы создали клуб для своих — статусы Black и Gold. Это полный контроль, AI-аналитика и эксклюзивный уровень сервиса через приватного Telegram-консьержа.</p>
+            <a href="#" class="btn btn-primary" style="padding: 20px 48px; font-size: 1.125rem;">Скачать и активировать 3 дня Status Gold</a>
+        </div>
+    </section>
+
+    <!-- Footer с дисклеймером -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo">
+                <img src="logo-transparent.png" alt="Health Code">
+                <div>Health<span class="text-gradient">Code</span></div>
+            </div>
+            <!-- STRICT MEDICAL DISCLAIMER -->
+            <div class="disclaimer">
+                <strong>ВНИМАНИЕ: НЕ ЯВЛЯЕТСЯ МЕДИЦИНСКОЙ РЕКОМЕНДАЦИЕЙ.</strong><br>
+                Приложение Health Code, его алгоритмы, база знаний и любые предоставляемые советы носят исключительно информационный и рекомендательный характер в целях поддержания общего благополучия и физической формы. Сервис не предназначен для диагностики, лечения, облегчения симптомов или профилактики каких-либо заболеваний. Вся информация, расчеты макронутриентов и рекомендации по приему добавок сгенерированы на основе общих данных и не заменяют профессиональную медицинскую консультацию. Перед внесением изменений в свой рацион, режим тренировок или началом приема любых биологически активных добавок, обязательно проконсультируйтесь с вашим лечащим врачом или квалифицированным медицинским специалистом.
+            </div>
+            
+            <p>© 2026 Health Code. Все права защищены.<br>
+            <a href="privacy.html" style="color: var(--text-main); margin-top: 1rem; display: inline-block;">Политика конфиденциальности</a></p>
+        </div>
+    </footer>
+
+    <script>
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Parallax Effect for Mockups
+        window.addEventListener('scroll', () => {
+            requestAnimationFrame(() => {
+                const scrolled = window.scrollY;
+                document.querySelectorAll('.iphone-frame').forEach(el => {
+                    // Extract base transform values to not overwrite the 3D rotation
+                    const baseTransform = window.getComputedStyle(el).transform;
+                    if (baseTransform === 'none') return;
+                    
+                    const speed = 0.08;
+                    const rect = el.parentElement.getBoundingClientRect();
+                    const yPos = (window.innerHeight / 2 - rect.top) * speed;
+                    
+                    // The CSS handles base rotations, we just add a translateY via a CSS variable
+                    el.style.setProperty('--parallax-y', `${yPos}px`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

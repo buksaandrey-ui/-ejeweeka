@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variant 1 - ezheWEEKa: Tech & Wellness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F3F4F6; }
+        .phone-mockup { 
+            width: 390px; height: 844px; border-radius: 40px; 
+            border: 14px solid #111827; background-color: #FFFFFF;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            position: relative; overflow-y: auto; scroll-behavior: smooth;
+            flex-shrink: 0; scroll-snap-align: center;
+        }
+        .phone-mockup::-webkit-scrollbar { display: none; }
+        .notch {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 150px; height: 28px; background-color: #111827;
+            border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; z-index: 50;
+        }
+        
+        /* Variant 1 Specifics */
+        :root {
+            --primary: #7C3AED;
+            --primary-dark: #6D28D9;
+            --dark-bg: #1E1B4B;
+        }
+    </style>
+</head>
+<body class="pb-20">
+    <!-- Description -->
+    <div class="max-w-7xl mx-auto pt-16 px-8 mb-12">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Вариант 1: ezheWEEKa (Tech & Wellness)</h1>
+        <p class="text-xl text-gray-600 mb-6">Энергичный, технологичный, современный стиль.</p>
+        <div class="flex flex-wrap gap-6">
+            <div class="flex items-center gap-3 bg-white p-3 rounded-2xl shadow-sm">
+                <div class="w-10 h-10 rounded-full" style="background-color: var(--primary);"></div>
+                <div><div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Primary</div><div class="font-mono text-sm">#7C3AED</div></div>
+            </div>
+            <div class="flex items-center gap-3 bg-white p-3 rounded-2xl shadow-sm">
+                <div class="w-10 h-10 rounded-full" style="background-color: var(--dark-bg);"></div>
+                <div><div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Dark / Texts</div><div class="font-mono text-sm">#1E1B4B</div></div>
+            </div>
+            <div class="flex items-center gap-3 bg-white p-3 rounded-2xl shadow-sm">
+                <div class="w-10 h-10 rounded-full" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark));"></div>
+                <div><div class="text-xs text-gray-500 uppercase font-bold tracking-wider">Gradient</div><div class="font-mono text-sm">#7C3AED → #6D28D9</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Landing Preview -->
+    <div class="max-w-7xl mx-auto px-8 mb-20">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Лендинг (Hero Block)</h2>
+        <div class="rounded-[40px] overflow-hidden shadow-2xl relative flex items-center justify-center p-12" style="background-color: var(--dark-bg); min-height: 500px;">
+            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle at 50% 50%, var(--primary) 0%, transparent 60%);"></div>
+            
+            <div class="relative z-10 text-center max-w-3xl">
+                <div class="inline-flex items-center gap-2 mb-6 opacity-70">
+                    <i class="ph-fill ph-circles-three text-2xl text-[var(--primary)]"></i>
+                    <span class="text-white tracking-[0.3em] uppercase text-sm font-bold">ezheWEEKa</span>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-8 leading-tight tracking-tight">
+                    Твой умный <br><span style="color: var(--primary);">wellness-наставник</span>
+                </h1>
+                <p class="text-lg text-white/60 mb-10 max-w-xl mx-auto leading-relaxed">
+                    Город, бюджет, тренировки и сон — всё влияет на план. 60+ параметров для идеальной недели.
+                </p>
+                <button class="px-10 py-5 rounded-full text-white font-bold text-lg shadow-xl shadow-[#7C3AED]/30 transition-transform hover:scale-105" style="background-color: var(--primary);">
+                    Начать бесплатно
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Screens -->
+    <div class="max-w-7xl mx-auto px-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Экраны приложения</h2>
+        <div class="flex gap-10 overflow-x-auto pb-12 pt-4 px-4 -mx-4" style="scroll-snap-type: x mandatory;">
+            
+            <!-- Screen 1: Dashboard -->
+            <div class="phone-mockup">
+                <div class="notch"></div>
+                <div class="pt-14 px-6 pb-6">
+                    <!-- Header -->
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <div class="text-sm text-gray-500 font-medium">Среда, 24 Июля</div>
+                            <div class="text-2xl font-extrabold text-[#1E1B4B]">Привет, Андрей!</div>
+                        </div>
+                        <div class="w-10 h-10 rounded-full bg-gray-200 border-2 border-[#7C3AED]"></div>
+                    </div>
+
+                    <!-- Calorie Ring -->
+                    <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mb-6 flex flex-col items-center">
+                        <div class="relative w-40 h-40 flex items-center justify-center mb-6">
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="#F3F4F6" stroke-width="10"></circle>
+                                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--primary)" stroke-width="10" stroke-dasharray="314" stroke-dashoffset="100" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute text-center">
+                                <div class="text-3xl font-extrabold text-[#1E1B4B]">1840</div>
+                                <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide">ккал осталось</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Macros -->
+                        <div class="flex justify-between w-full gap-2">
+                            <div class="flex-1">
+                                <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-1"><span>Б</span><span>60g</span></div>
+                                <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-blue-500 w-[60%]"></div></div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-1"><span>Ж</span><span>45g</span></div>
+                                <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-yellow-500 w-[40%]"></div></div>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-1"><span>У</span><span>120g</span></div>
+                                <div class="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-red-400 w-[70%]"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <h3 class="font-bold text-[#1E1B4B] mb-3">Быстрые действия</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <button class="bg-white border border-gray-100 shadow-sm p-4 rounded-2xl flex items-center gap-3 text-left">
+                            <div class="w-10 h-10 rounded-xl bg-[#7C3AED]/10 flex justify-center items-center text-[#7C3AED]"><i class="ph-fill ph-camera text-xl"></i></div>
+                            <span class="text-sm font-bold text-[#1E1B4B]">Фото еды</span>
+                        </button>
+                        <button class="bg-white border border-gray-100 shadow-sm p-4 rounded-2xl flex items-center gap-3 text-left">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 flex justify-center items-center text-blue-500"><i class="ph-fill ph-drop text-xl"></i></div>
+                            <span class="text-sm font-bold text-[#1E1B4B]">Вода</span>
+                        </button>
+                    </div>
+
+                    <!-- Plan Teaser -->
+                    <div class="bg-[var(--dark-bg)] text-white rounded-3xl p-5 relative overflow-hidden">
+                        <div class="absolute right-0 bottom-0 opacity-10"><i class="ph-fill ph-fork-knife text-8xl"></i></div>
+                        <div class="text-xs font-bold text-[var(--primary)] mb-1 uppercase tracking-wider">Следующий прием</div>
+                        <div class="font-bold text-lg mb-1">Гречневая лапша с индейкой</div>
+                        <div class="text-sm text-gray-400">420 ккал • 20 мин</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 2: Weekly Plan -->
+            <div class="phone-mockup bg-gray-50">
+                <div class="notch"></div>
+                <!-- Header bg -->
+                <div class="bg-white pt-14 pb-4 px-6 rounded-b-3xl shadow-sm mb-6 relative z-10">
+                    <h2 class="text-2xl font-extrabold text-[#1E1B4B] mb-6">План питания</h2>
+                    
+                    <!-- Week selector -->
+                    <div class="flex justify-between items-center">
+                        <div class="flex flex-col items-center gap-1 opacity-50"><span class="text-xs font-bold">ПН</span><span class="text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full">22</span></div>
+                        <div class="flex flex-col items-center gap-1 opacity-50"><span class="text-xs font-bold">ВТ</span><span class="text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full">23</span></div>
+                        <div class="flex flex-col items-center gap-1 text-[var(--primary)]"><span class="text-xs font-bold">СР</span><span class="text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full bg-[var(--primary)] text-white shadow-md shadow-[#7C3AED]/40">24</span></div>
+                        <div class="flex flex-col items-center gap-1 opacity-50"><span class="text-xs font-bold">ЧТ</span><span class="text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full">25</span></div>
+                        <div class="flex flex-col items-center gap-1 opacity-50"><span class="text-xs font-bold">ПТ</span><span class="text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full">26</span></div>
+                    </div>
+                </div>
+
+                <div class="px-6 pb-10">
+                    <!-- Meal Card -->
+                    <div class="bg-white rounded-3xl p-4 shadow-sm mb-4 border border-gray-100 flex gap-4">
+                        <div class="w-20 h-20 bg-gray-200 rounded-2xl flex-shrink-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1493770348161-369560ae357d?auto=format&fit=crop&w=200&q=80')"></div>
+                        <div class="flex-1 flex flex-col justify-center">
+                            <div class="text-[10px] font-bold text-[var(--primary)] uppercase tracking-wider mb-1">Завтрак</div>
+                            <div class="font-bold text-[#1E1B4B] text-sm leading-tight mb-2">Овсянка с ягодами и орехами</div>
+                            <div class="text-xs font-semibold text-gray-400">320 ккал</div>
+                        </div>
+                        <div class="flex items-center">
+                            <button class="w-10 h-10 rounded-full bg-[var(--primary)] flex items-center justify-center text-white shadow-md shadow-[#7C3AED]/30"><i class="ph-bold ph-check"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Vitamin -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm mb-4 border border-gray-100 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-[#7C3AED]/10 text-[#7C3AED] flex items-center justify-center text-xl"><i class="ph-fill ph-pill"></i></div>
+                        <div class="flex-1">
+                            <div class="font-bold text-[#1E1B4B] text-sm">Витамин D3</div>
+                            <div class="text-xs font-semibold text-gray-400">Во время еды</div>
+                        </div>
+                        <button class="w-8 h-8 rounded-full border-2 border-gray-200"></button>
+                    </div>
+
+                     <!-- Meal Card -->
+                     <div class="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 flex gap-4">
+                        <div class="w-20 h-20 bg-gray-200 rounded-2xl flex-shrink-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=200&q=80')"></div>
+                        <div class="flex-1 flex flex-col justify-center">
+                            <div class="text-[10px] font-bold text-[var(--primary)] uppercase tracking-wider mb-1">Обед</div>
+                            <div class="font-bold text-[#1E1B4B] text-sm leading-tight mb-2">Салат с киноа и авокадо</div>
+                            <div class="text-xs font-semibold text-gray-400">450 ккал</div>
+                        </div>
+                        <div class="flex items-center">
+                            <button class="w-8 h-8 rounded-full border-2 border-gray-200"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 3: Statuswall -->
+            <div class="phone-mockup relative text-white" style="background: linear-gradient(135deg, var(--primary), var(--dark-bg));">
+                <div class="notch bg-white/10 backdrop-blur-md"></div>
+                <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wLDBMMDAsNDBMMDAsNDBMMDAsMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuMSIvPgo8L3N2Zz4=')]"></div>
+                
+                <div class="relative z-10 pt-20 px-6 pb-10 flex flex-col h-full">
+                    <button class="w-10 h-10 rounded-full bg-white/10 backdrop-blur flex items-center justify-center mb-6"><i class="ph ph-x"></i></button>
+                    
+                    <div class="inline-block px-3 py-1 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg text-xs font-black uppercase tracking-wider text-[#1E1B4B] self-start mb-6">
+                        Status Gold
+                    </div>
+
+                    <h2 class="text-4xl font-extrabold leading-tight mb-4">Больше, чем <br>просто калории</h2>
+                    <p class="text-white/70 mb-10 text-lg">AI-анализ еды по фото и персональные тренировки.</p>
+
+                    <div class="flex flex-col gap-4 mb-auto">
+                        <div class="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl text-yellow-400"><i class="ph-fill ph-camera"></i></div>
+                            <div>
+                                <div class="font-bold text-lg">AI-Сканер еды</div>
+                                <div class="text-white/60 text-sm">Просто сделай фото</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                            <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-2xl text-yellow-400"><i class="ph-fill ph-barbell"></i></div>
+                            <div>
+                                <div class="font-bold text-lg">Умные тренировки</div>
+                                <div class="text-white/60 text-sm">С видео и таймерами</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <button class="w-full py-5 rounded-2xl bg-white text-[#1E1B4B] font-extrabold text-xl shadow-2xl shadow-black/30 mb-4 transition-transform hover:scale-105">
+                            Продолжить за 990 ₽/мес
+                        </button>
+                        <p class="text-center text-xs text-white/50">Отменить можно в любой момент</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

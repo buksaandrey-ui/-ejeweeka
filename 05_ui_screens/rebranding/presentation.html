@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ejeweeka: Визуальная Эволюция</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #050505; color: white; -webkit-font-smoothing: antialiased; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+    </style>
+</head>
+<body class="p-8">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="text-center mb-20 pt-10">
+            <h1 class="text-5xl font-bold mb-4 tracking-tight">Эволюция Проекта</h1>
+            <p class="text-gray-400 text-xl max-w-2xl mx-auto font-light">Визуальный отчет по последним 8 итерациям рефакторинга и редизайна (от Health Code к ejeweeka).</p>
+        </header>
+
+        <!-- Лендинг -->
+        <section class="mb-24">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-10 h-10 rounded-full bg-[#4C1D95] flex items-center justify-center font-bold">1</div>
+                <h2 class="text-3xl font-semibold">Новый Лендинг (Premium Dark)</h2>
+            </div>
+            <p class="text-gray-400 mb-8 font-light">Решение проблемы с "дешевым дизайном". Это идеальный визуальный мокап (Apple Style), по которому теперь сверстан Вариант 2.</p>
+            <div class="glass p-4 rounded-[32px]">
+                <img src="images/landing_page_mockup_1778343757640.png" class="w-full rounded-[24px] shadow-2xl" alt="Landing Page Mockup">
+            </div>
+        </section>
+
+        <!-- Светлая тема -->
+        <section class="mb-24">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center font-bold">2</div>
+                <h2 class="text-3xl font-semibold">Мобильные экраны: Status White</h2>
+            </div>
+            <p class="text-gray-400 mb-8 font-light">Чистая, премиальная белая тема для базового тарифа. Контраст, который заставляет хотеть темную версию.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass p-4 rounded-3xl"><img src="images/light_theme_welcome_v2_1778340196347.png" class="w-full rounded-2xl" alt="Welcome"></div>
+                <div class="glass p-4 rounded-3xl"><img src="images/light_theme_dashboard_1778339669878.png" class="w-full rounded-2xl" alt="Dashboard"></div>
+                <div class="glass p-4 rounded-3xl"><img src="images/light_theme_recipe_v2_1778340099684.png" class="w-full rounded-2xl" alt="Recipe"></div>
+                <div class="glass p-4 rounded-3xl"><img src="images/light_theme_mealplan_v2_1778340119970.png" class="w-full rounded-2xl" alt="Meal Plan"></div>
+                <div class="glass p-4 rounded-3xl"><img src="images/light_theme_activity_v2_1778340134309.png" class="w-full rounded-2xl" alt="Activity"></div>
+                <div class="glass p-4 rounded-3xl"><img src="images/light_theme_profile_v2_1778340183602.png" class="w-full rounded-2xl" alt="Profile"></div>
+                <div class="glass p-4 rounded-3xl md:col-span-2 lg:col-span-3 flex justify-center"><img src="images/light_theme_paywall_v2_1778340148536.png" class="w-full max-w-md rounded-2xl" alt="Paywall"></div>
+            </div>
+        </section>
+
+        <!-- Логотипы -->
+        <section class="mb-24">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-10 h-10 rounded-full bg-[#F5922B] text-black flex items-center justify-center font-bold">3</div>
+                <h2 class="text-3xl font-semibold">Концепты Логотипов</h2>
+            </div>
+            <p class="text-gray-400 mb-8 font-light">Эволюция бренда в Blackberry Purple & Gold.</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass p-2 rounded-2xl"><img src="images/logo_concept_gold_v2_1778340224144.png" class="w-full rounded-xl aspect-square object-cover" alt="Logo"></div>
+                <div class="glass p-2 rounded-2xl"><img src="images/logo_concept_glass_v2_1778340207728.png" class="w-full rounded-xl aspect-square object-cover" alt="Logo"></div>
+                <div class="glass p-2 rounded-2xl"><img src="images/concept_infinity_w_1778338517305.png" class="w-full rounded-xl aspect-square object-cover" alt="Logo"></div>
+                <div class="glass p-2 rounded-2xl"><img src="images/concept_glass_berry_1778338530062.png" class="w-full rounded-xl aspect-square object-cover" alt="Logo"></div>
+                <div class="glass p-2 rounded-2xl"><img src="images/concept_calorie_ring_1778339248061.png" class="w-full rounded-xl aspect-square object-cover" alt="Logo"></div>
+                <div class="glass p-2 rounded-2xl"><img src="images/concept_negative_e_1778339235571.png" class="w-full rounded-xl aspect-square object-cover" alt="Logo"></div>
+                <div class="glass p-2 rounded-2xl"><img src="images/concept_smart_berry_1778338505632.png" class="w-full rounded-xl aspect-square object-cover" alt="Logo"></div>
+                <div class="glass p-2 rounded-2xl"><img src="images/concept_tech_drop_1778339224902.png" class="w-full rounded-xl aspect-square object-cover" alt="Logo"></div>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>

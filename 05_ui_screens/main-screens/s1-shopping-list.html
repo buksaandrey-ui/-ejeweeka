@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - S-1 Список покупок</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .header-title { font-size: 24px; font-weight: 700; color: var(--color-text-primary); }
+    .btn-share { width: 44px; height: 44px; border-radius: 12px; background: #FFFFFF; border: 1px solid var(--color-divider); color: var(--color-text-primary); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; }
+    /* Period Selector */
+    .period-toggle { display: flex; background: #F3F4F6; padding: 4px; border-radius: 12px; }
+    .toggle-item { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; color: var(--color-text-secondary); transition: all 0.2s; }
+    .toggle-item.active { background: #FFFFFF; color: var(--color-text-primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .category-section { display: flex; flex-direction: column; gap: 12px; }
+    .category-header { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700; color: var(--color-text-primary); padding: 4px 0; }
+    .category-icon { font-size: 20px; color: var(--color-primary); }
+    .product-list { background: #FFFFFF; border-radius: 20px; border: 1px solid var(--color-divider); padding: 4px 16px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+    .product-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid #F3F4F6; cursor: pointer; }
+    .product-item:last-child { border-bottom: none; }
+    .prod-left { display: flex; align-items: center; gap: 16px; }
+    .prod-checkbox { width: 24px; height: 24px; border-radius: 7px; border: 2px solid var(--color-divider); display: flex; justify-content: center; align-items: center; color: transparent; transition: all 0.2s; }
+    .prod-name { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+    .prod-qty { font-size: 14px; font-weight: 600; color: var(--color-text-secondary); text-align: right; }
+    .product-item.checked .prod-checkbox { background: var(--color-primary); border-color: var(--color-primary); color: #FFFFFF; }
+    .product-item.checked .prod-name { color: var(--color-text-secondary); text-decoration: line-through; }
+    .summary-card { background: #F0FDF4; border: 1px solid #DCFCE7; border-radius: 18px; padding: 16px; display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+    .summary-info { display: flex; flex-direction: column; gap: 2px; }
+    .summary-label { font-size: 12px; font-weight: 600; color: #166534; text-transform: uppercase; }
+    .summary-val { font-size: 18px; font-weight: 700; color: #15803D; }
+    .btn-buy { padding: 10px 16px; border-radius: 10px; background: #166534; color: #FFFFFF; border: none; font-size: 13px; font-weight: 700; }
+    /* Tab Bar */
+    .tab-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 84px; background-color: #FFFFFF; border-top: 1px solid var(--color-divider); display: flex; justify-content: space-around; padding: 12px 12px 30px 12px; z-index: 100; }
+    .tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--color-text-tertiary); text-decoration: none; flex: 1; }
+    .tab-item.active, .tab-item:active { color: var(--color-primary); }
+    .tab-item i { font-size: 24px; }
+    .tab-label { font-size: 10px; font-weight: 600; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <h1 class="header-title">Покупки</h1>
+      <button class="btn-share"><i class="ph ph-export"></i></button>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Notification Banner -->
+      <div style="background: #FFF7ED; border: 1px solid #FFE4CC; border-radius: 16px; padding: 16px; margin-top: 8px;">
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: #FFFFFF; display: flex; justify-content: center; align-items: center; color: #F5922B; font-size: 20px; flex-shrink: 0;"><i class="ph ph-bell-ringing"></i></div>
+          <div>
+            <h3 style="font-size: 14px; font-weight: 700; color: #995400; margin-bottom: 4px;">План покупок сформирован</h3>
+            <p style="font-size: 13px; color: #B36200; line-height: 1.4; margin-bottom: 12px; font-weight: 500;">Ты можете посмотреть меню на следующие 3 дня и при необходимости изменить блюда.</p>
+            <button onclick="location.href='s2-meal-swap.html'" style="padding: 8px 16px; background: #F5922B; color: #FFFFFF; font-size: 13px; font-weight: 700; border: none; border-radius: 10px; cursor: pointer;">Выбрать блюда</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Period Selector -->
+      <div class="period-toggle">
+        <div class="toggle-item">На 3 дня</div>
+        <div class="toggle-item active">На неделю</div>
+      </div>
+
+      <!-- Vegetables -->
+      <section class="category-section">
+        <div class="category-header">
+          <i class="ph ph-leaf category-icon"></i>
+          <span>Овощи и зелень</span>
+        </div>
+        <div class="product-list">
+          <div class="product-item" onclick="location.href='s2-product-detail.html'">
+            <div class="prod-left">
+              <div class="prod-checkbox"><i class="ph ph-check"></i></div>
+              <span class="prod-name">Брокколи</span>
+            </div>
+            <span class="prod-qty">700 г</span>
+          </div>
+          <div class="product-item checked">
+            <div class="prod-left">
+              <div class="prod-checkbox"><i class="ph ph-check"></i></div>
+              <span class="prod-name">Огурцы</span>
+            </div>
+            <span class="prod-qty">1.5 кг</span>
+          </div>
+          <div class="product-item">
+            <div class="prod-left">
+              <div class="prod-checkbox"><i class="ph ph-check"></i></div>
+              <span class="prod-name">Авокадо хасс</span>
+            </div>
+            <span class="prod-qty">4 шт</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Meat & Poultry -->
+      <section class="category-section">
+        <div class="category-header">
+          <i class="ph ph-cooking-pot category-icon"></i>
+          <span>Мясо и птица</span>
+        </div>
+        <div class="product-list">
+          <div class="product-item">
+            <div class="prod-left">
+              <div class="prod-checkbox"><i class="ph ph-check"></i></div>
+              <span class="prod-name">Куриная грудка (филе)</span>
+            </div>
+            <span class="prod-qty">1.2 кг</span>
+          </div>
+          <div class="product-item">
+            <div class="prod-left">
+              <div class="prod-checkbox"><i class="ph ph-check"></i></div>
+              <span class="prod-name">Индейка стейк</span>
+            </div>
+            <span class="prod-qty">600 г</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Summary -->
+      <section class="summary-card">
+        <div class="summary-info">
+          <span class="summary-label">Примерная сумма</span>
+          <span class="summary-val">~ 4 250 ₽</span>
+        </div>
+        <button class="btn-buy">Заказать всё</button>
+      </section>
+
+    </div>
+
+    <!-- Tab Bar -->
+    <nav class="tab-bar">
+      <a href="h1-dashboard.html" class="tab-item">
+        <i class="ph ph-house"></i>
+        <span class="tab-label">Главная</span>
+      </a>
+      <a href="p1-weekly-plan.html" class="tab-item">
+        <i class="ph ph-calendar-blank"></i>
+        <span class="tab-label">План</span>
+      </a>
+      <a href="s1-shopping-list.html" class="tab-item active">
+        <i class="ph ph-shopping-cart-fill"></i>
+        <span class="tab-label">Покупки</span>
+      </a>
+      <a href="pr1-progress.html" class="tab-item">
+        <i class="ph ph-chart-line-up"></i>
+        <span class="tab-label">Прогресс</span>
+      </a>
+      <a href="u1-profile-main.html" class="tab-item">
+        <i class="ph ph-user"></i>
+        <span class="tab-label">Профиль</span>
+      </a>
+    </nav>
+  </div>
+  <script src="shopping-state.js"></script>
+<script src="shopping-cart-state.js"></script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-7 Женское здоровье</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .option-list { display: flex; flex-direction: column; gap: 12px; }
+    .option-card { 
+      background: #FFFFFF; border: 1.5px solid var(--color-divider); border-radius: 18px; padding: 18px 20px; 
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; cursor: pointer; transition: all 0.2s;
+    }
+    .option-card.active { border-color: var(--color-primary); background: #FFF7ED; }
+    .option-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+    .option-title { font-size: 15px; font-weight: 700; color: var(--color-text-primary); line-height: 1.4; }
+    .option-desc { font-size: 12px; color: var(--color-text-secondary); }
+    .check-box { min-width: 24px; min-height: 24px; min-width: 24px; min-height: 24px; min-width: 24px; min-height: 24px; width: 24px; height: 24px; border-radius: 8px; border: 2px solid var(--color-divider); display: flex; justify-content: center; align-items: center; color: transparent; font-size: 16px; transition: all 0.2s; flex-shrink: 0; margin-top: 2px; }
+    .option-card.active .check-box { background: var(--color-primary); border-color: var(--color-primary); color: #FFFFFF; }
+    .info-bar { margin-top: 32px; padding: 16px; background: #F3F4F6; border-radius: 16px; display: flex; gap: 12px; align-items: flex-start; }
+    .info-bar i { font-size: 20px; color: var(--color-primary); margin-top: 2px; }
+    .info-text { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; font-weight: 500; }
+    .onboarding-tip-card {
+      background-color: #E8F5E9;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+      border: 1px solid #C8E6C9;
+    }
+    .onboarding-tip-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .onboarding-tip-text {
+      font-size: 13px;
+      color: #2E7D32;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+    /* Toggle Switch & Input Styles */
+    .toggle-section { 
+      background: #FFFFFF; border: 1px solid var(--color-divider); border-radius: 16px; padding: 18px 20px; 
+      display: flex; justify-content: space-between; align-items: center; margin-top: 24px;
+    }
+    .toggle-info { display: flex; flex-direction: column; gap: 4px; }
+    .toggle-title { font-size: 15px; font-weight: 700; color: var(--color-text-primary); }
+    .toggle-desc { font-size: 12px; color: var(--color-text-secondary); }
+    .toggle-switch { width: 52px; height: 28px; background: #E5E7EB; border-radius: 14px; position: relative; cursor: pointer; flex-shrink: 0; }
+    .toggle-switch.active { background: #52B044; }
+    .toggle-circle { width: 22px; height: 22px; background: #FFFFFF; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: transform 0.2s; }
+    .toggle-switch.active .toggle-circle { transform: translateX(24px); }
+    @media (max-width: 440px) {
+    }
+  </style>
+
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 6 из 14</div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+      <h1 class="question-title">Женское здоровье</h1>
+      <p class="question-desc">Учет гормонального фона позволяет нам составлять рацион, который меняется вместе с твоим циклом.</p>
+
+      <div style="font-size:14px; font-weight:700; color:var(--color-text-primary); margin-bottom:16px; text-transform:uppercase; letter-spacing:0.8px;">Есть ли особенности, которые важно учесть?</div>
+      <div class="option-list">
+        <div class="option-card" id="cardPregnancy">
+          <div class="option-info">
+            <span class="option-title">Беременность</span>
+            <span class="option-desc">Повышенная потребность в фолатах и железе</span>
+          </div>
+          <div class="check-box"><i class="ph ph-check"></i></div>
+        </div>
+        <div class="option-card" id="cardBreastfeeding">
+          <div class="option-info">
+            <span class="option-title">Кормление грудью</span>
+            <span class="option-desc">Дополнительные +500 ккал к твоей базе</span>
+          </div>
+          <div class="check-box"><i class="ph ph-check"></i></div>
+        </div>
+        <div class="option-card">
+          <div class="option-info">
+            <span class="option-title">Менопауза или перименопауза</span>
+            <span class="option-desc">Акцент на кальций и контроль веса</span>
+          </div>
+          <div class="check-box"><i class="ph ph-check"></i></div>
+        </div>
+        <div class="option-card">
+          <div class="option-info">
+            <span class="option-title">Нерегулярный цикл</span>
+            <span class="option-desc">Цикл нестабильный или длинный</span>
+          </div>
+          <div class="check-box"><i class="ph ph-check"></i></div>
+        </div>
+        <div class="option-card">
+          <div class="option-info">
+            <span class="option-title">СПКЯ</span>
+            <span class="option-desc">Контроль инсулинорезистентности</span>
+          </div>
+          <div class="check-box"><i class="ph ph-check"></i></div>
+        </div>
+        <div class="option-card">
+          <div class="option-info">
+            <span class="option-title">Нет особенностей</span>
+            <span class="option-desc">Стандартный расчет по возрасту</span>
+          </div>
+          <div class="check-box"><i class="ph ph-check"></i></div>
+        </div>
+      </div>
+
+      <div class="info-bar">
+        <i class="ph ph-sparkle"></i>
+        <p class="info-text">В зависимости от фазы цикла твоя тяга к сладкому и аппетит могут меняться. Мы учтем это в плане.</p>
+      </div>
+
+      <!-- BUG-F2-18: Блок «Лекарства» по спеку O-7 -->
+      <div class="toggle-section" id="medsToggleSection">
+        <div class="toggle-info">
+          <span class="toggle-title">Принимаешь ли лекарства на постоянной основе?</span>
+          <span class="toggle-desc">Некоторые продукты и добавки могут влиять на действие лекарств</span>
+        </div>
+        <div class="toggle-switch" id="medsToggle"><div class="toggle-circle"></div></div>
+      </div>
+      <div class="input-wrapper" id="medsInputWrap" style="display: none;">
+        <input type="text" class="input-field" id="medsInput" placeholder="Укажи названия лекарств...">
+      </div>
+
+      <div class="toggle-section" id="hormonesToggleSection">
+        <div class="toggle-info">
+          <span class="toggle-title">Принимаешь ли гормональные препараты или КОК?</span>
+          <span class="toggle-desc">Противозачаточные, ЗГТ</span>
+        </div>
+        <div class="toggle-switch" id="hormonesToggle"><div class="toggle-circle"></div></div>
+      </div>
+      <div class="input-wrapper" id="hormonesInputWrap" style="display: none;">
+        <input type="text" class="input-field" id="hormonesInput" placeholder="Укажи названия препаратов...">
+      </div>
+
+          <!-- Motivation Block -->
+      <div class="onboarding-tip-card" style="margin-top: 24px;">
+        <div class="onboarding-tip-icon">💡</div>
+        <div class="onboarding-tip-text">
+          Некоторые продукты могут усиливать или ослаблять действие лекарств. Грейпфрут влияет на метаболизм десятков препаратов. Кальций снижает усвоение L-тироксина. Витамин K конфликтует с варфарином. Мы учтём твои лекарства — и еда будет работать с ними, а не против. Беременность, лактация, менопауза, СПКЯ — это не «особые случаи», это разные физиологические состояния с принципиально разными потребностями в питании. При менопаузе критичен кальций и витамин D. При СПКЯ — контроль инсулина. При лактации — калорийность и омега-3. Мы подстроим план под твой этап жизни.
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="location.href='o6-health-core.html'">← Назад</button>
+      <button class="btn-primary" id="btnNextO7">Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+
+  </div>
+
+  <script>
+    // === BUG-F2-17: Hide pregnancy/breastfeeding if goal = weight loss ===
+    (function() {
+      const prof = window.AIDiet ? window.AIDiet.getProfile() : {};
+      const goal = (prof['goal'] || prof['Главная цель'] || '').toLowerCase();
+      if (goal.includes('снизить вес')) {
+        const cp = document.getElementById('cardPregnancy');
+        const cb = document.getElementById('cardBreastfeeding');
+        if (cp) { cp.style.display = 'none'; cp.classList.add('_hidden'); }
+        if (cb) { cb.style.display = 'none'; cb.classList.add('_hidden'); }
+      }
+    })();
+
+    // === Checkbox toggling with mutual exclusion ===
+    document.querySelectorAll('.option-card').forEach(item => {
+      item.addEventListener('click', () => {
+        if (item.classList.contains('_hidden')) return;
+        item.classList.toggle('active');
+        const title = item.querySelector('.option-title').innerText.trim();
+        if (title === 'Нет особенностей' && item.classList.contains('active')) {
+          document.querySelectorAll('.option-card').forEach(other => {
+            if (other !== item) other.classList.remove('active');
+          });
+        } else if (item.classList.contains('active')) {
+          document.querySelectorAll('.option-card').forEach(other => {
+            if (other.querySelector('.option-title').innerText.trim() === 'Нет особенностей') {
+              other.classList.remove('active');
+            }
+          });
+        }
+        saveO7State();
+      });
+    });
+
+    // === Medications Toggle (BUG-F2-18) ===
+    const mToggle = document.getElementById('medsToggle');
+    const mWrap = document.getElementById('medsInputWrap');
+    let hasMeds = false;
+    mToggle.addEventListener('click', () => {
+      mToggle.classList.toggle('active');
+      hasMeds = mToggle.classList.contains('active');
+      mWrap.style.display = hasMeds ? 'flex' : 'none';
+      if (!hasMeds) document.getElementById('medsInput').value = '';
+      saveO7State();
+    });
+    
+    document.getElementById('medsInput').addEventListener('input', () => {
+        saveO7State();
+    });
+
+    // === Hormones Toggle ===
+    const hToggle = document.getElementById('hormonesToggle');
+    const hWrap = document.getElementById('hormonesInputWrap');
+    let hasHormones = false;
+    hToggle.addEventListener('click', () => {
+      hToggle.classList.toggle('active');
+      hasHormones = hToggle.classList.contains('active');
+      hWrap.style.display = hasHormones ? 'flex' : 'none';
+      if (!hasHormones) document.getElementById('hormonesInput').value = '';
+      saveO7State();
+    });
+    
+    document.getElementById('hormonesInput').addEventListener('input', () => {
+        saveO7State();
+    });
+
+    function saveO7State() {
+      const activeConditions = [];
+      document.querySelectorAll('.option-card.active .option-title').forEach(el => {
+        activeConditions.push(el.innerText.trim());
+      });
+      window.AIDiet && window.AIDiet.saveField('womens_health', activeConditions.length ? activeConditions.join(', ') : 'Нет особенностей');
+
+      // Medications
+      if (hasMeds) {
+        window.AIDiet && window.AIDiet.saveField('medications', document.getElementById('medsInput').value || 'Да (не указано)');
+      } else {
+        window.AIDiet && window.AIDiet.saveField('medications', 'Нет');
+      }
+
+      // Hormones
+      if (hasHormones) {
+        window.AIDiet && window.AIDiet.saveField('takes_contraceptives', document.getElementById('hormonesInput').value || 'Да (не указано)');
+      } else {
+        window.AIDiet && window.AIDiet.saveField('takes_contraceptives', 'Нет');
+      }
+    }
+
+    // === ДАЛЕЕ ===
+    document.getElementById('btnNextO7').addEventListener('click', (e) => {
+      e.preventDefault();
+      saveO7State();
+      window.AIDiet.goNext('o8-habits.html');
+    });
+
+    // === O7-01: HYDRATION при возврате назад ===
+    setTimeout(() => {
+      const prof = window.AIDiet ? window.AIDiet.getProfile() : {};
+
+      // 1. Женское здоровье — option-cards
+      const savedWH = (prof['womens_health'] || prof['Женское здоровье'] || '').split(',').map(s => s.trim()).filter(Boolean);
+      if (savedWH.length && savedWH[0] !== 'Нет особенностей') {
+        document.querySelectorAll('.option-card').forEach(card => {
+          const title = card.querySelector('.option-title')?.innerText.trim();
+          if (savedWH.includes(title)) card.classList.add('active');
+        });
+      } else if (savedWH[0] === 'Нет особенностей') {
+        document.querySelectorAll('.option-card').forEach(card => {
+          if (card.querySelector('.option-title')?.innerText.trim() === 'Нет особенностей') card.classList.add('active');
+        });
+      }
+
+      // Pregnancy + Breastfeeding mutual exclusion visual state
+      const pregCard = document.getElementById('cardPregnancy');
+      const bfCard = document.getElementById('cardBreastfeeding');
+      if (pregCard?.classList.contains('active') && bfCard?.classList.contains('active')) {
+        bfCard.classList.remove('active'); // по спеку взаимоисключающие
+      }
+
+      // 2. Лекарства toggle + input (medications)
+      const savedMeds = prof['medications'] || prof['takes_medications'] || prof['Принимает лекарства'];
+      if (savedMeds && savedMeds !== 'Нет') {
+        hasMeds = true;
+        document.getElementById('medsToggle').classList.add('active');
+        document.getElementById('medsInputWrap').style.display = 'flex';
+        if (savedMeds !== 'Да (не указано)') {
+          document.getElementById('medsInput').value = savedMeds;
+        }
+      }
+
+      // 3. Гормональные toggle + input (takes_contraceptives)
+      const savedHormones = prof['takes_contraceptives'] || prof['Принимает гормональные (КОК)'];
+      if (savedHormones && savedHormones !== 'Нет') {
+        hasHormones = true;
+        hToggle.classList.add('active');
+        hWrap.style.display = 'flex';
+        if (savedHormones !== 'Да (не указано)') {
+          document.getElementById('hormonesInput').value = savedHormones;
+        }
+      }
+      window.__inlineHydrated = true;
+    }, 150);
+  </script>
+  <script src="medical-safety.js"></script>
+  <script src="onboarding-state.js"></script>
+</body>
+</html>
+

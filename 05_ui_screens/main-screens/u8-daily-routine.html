@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - U-8 Режим дня</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-divider); background: #FFFFFF; }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid var(--color-divider); color: var(--color-text-primary); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; }
+    .header-title { font-size: 18px; font-weight: 700; color: var(--color-text-primary); }
+    .save-btn { font-size: 14px; font-weight: 700; color: var(--color-primary); background: none; border: none; cursor: pointer; }
+    .subtitle { font-size: 14px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.8px; margin: 24px 0 12px 0; }
+    .card { background: #FFFFFF; border: 1px solid var(--color-divider); border-radius: 20px; padding: 20px; }
+    .meal-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .meal-box { height: 48px; border-radius: 12px; border: 1px solid var(--color-divider); background: #FAFAFA; display: flex; justify-content: center; align-items: center; font-size: 15px; font-weight: 700; color: var(--color-text-primary); cursor: pointer; }
+    .meal-box.active { background: #FFF7ED; border-color: var(--color-primary); color: var(--color-primary); }
+    .fasting-switch { display: flex; justify-content: space-between; align-items: center; }
+    .toggle { width: 48px; height: 26px; border-radius: 13px; background: #E5E7EB; position: relative; cursor: pointer; }
+    .toggle.active { background: var(--color-primary); }
+    .toggle-circle { width: 22px; height: 22px; border-radius: 50%; background: #FFFFFF; position: absolute; top: 2px; left: 2px; transition: transform 0.2s; }
+    .toggle.active .toggle-circle { transform: translateX(22px); }
+    .sleep-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 12px; }
+    .time-picker { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .time-label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); }
+    .time-box { height: 48px; border-radius: 12px; border: 1px solid var(--color-divider); background: #FAFAFA; display: flex; justify-content: center; align-items: center; font-size: 16px; font-weight: 700; color: var(--color-text-primary); }
+    .sleep-gauge { height: 8px; background: #F3F4F6; border-radius: 4px; overflow: hidden; margin-top: 20px; }
+    .sleep-fill { height: 100%; width: 75%; background: linear-gradient(90deg, #3B82F6, #22C55E); border-radius: 4px; }
+    .sleep-info { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-top: 6px; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js">
+    // === PROFILE PRE-FILL from onboarding ===
+    document.addEventListener("DOMContentLoaded", () => {
+    const d = (window.AIDiet && window.AIDiet.getProfile) ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+    const sleep = document.querySelector('#sleepTime, #bedtime, [data-field="sleep"]');
+    if (sleep && d.sleep_time) sleep.value = d.sleep_time;
+    const wake = document.querySelector('#wakeTime, #wakeup, [data-field="wake"]');
+    if (wake && d.wake_time) wake.value = d.wake_time;
+
+    });
+</script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="back-btn" onclick="history.back()" aria-label="Назад"><i class="ph ph-arrow-left"></i></button>
+        <h1 class="header-title">Режим дня</h1>
+      </div>
+      <button class="save-btn">Сохранить</button>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <div>
+        <div class="subtitle">Приёмы пищи</div>
+        <div class="card">
+          <div style="font-size: 14px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 12px;">Сколько раз в день ешь?</div>
+          <div class="meal-grid">
+            <div class="meal-box">1</div>
+            <div class="meal-box">2</div>
+            <div class="meal-box active">3</div>
+            <div class="meal-box">4+</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="subtitle">Интервальное голодание</div>
+        <div class="card">
+          <div class="fasting-switch">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <span style="font-size: 15px; font-weight: 700; color: var(--color-text-primary);">Практикуешь голодание?</span>
+              <span style="font-size: 12px; color: var(--color-text-secondary);">Например протокол 16:8</span>
+            </div>
+            <div class="toggle active"><div class="toggle-circle"></div></div>
+          </div>
+          <div style="margin-top: 16px; border-top: 1px solid #F3F4F6; padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+             <span style="font-size: 14px; font-weight: 600; color: var(--color-text-primary);">Текущий формат</span>
+             <span style="font-size: 14px; font-weight: 700; color: var(--color-primary);">16:8</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="subtitle">Сон и отдых</div>
+        <div class="card">
+          <div class="sleep-row">
+            <div class="time-picker">
+              <span class="time-label">Ложусь</span>
+              <div class="time-box">23:30</div>
+            </div>
+            <div class="time-picker">
+              <span class="time-label">Встаю</span>
+              <div class="time-box">07:30</div>
+            </div>
+          </div>
+          
+          <div class="sleep-gauge"><div class="sleep-fill"></div></div>
+          <div class="sleep-info">
+            <span>Продолжительность</span>
+            <span style="color: #22C55E;">8 часов — Идеально</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+<script src="onboarding-state.js"></script>
+</body>
+</html>

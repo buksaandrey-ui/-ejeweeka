@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-3 Базовый профиль</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <link rel="stylesheet" href="drum-picker.css">
+  <style>
+    .header { padding: 8px 20px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid var(--color-divider); background: #FFFFFF; }
+    .back-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--color-divider); color: var(--color-text-primary); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; }
+    .gender-selector { display: flex; gap: 12px; }
+    .gender-btn { 
+      flex: 1; height: 56px; border-radius: 16px; border: 1.5px solid var(--color-divider); 
+      background: #FFFFFF; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 700; color: var(--color-text-primary); cursor: pointer;
+    }
+    .gender-btn.active { border-color: var(--color-primary); background: #FFF7ED; color: var(--color-primary); }
+    .motivation-card { background: #F3F4F6; border-radius: 20px; padding: 20px; margin-top: 32px; position: relative; }
+    .motivation-icon { font-size: 24px; color: var(--color-primary); margin-bottom: 12px; }
+    .motivation-text { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; font-weight: 500; }
+    .motivation-text b { color: var(--color-text-primary); font-weight: 700; }
+    .onboarding-tip-card {
+      background-color: #E8F5E9;
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+      border: 1px solid #C8E6C9;
+    }
+    .onboarding-tip-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .onboarding-tip-text {
+      font-size: 13px;
+      color: #2E7D32;
+      line-height: 1.5;
+      font-weight: 500;
+    }
+    /* Toggle Switch Styles */
+    .toggle-section { 
+      background: #FFFFFF; border: 1px solid var(--color-divider); border-radius: 16px; padding: 18px 20px; 
+      display: flex; justify-content: space-between; align-items: center; margin-top: 24px; margin-bottom: 24px;
+    }
+    .toggle-info { display: flex; flex-direction: column; gap: 4px; }
+    .toggle-title { font-size: 15px; font-weight: 700; color: var(--color-text-primary); }
+    .toggle-desc { font-size: 12px; color: var(--color-text-secondary); }
+    .toggle-switch { width: 52px; height: 28px; background: #E5E7EB; border-radius: 14px; position: relative; cursor: pointer; }
+    .toggle-switch.active { background: #52B044; }
+    .toggle-circle { width: 22px; height: 22px; background: #FFFFFF; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: transform 0.2s; }
+    .toggle-switch.active .toggle-circle { transform: translateX(24px); }
+    @media (max-width: 440px) {
+    }
+  </style>
+
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 2 из 14</div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content">
+      <h1 class="question-title">Базовый профиль</h1>
+      <p class="question-desc">Эти данные позволят нам рассчитать твой ИМТ (индекс массы тела) и норму калорий с точностью до 98%.</p>
+
+      <div class="form-section">
+        <div class="field-group">
+          <label class="field-label">Как к тебе обращаться? (можно никнейм)</label>
+          <div class="input-wrapper">
+            <input type="text" id="inputName" data-question="first_name" class="input-field" placeholder="Например: Алекс, Мария">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Пол</label>
+          <div class="gender-selector">
+            <div class="gender-btn"><i class="ph ph-gender-male"></i> Мужчина</div>
+            <div class="gender-btn"><i class="ph ph-gender-female"></i> Женщина</div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 16px;">
+          <div class="field-group" style="flex: 1;">
+            <label class="field-label">Возраст</label>
+            <div class="input-wrapper">
+             <input type="hidden" id="inputAge" value="32">
+              <div class="drum-tap" id="tapAge" onclick="openAgePicker()" style="width:100%">32</div>
+            </div>
+            <div class="error-msg" id="errAge" style="display:none; color: #DC2626; font-size: 11px; margin-top: 4px; font-weight: 500;">Возраст: от 16 до 100</div>
+          </div>
+          <div class="field-group" style="flex: 1;">
+            <label class="field-label">Рост</label>
+            <div class="input-wrapper">
+              <input type="hidden" id="inputHeight" value="170">
+              <div class="drum-tap" id="tapHeight" onclick="openHeightPicker()" style="flex:1">170</div>
+              <span class="input-unit">см</span>
+            </div>
+            <div class="error-msg" id="errHeight" style="display:none; color: #DC2626; font-size: 11px; margin-top: 4px; font-weight: 500;">Рост: от 130 до 250</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Текущий вес</label>
+          <div class="input-wrapper">
+            <input type="hidden" id="inputWeight" value="75">
+            <div class="drum-tap" id="tapWeight" onclick="openWeightPicker()" style="flex:1">75.0</div>
+            <span class="input-unit">кг</span>
+          </div>
+          <div class="error-msg" id="errWeight" style="display:none; color: #DC2626; font-size: 11px; margin-top: 4px; font-weight: 500;">Вес: от 35 до 300</div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Телосложение</label>
+          <div class="input-wrapper">
+            <select id="inputBodyType" onchange="window.AIDiet && window.AIDiet.saveField('body_type', this.value)" data-question="body_type" class="input-field" style="-webkit-appearance:none; appearance:none; padding-right:36px; background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%228%22><path d=%22M1 1l5 5 5-5%22 stroke=%22%239CA3AF%22 stroke-width=%222%22 fill=%22none%22/></svg>'); background-repeat:no-repeat; background-position:right 14px center;">
+              <option value="" disabled selected>Выбери</option>
+              <option value="Худощавое">Худощавое</option>
+              <option value="Среднее">Среднее</option>
+              <option value="Крепкое">Крепкое</option>
+              <option value="Спортивное">Спортивное</option>
+              <option value="Есть лишний вес">Есть лишний вес</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Обхват талии (см) <span style="font-weight:400; color:#9CA3AF;">— необязательно</span></label>
+          <div class="input-wrapper">
+            <input type="hidden" id="inputWaist" data-question="waist" value="">
+            <div class="drum-tap" id="tapWaist" onclick="openWaistPicker()" style="flex:1">—</div>
+            <span class="input-unit">см</span>
+          </div>
+          <div style="display:flex; align-items:flex-start; gap:6px; margin-top:8px; font-size:12px; color:var(--color-text-secondary);">
+            <span style="flex-shrink:0;">ℹ️</span>
+            <span>Измерь сантиметровой лентой на уровне пупка, стоя, на выдохе.</span>
+          </div>
+        </div>
+
+        <!-- Условное поле: fat_distribution (если ИМТ ≥ 25) -->
+        <div class="field-group" id="fatDistBlock" style="display:none;">
+          <label class="field-label">Если вес увеличивается, где это заметнее всего?</label>
+          <div class="input-wrapper">
+            <select id="inputFatDist" onchange="window.AIDiet && window.AIDiet.saveField('fat_distribution', this.value)" data-question="fat_distribution" class="input-field" style="-webkit-appearance:none; appearance:none; padding-right:36px; background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%228%22><path d=%22M1 1l5 5 5-5%22 stroke=%22%239CA3AF%22 stroke-width=%222%22 fill=%22none%22/></svg>'); background-repeat:no-repeat; background-position:right 14px center;">
+              <option value="" disabled selected>Выбери</option>
+              <option value="В основном живот и талия">В основном живот и талия</option>
+              <option value="Бёдра и ягодицы">Бёдра и ягодицы</option>
+              <option value="Равномерно по телу">Равномерно по телу</option>
+              <option value="Затрудняюсь ответить">Затрудняюсь ответить</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Развилка: «Хотел(а) бы также снизить вес?» (по спеку — Да/Нет) -->
+        <div id="weightLossGoalBlock" style="display:none; margin-top:24px; margin-bottom:24px;">
+          <label class="field-label" style="margin-bottom:12px;">Хотел(а) бы также снизить вес?</label>
+          <div class="gender-selector">
+            <div class="gender-btn" id="wlYes">Да</div>
+            <div class="gender-btn" id="wlNo">Нет</div>
+          </div>
+        </div>
+
+
+      <!-- Motivation Block -->
+      <div class="onboarding-tip-card">
+        <div class="onboarding-tip-icon">💡</div>
+        <div class="onboarding-tip-text">
+          Эти данные — основа всего. Из роста, веса и возраста мы рассчитаем твой базовый обмен веществ: сколько калорий нужно именно твоему телу в состоянии покоя. Обхват талии точнее говорит о висцеральном жире — том, что окружает внутренние органы и реально влияет на здоровье. Именно поэтому мы спрашиваем больше, чем просто «сколько ты весишь». Чем точнее данные — тем точнее вердикт и план.
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="location.href='o2-goal.html'">← Назад</button>
+      <button class="btn-primary disabled" id="btnO3Next" disabled>Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+
+  </div>
+
+  <script src="drum-picker.js"></script>
+  <script src="onboarding-state.js"></script>
+  <script>
+    // === ПОЛ ===
+    const genderBtns = document.querySelectorAll('.gender-selector .gender-btn');
+    // Exclude weight-loss Да/Нет buttons from gender logic
+    document.querySelectorAll('.form-section > .field-group:nth-child(2) .gender-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.form-section > .field-group:nth-child(2) .gender-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const gender = btn.innerText.trim().includes('Женщина') ? 'Женский' : 'Мужской';
+        window.AIDiet && window.AIDiet.saveField('sex', gender);
+        checkO3Fields();
+      });
+    });
+
+    // === REALTIME VALIDATION + AUTO-CALCULATIONS ===
+    function checkO3Fields() {
+      const name = (document.getElementById('inputName').value || '').trim();
+      const a = parseFloat(document.getElementById('inputAge').value) || 0;
+      const h = parseFloat(document.getElementById('inputHeight').value) || 0;
+      const w = parseFloat(document.getElementById('inputWeight').value) || 0;
+      const genderSelected = document.querySelector('.form-section > .field-group:nth-child(2) .gender-btn.active') !== null;
+      const ok = name.length >= 2 && (a >= 16 && a <= 100) && (h >= 130 && h <= 250) && (w >= 35 && w <= 300) && genderSelected;
+      const btn = document.getElementById('btnO3Next');
+      btn.disabled = !ok;
+      btn.classList.toggle('disabled', !ok);
+
+      // BUG-F2-07: Auto-calculate BMI when height + weight valid
+      if (h >= 130 && w >= 35) {
+        const bmi = w / Math.pow(h / 100, 2);
+        // Show/hide fat distribution question (BUG-F2-06)
+        document.getElementById('fatDistBlock').style.display = bmi >= 25 ? 'block' : 'none';
+      }
+    }
+    // === DRUM PICKER OPENERS ===
+    function openAgePicker() {
+      const cur = parseFloat(document.getElementById('inputAge').value) || 32;
+      DrumPicker.openNumber('Возраст', { value: cur, min: 16, max: 100, step: 1, suffix: 'лет' }, (v) => {
+        document.getElementById('inputAge').value = v;
+        document.getElementById('tapAge').textContent = v;
+        window.AIDiet && window.AIDiet.saveField('age', v);
+        checkO3Fields();
+      });
+    }
+    function openHeightPicker() {
+      const cur = parseFloat(document.getElementById('inputHeight').value) || 170;
+      DrumPicker.openNumber('Рост', { value: cur, min: 130, max: 250, step: 1, suffix: 'см' }, (v) => {
+        document.getElementById('inputHeight').value = v;
+        document.getElementById('tapHeight').textContent = v;
+        window.AIDiet && window.AIDiet.saveField('height_cm', v);
+        checkO3Fields();
+      });
+    }
+    function openWeightPicker() {
+      const cur = parseFloat(document.getElementById('inputWeight').value) || 75;
+      DrumPicker.openNumber('Текущий вес', { value: cur, min: 35, max: 300, step: 0.5, suffix: 'кг' }, (v) => {
+        document.getElementById('inputWeight').value = v;
+        document.getElementById('tapWeight').textContent = v.toFixed(1);
+        window.AIDiet && window.AIDiet.saveField('weight_kg', v);
+        checkO3Fields();
+      });
+    }
+    function openWaistPicker() {
+      const cur = parseFloat(document.getElementById('inputWaist').value) || 80;
+      DrumPicker.openNumber('Обхват талии', { value: cur, min: 50, max: 200, step: 1, suffix: 'см' }, (v) => {
+        document.getElementById('inputWaist').value = v;
+        document.getElementById('tapWaist').textContent = v;
+        window.AIDiet && window.AIDiet.saveField('waist_cm', v);
+      });
+    }
+
+    // Hidden inputs don't fire input events — checkO3Fields is called from picker callbacks
+    // Name field — listen for typing
+    document.getElementById('inputName').addEventListener('input', checkO3Fields);
+    // Run once on load with default values
+    checkO3Fields();
+
+    // === WEIGHT LOSS QUESTION (Да / Нет) ===
+    const profile = window.AIDiet ? window.AIDiet.getProfile() : {};
+    const goal = profile['Главная цель'] || '';
+    const goalLower = goal.toLowerCase();
+    const isMainGoalLoss = goalLower.includes('снизить вес');
+
+    // Спек: показывать вопрос «Хотел(а) бы также снизить вес?» для ВСЕХ целей
+    // КРОМЕ «Снизить вес» и «Набрать мышечную массу»
+    const GOALS_WITHOUT_QUESTION = ['снизить вес', 'набрать мышечную массу'];
+    const shouldHideQuestion = GOALS_WITHOUT_QUESTION.some(g => goalLower.includes(g));
+
+    const weightBlock = document.getElementById('weightLossGoalBlock');
+    const wlYesBtn = document.getElementById('wlYes');
+    const wlNoBtn = document.getElementById('wlNo');
+    let wantsToLoseWeight = isMainGoalLoss;
+
+    if (shouldHideQuestion) {
+      weightBlock.style.display = 'none';
+      if (!isMainGoalLoss) {
+        window.AIDiet && window.AIDiet.saveField('also_wants_weight_loss', 'Нет');
+      }
+    } else {
+      weightBlock.style.display = 'block';
+      // Hydrate saved state
+      if (profile['also_wants_weight_loss'] === 'Да' || profile['Доп. Снижение веса'] === 'Да') {
+        wlYesBtn.classList.add('active');
+        wantsToLoseWeight = true;
+      } else if (profile['also_wants_weight_loss'] === 'Нет' || profile['Доп. Снижение веса'] === 'Нет') {
+        wlNoBtn.classList.add('active');
+      }
+    }
+
+    wlYesBtn && wlYesBtn.addEventListener('click', () => {
+      wlYesBtn.classList.add('active');
+      wlNoBtn.classList.remove('active');
+      wantsToLoseWeight = true;
+      window.AIDiet && window.AIDiet.saveField('also_wants_weight_loss', 'Да');
+    });
+    wlNoBtn && wlNoBtn.addEventListener('click', () => {
+      wlNoBtn.classList.add('active');
+      wlYesBtn.classList.remove('active');
+      wantsToLoseWeight = false;
+      window.AIDiet && window.AIDiet.saveField('also_wants_weight_loss', 'Нет');
+    });
+
+    // === ДАЛЕЕ: Validation + BMR/BMI calculations + Routing ===
+    document.getElementById('btnO3Next').addEventListener('click', (e) => {
+      e.preventDefault();
+      const ageVal = parseFloat(document.getElementById('inputAge').value) || 0;
+      const heightVal = parseFloat(document.getElementById('inputHeight').value) || 0;
+      const weightVal = parseFloat(document.getElementById('inputWeight').value) || 0;
+      const genderBtn = document.querySelector('.form-section > .field-group:nth-child(2) .gender-btn.active');
+      const sex = genderBtn ? (genderBtn.innerText.trim().includes('Женщина') ? 'Женский' : 'Мужской') : null;
+
+      // --- Validation ---
+      let isValid = true;
+      document.getElementById('errAge').style.display = 'none';
+      document.getElementById('errHeight').style.display = 'none';
+      document.getElementById('errWeight').style.display = 'none';
+      document.getElementById('inputAge').parentElement.style.borderColor = 'var(--color-divider)';
+      document.getElementById('inputHeight').parentElement.style.borderColor = 'var(--color-divider)';
+      document.getElementById('inputWeight').parentElement.style.borderColor = 'var(--color-divider)';
+
+      if (ageVal < 16 || ageVal > 100) {
+        isValid = false;
+        document.getElementById('errAge').style.display = 'block';
+        document.getElementById('inputAge').parentElement.style.borderColor = '#DC2626';
+      }
+      if (heightVal < 130 || heightVal > 250) {
+        isValid = false;
+        document.getElementById('errHeight').style.display = 'block';
+        document.getElementById('inputHeight').parentElement.style.borderColor = '#DC2626';
+      }
+      if (weightVal < 35 || weightVal > 300) {
+        isValid = false;
+        document.getElementById('errWeight').style.display = 'block';
+        document.getElementById('inputWeight').parentElement.style.borderColor = '#DC2626';
+      }
+      if (!isValid) return;
+
+      // --- Save to Global State (SSOT: English Keys Only) ---
+      const nameInput = document.getElementById('inputName');
+      const waistInput = document.getElementById('inputWaist');
+      if (fatDist) window.AIDiet && window.AIDiet.saveField('fat_distribution', fatDist);
+
+      // --- BUG-F2-07: Auto-calculations (ИМТ, BMR, waist-to-height) ---
+
+      // ИМТ = вес / (рост_м)²
+      const bmi = weightVal / Math.pow(heightVal / 100, 2);
+      window.AIDiet && window.AIDiet.saveField('bmi', Math.round(bmi * 10) / 10);
+
+      // Классификация ИМТ
+      let bmiClass;
+      if (bmi < 18.5) bmiClass = 'Недостаточный';
+      else if (bmi < 25) bmiClass = 'Нормальный';
+      else if (bmi < 30) bmiClass = 'Избыточный';
+      else bmiClass = 'Ожирение';
+      window.AIDiet && window.AIDiet.saveField('bmi_class', bmiClass);
+
+      // BMR по Миффлину — Сан Жеору
+      let bmr;
+      if (sex === 'Мужской') {
+        bmr = 10 * weightVal + 6.25 * heightVal - 5 * ageVal + 5;
+      } else {
+        bmr = 10 * weightVal + 6.25 * heightVal - 5 * ageVal - 161;
+      }
+      window.AIDiet && window.AIDiet.saveField('bmr_kcal', Math.round(bmr));
+
+      // Соотношение талия/рост
+      if (waistInput.value) {
+        const wth = parseFloat(waistInput.value) / heightVal;
+        window.AIDiet && window.AIDiet.saveField('waist_to_height', Math.round(wth * 100) / 100);
+      }
+
+      // --- Routing ---
+      // Age/Goal safety check (Scenario 45): "60+" goal selected by young user
+      const savedGoal = window.AIDiet.getProfile()['primary_goal'] || '';
+      const isAgeGoal = savedGoal === 'age_adaptation' || savedGoal.includes('возраст') || savedGoal.includes('40+') || savedGoal.includes('50+') || savedGoal.includes('60+');
+      if (isAgeGoal && ageVal < 40) {
+        const proceed = confirm(
+          '⚠️ Внимание!\n\n' +
+          'Ты выбрал(а) цель «Питание для возраста 40+/50+/60+», но твой возраст — ' + ageVal + ' лет.\n\n' +
+          'Программа «60+» включает акцент на кальций, коллаген и суставы, что не оптимально для молодых.\n\n' +
+          'Нажми «ОК» чтобы продолжить с этой целью, или «Отмена» чтобы вернуться и выбрать другую.'
+        );
+        if (!proceed) return; // Stay on O-3, user will go back to O-2
+      }
+
+      if (wantsToLoseWeight || isMainGoalLoss) {
+        window.AIDiet.goNext('o4-weight-loss.html');
+      } else {
+        window.AIDiet.goNext('o5-restrictions.html');
+      }
+    });
+
+    // === HYDRATION: восстановление всех полей при возврате назад (O3-04) ===
+    // CRITICAL FIX: saveField() конвертирует ключи RU→EN через i18n.
+    // Поэтому читаем АНГЛИЙСКИЕ ключи (canonical), с fallback на русские (legacy).
+    setTimeout(() => {
+      const prof = window.AIDiet ? window.AIDiet.getProfile() : {};
+      // Хелпер: читает English-ключ (основной) или Russian-ключ (fallback)
+      const get = (en, ru) => prof[en] || prof[ru] || '';
+
+      const savedName = get('name', 'Имя');
+      if (savedName) document.getElementById('inputName').value = savedName;
+
+      const savedAge = get('age', 'Возраст');
+      if (savedAge) { document.getElementById('inputAge').value = savedAge; document.getElementById('tapAge').textContent = savedAge; }
+
+      const savedHeight = get('height', 'Рост');
+      if (savedHeight) { document.getElementById('inputHeight').value = savedHeight; document.getElementById('tapHeight').textContent = savedHeight; }
+
+      const savedWeight = get('weight', 'Текущий вес');
+      if (savedWeight) { document.getElementById('inputWeight').value = savedWeight; document.getElementById('tapWeight').textContent = parseFloat(savedWeight).toFixed(1); }
+
+      const savedBodyType = get('body_type', 'Телосложение');
+      if (savedBodyType) document.getElementById('inputBodyType').value = window.i18n ? window.i18n.toRuVal(savedBodyType) : savedBodyType;
+
+      const savedWaist = get('waist_cm', 'Обхват талии');
+      if (savedWaist && savedWaist !== 'Не измерено') {
+        document.getElementById('inputWaist').value = savedWaist;
+        document.getElementById('tapWaist').textContent = savedWaist;
+      }
+
+      const savedFatDist = get('fat_distribution', 'Распределение жира');
+      if (savedFatDist) document.getElementById('inputFatDist').value = window.i18n ? window.i18n.toRuVal(savedFatDist) : savedFatDist;
+
+      // Пол — saveField сохраняет gender = 'male'/'female', нужно маппить обратно
+      const savedGender = get('sex', 'Пол');
+      if (savedGender) {
+        const isFemale = savedGender === 'female' || savedGender === 'Женский';
+        const isMale = savedGender === 'male' || savedGender === 'Мужской';
+        document.querySelectorAll('.form-section > .field-group:nth-child(2) .gender-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (isFemale && btn.innerText.trim().includes('Женщина')) btn.classList.add('active');
+          if (isMale && btn.innerText.trim().includes('Мужчина')) btn.classList.add('active');
+        });
+      }
+      // Если пол НЕ сохранён — ни одна кнопка не будет active (нет предвыбора!)
+
+      checkO3Fields();
+    }, 100);
+</script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-12 Результаты анализов</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    /* Chips */
+    .chip.none-chip.active { border-color: #9CA3AF; background: #F3F4F6; color: #4B5563; }
+    /* Active input card */
+    .active-input-section { margin-bottom: 16px; }
+    .active-input-title {
+      font-size: 12px; font-weight: 700; color: var(--color-text-secondary);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px;
+    }
+    .test-input-card {
+      background: #FFFFFF; border: 1.5px solid var(--color-divider); border-radius: 16px;
+      padding: 14px 16px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .test-input-header { display: flex; justify-content: space-between; align-items: center; }
+    .test-name { font-size: 14px; font-weight: 700; color: var(--color-text-primary); }
+    .test-hint { font-size: 11px; color: var(--color-text-secondary); }
+    .input-row { display: flex; align-items: center; gap: 10px; }
+    .unit { font-size: 12px; font-weight: 700; color: var(--color-text-secondary); min-width: 52px; text-align: right; }
+    /* Summary chips — filled tests */
+    .summary-section { margin-bottom: 16px; }
+    .summary-title { font-size: 12px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+    .summary-list { display: flex; flex-direction: column; gap: 8px; }
+    .summary-row {
+      background: #F0FDF4; border: 1.5px solid #86EFAC; border-radius: 12px;
+      padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .summary-row-label { font-size: 13px; font-weight: 600; color: #166534; }
+    .summary-row-val { font-size: 14px; font-weight: 800; color: #15803D; }
+    .summary-edit-btn { font-size: 11px; color: var(--color-text-secondary); border: none; background: none; cursor: pointer; padding: 2px 6px; }
+    .btn-primary:disabled {
+      background: #E5E7EB; color: #9CA3AF; cursor: not-allowed; box-shadow: none;
+    }
+    @media (max-width: 440px) {
+    }
+</style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 11 из 14</div>
+    </div>
+
+    <div class="content">
+      <h1 class="question-title">Биомаркеры и чекап</h1>
+      <p class="question-desc">Хочешь повысить точность рекомендаций? Если есть свежие показатели — мы их учтём.</p>
+
+      <!-- Chip selector -->
+      <div class="chip-grid" id="chipGrid">
+        <div class="chip none-chip" data-key="none" style="width:100%;text-align:center;height:54px;display:flex;align-items:center;justify-content:center;font-size:15px;">Нет свежих показателей</div>
+        <div class="chip" data-key="glucose" data-label="Глюкоза натощак" data-unit="ммоль/л" data-hint="Показывает уровень сахара в крови" data-type="number">Глюкоза</div>
+        <div class="chip" data-key="hba1c" data-label="HbA1c" data-unit="%" data-hint="Средний уровень сахара за 3 месяца" data-type="number">HbA1c</div>
+        <div class="chip" data-key="insulin" data-label="Инсулин" data-unit="мкМЕ/мл" data-hint="Гормон, регулирующий сахар в крови" data-type="number">Инсулин</div>
+        <div class="chip" data-key="cholesterol" data-label="Холестерин общий" data-unit="ммоль/л" data-hint="Общий уровень жиров в крови" data-type="number">Холестерин или липидограмма</div>
+        <div class="chip" data-key="vitD" data-label="Витамин D" data-unit="нг/мл" data-hint="Влияет на кости, иммунитет и настроение" data-type="number">Витамин D</div>
+        <div class="chip" data-key="ferritin" data-label="Ферритин" data-unit="нг/мл" data-hint="Запасы железа в организме" data-type="number">Ферритин</div>
+        <div class="chip" data-key="iron" data-label="Железо" data-unit="мкмоль/л" data-hint="Уровень сывороточного железа в крови" data-type="number">Железо</div>
+        <div class="chip" data-key="tsh" data-label="ТТГ" data-unit="мМЕ/л" data-hint="Показатель работы щитовидной железы" data-type="number">ТТГ</div>
+        <div class="chip" data-key="b12" data-label="Витамин B12" data-unit="пг/мл" data-hint="Важен для нервной системы и кроветворения" data-type="number">Витамин B12</div>
+        <div class="chip" data-key="other" data-label="Другой показатель" data-unit="" data-hint="Название и значение" data-type="text">Другое</div>
+      </div>
+
+      <!-- Summary (filled tests) -->
+      <div class="summary-section" id="summarySection" style="display:none;">
+        <div class="summary-title">✅ Уже введено</div>
+        <div class="summary-list" id="summaryList"></div>
+      </div>
+
+      <!-- Active input (current selected, not yet confirmed) -->
+      <div class="active-input-section" id="activeInputSection" style="display:none;">
+        <div class="active-input-title">Введи значение</div>
+        <div id="activeInputCard"></div>
+      </div>
+
+      <div class="onboarding-tip-card">
+        <div class="onboarding-tip-icon">💡</div>
+        <div class="onboarding-tip-text">
+          Многие дефициты не дают явных симптомов до тех пор, пока не накапливаются годами. Ферритин ниже 30 нг/мл — это уже нехватка железа, даже если гемоглобин «в норме». Витамин D ниже 30 нг/мл — норма для 80% россиян, но не норма для твоего здоровья. Биомаркеры не обязательны, но если они есть — план станет точнее на порядок.
+        </div>
+      </div>
+      <div style="margin-top:8px; font-size:12px; color:#9CA3AF; text-align:center; line-height:1.4;">Если не помнишь точное значение — пропусти. Обновить можно в любой момент в профиле.</div>
+    </div>
+
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="location.href='o11-budget-cooking.html'">← Назад</button>
+      <button class="btn-primary" id="btnNext">Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <script>
+    // Persistent storage: key → {label, unit, value}
+    const savedTests = {};
+
+    // Which key is currently active (being filled)
+    let activeKey = null;
+
+    const chips = document.querySelectorAll('#chipGrid .chip');
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const key = chip.dataset.key;
+
+        if (key === 'none') {
+          // If "none" is clicked: clear everything
+          const wasActive = chip.classList.contains('active');
+          chips.forEach(c => c.classList.remove('active'));
+          Object.keys(savedTests).forEach(k => delete savedTests[k]);
+          activeKey = null;
+          if (!wasActive) chip.classList.add('active');
+          render();
+          return;
+        }
+
+        // Remove "none" if another chip selected
+        document.querySelector('[data-key="none"]').classList.remove('active');
+
+        if (chip.classList.contains('active')) {
+          // Deselect — save current value if it's the active one, then remove
+          if (activeKey === key) saveActiveValue();
+          chip.classList.remove('active');
+          delete savedTests[key];
+          if (activeKey === key) activeKey = null;
+          // Find next unconfirmed active chip
+          findNextActive();
+        } else {
+          // Save current active input first
+          if (activeKey) saveActiveValue();
+          chip.classList.add('active');
+          activeKey = key;
+        }
+        render();
+        saveO12State();
+      });
+    });
+
+    function saveActiveValue() {
+      if (!activeKey) return;
+      const inp = document.getElementById('activeVal');
+      if (!inp) return;
+      const val = inp.value.trim();
+      const chip = document.querySelector(`[data-key="${activeKey}"]`);
+      if (chip) {
+        savedTests[activeKey] = {
+          label: chip.dataset.label,
+          unit: chip.dataset.unit,
+          value: val
+        };
+      }
+    }
+
+    function findNextActive() {
+      // Find a selected chip that hasn't been confirmed yet
+      const activeChips = [...document.querySelectorAll('#chipGrid .chip.active')];
+      const unconfirmed = activeChips.find(c => c.dataset.key !== 'none' && !(c.dataset.key in savedTests));
+      activeKey = unconfirmed ? unconfirmed.dataset.key : null;
+    }
+
+    function render() {
+      renderSummary();
+      renderActiveInput();
+    }
+
+    function renderSummary() {
+      const section = document.getElementById('summarySection');
+      const list = document.getElementById('summaryList');
+      const keys = Object.keys(savedTests).filter(k => savedTests[k].value !== '');
+
+      if (keys.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      section.style.display = 'block';
+      list.innerHTML = keys.map(k => {
+        const t = savedTests[k];
+        const displayVal = t.value ? `${t.value} ${t.unit}` : '—';
+        return `<div class="summary-row">
+          <div>
+            <div class="summary-row-label">${t.label}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="summary-row-val">${displayVal}</span>
+            <button class="summary-edit-btn" onclick="editEntry('${k}')">✏️</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    function editEntry(key) {
+      // Save current active first
+      if (activeKey) saveActiveValue();
+      // Delete from saved to re-enter
+      delete savedTests[key];
+      // Make it active again
+      activeKey = key;
+      render();
+    }
+
+    function renderActiveInput() {
+      const section = document.getElementById('activeInputSection');
+      const card = document.getElementById('activeInputCard');
+
+      if (!activeKey) {
+        section.style.display = 'none';
+        return;
+      }
+
+      // Check if already saved (confirmed)
+      if (activeKey in savedTests) {
+        section.style.display = 'none';
+        return;
+      }
+
+      const chip = document.querySelector(`[data-key="${activeKey}"]`);
+      if (!chip) { section.style.display = 'none'; return; }
+
+      section.style.display = 'block';
+
+      const prevVal = savedTests[activeKey]?.value ?? '';
+      const isText = chip.dataset.type === 'text';
+
+      if (isText) {
+        card.innerHTML = `
+          <div class="test-input-card">
+            <div class="test-name">${chip.dataset.label}</div>
+            <div class="test-hint">${chip.dataset.hint}</div>
+            <textarea id="activeVal" placeholder="Например: Гомоцистеин 9.2 мкмоль/л"
+              style="width:100%; min-height:80px; border-radius:12px; border:1.5px solid var(--color-divider); padding:12px 16px; font-size:14px; font-family:inherit; resize:none; outline:none; background:#FAFAFA;"
+              oninput="autoSaveActive()">${prevVal}</textarea>
+          </div>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="test-input-card">
+            <div class="test-input-header">
+              <div>
+                <div class="test-name">${chip.dataset.label}</div>
+                <div class="test-hint">${chip.dataset.hint}</div>
+              </div>
+              <span class="unit">${chip.dataset.unit}</span>
+            </div>
+            <div class="input-row">
+              <input type="number" inputmode="decimal" id="activeVal" class="input-field"
+                placeholder="0.0" value="${prevVal}" oninput="autoSaveActive()">
+            </div>
+          </div>
+        `;
+      }
+
+      // Auto-focus the input
+      setTimeout(() => document.getElementById('activeVal')?.focus(), 50);
+    }
+
+    function autoSaveActive() {
+      // Continuously persist to savedTests while typing
+      if (!activeKey) return;
+      const inp = document.getElementById('activeVal');
+      if (!inp) return;
+      const chip = document.querySelector(`[data-key="${activeKey}"]`);
+      if (!chip) return;
+      savedTests[activeKey] = {
+        label: chip.dataset.label,
+        unit: chip.dataset.unit,
+        value: inp.value.trim()
+      };
+      renderSummary();
+      saveO12State();
+    }
+
+    function confirmActive() {
+      saveActiveValue();
+      activeKey = null;
+      findNextActive();
+      render();
+      saveO12State();
+    }
+
+    function saveO12State() {
+      // Save any active input before proceeding
+      if (activeKey) saveActiveValue();
+
+      const result = {};
+      const noneSelected = document.querySelector('[data-key="none"].active');
+
+      if (noneSelected || Object.keys(savedTests).length === 0) {
+        result['has_lab_tests'] = false;
+      } else {
+        result['has_lab_tests'] = true;
+        Object.entries(savedTests).forEach(([key, data]) => {
+          if (data.value) result[`lab_${key}`] = data.value;
+        });
+      }
+
+      window.AIDiet && window.AIDiet.saveField('blood_tests', JSON.stringify(result));
+      window.AIDiet && window.AIDiet.saveField('_o12uiState', JSON.stringify({ savedTests, activeKey }));
+    }
+
+    document.getElementById('btnNext').addEventListener('click', (e) => {
+      e.preventDefault();
+      saveO12State();
+      window.AIDiet.goNext('o13-supplements.html');
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const p = window.AIDiet ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+      if (p['_o12uiState']) {
+        try {
+          const st = JSON.parse(p['_o12uiState']);
+          if (st.savedTests) {
+            Object.assign(savedTests, st.savedTests);
+            Object.keys(st.savedTests).forEach(k => {
+               const chip = document.querySelector(`[data-key="${k}"]`);
+               if (chip) chip.classList.add('active');
+            });
+          }
+          if (st.activeKey) {
+             activeKey = st.activeKey;
+             const chip = document.querySelector(`[data-key="${st.activeKey}"]`);
+             if (chip) chip.classList.add('active');
+          }
+          if (Object.keys(savedTests).length === 0 && !activeKey) {
+             const chip = document.querySelector(`[data-key="none"]`);
+             if (chip && p['Анализы'] && JSON.parse(p['Анализы']).has_lab_tests === false) chip.classList.add('active');
+          }
+          render();
+        } catch(e) {}
+      }
+      window.__inlineHydrated = true;
+    });
+  </script>
+
+
+  <script src="onboarding-state.js"></script>
+</body>
+</html>

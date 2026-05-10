@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 1: Variant 1 (Tech & Wellness)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #F3F4F6; }
+        .phone-mockup { 
+            width: 390px; height: 844px; border-radius: 40px; 
+            border: 14px solid #111827; background-color: #FFFFFF;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            position: relative; overflow-y: auto; scroll-behavior: smooth;
+            flex-shrink: 0; scroll-snap-align: center;
+        }
+        .phone-mockup::-webkit-scrollbar { display: none; }
+        .notch {
+            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 150px; height: 28px; background-color: #111827;
+            border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; z-index: 50;
+        }
+        :root {
+            --primary: #7C3AED;
+            --primary-dark: #6D28D9;
+            --dark-bg: #1E1B4B;
+        }
+    </style>
+</head>
+<body class="pb-20">
+    <div class="max-w-7xl mx-auto pt-16 px-8 mb-12">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Задача 1: Вариант 1 (Tech & Wellness)</h1>
+        <p class="text-xl text-gray-600">Экраны: Активность, Рецепт, Профиль</p>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-8">
+        <div class="flex gap-10 overflow-x-auto pb-12 pt-4 px-4 -mx-4" style="scroll-snap-type: x mandatory;">
+            
+            <!-- Screen 1: Activity Tracker -->
+            <div class="phone-mockup">
+                <div class="notch"></div>
+                <div class="pt-14 px-6 pb-6">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-extrabold text-[#1E1B4B]">Активность</h2>
+                        <button class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"><i class="ph-bold ph-calendar-blank"></i></button>
+                    </div>
+
+                    <!-- Steps Ring -->
+                    <div class="bg-[var(--dark-bg)] text-white rounded-[32px] p-6 shadow-xl mb-6 relative overflow-hidden">
+                        <div class="absolute right-0 top-0 opacity-10"><i class="ph-fill ph-sneaker text-9xl"></i></div>
+                        <div class="relative flex items-center justify-between mb-4">
+                            <div>
+                                <div class="text-sm font-bold text-[var(--primary)] uppercase tracking-wider mb-1">Шаги</div>
+                                <div class="text-4xl font-black">8 432</div>
+                                <div class="text-sm text-gray-400">из 10 000</div>
+                            </div>
+                            <div class="relative w-24 h-24">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="12"></circle>
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="var(--primary)" stroke-width="12" stroke-dasharray="314" stroke-dashoffset="60" stroke-linecap="round"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center"><i class="ph-fill ph-sneaker text-2xl text-[var(--primary)]"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+                            <div class="w-10 h-10 rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center mb-3"><i class="ph-fill ph-fire"></i></div>
+                            <div class="text-2xl font-bold text-[#1E1B4B]">420</div>
+                            <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">Ккал сожжено</div>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center mb-3"><i class="ph-fill ph-clock"></i></div>
+                            <div class="text-2xl font-bold text-[#1E1B4B]">45</div>
+                            <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">Мин актив.</div>
+                        </div>
+                    </div>
+
+                    <h3 class="font-bold text-[#1E1B4B] mb-4">Тренировки на сегодня</h3>
+                    <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex items-center gap-4">
+                        <div class="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center text-2xl text-[var(--primary)]"><i class="ph-fill ph-barbell"></i></div>
+                        <div class="flex-1">
+                            <div class="font-bold text-[#1E1B4B]">Силовая (Верх)</div>
+                            <div class="text-sm text-gray-400">45 мин • Средняя</div>
+                        </div>
+                        <button class="w-10 h-10 rounded-full bg-[var(--primary)] text-white flex items-center justify-center"><i class="ph-bold ph-play"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen 2: Recipe Card -->
+            <div class="phone-mockup">
+                <div class="notch"></div>
+                <div class="relative h-64 bg-gray-200 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=500&q=80')">
+                    <div class="absolute top-14 left-6 flex items-center justify-center w-10 h-10 rounded-full bg-white/20 backdrop-blur text-white"><i class="ph-bold ph-arrow-left"></i></div>
+                    <div class="absolute top-14 right-6 flex items-center justify-center w-10 h-10 rounded-full bg-white/20 backdrop-blur text-white"><i class="ph-fill ph-heart"></i></div>
+                </div>
+                
+                <div class="px-6 py-6 bg-white relative -mt-8 rounded-t-[32px]">
+                    <div class="inline-block px-3 py-1 bg-[#7C3AED]/10 text-[#7C3AED] rounded-lg text-xs font-bold uppercase tracking-wider mb-3">Обед</div>
+                    <h2 class="text-2xl font-extrabold text-[#1E1B4B] mb-2 leading-tight">Лосось с киноа и спаржей на гриле</h2>
+                    <p class="text-sm text-gray-500 mb-6">Идеальный баланс Омега-3 и медленных углеводов.</p>
+
+                    <!-- Macros row -->
+                    <div class="flex justify-between items-center mb-8 bg-gray-50 p-4 rounded-2xl">
+                        <div class="text-center"><div class="text-lg font-black text-[#1E1B4B]">450</div><div class="text-[10px] uppercase font-bold text-gray-400">Ккал</div></div>
+                        <div class="w-px h-8 bg-gray-200"></div>
+                        <div class="text-center"><div class="text-lg font-black text-[#1E1B4B]">35г</div><div class="text-[10px] uppercase font-bold text-gray-400">Белки</div></div>
+                        <div class="w-px h-8 bg-gray-200"></div>
+                        <div class="text-center"><div class="text-lg font-black text-[#1E1B4B]">22г</div><div class="text-[10px] uppercase font-bold text-gray-400">Жиры</div></div>
+                        <div class="w-px h-8 bg-gray-200"></div>
+                        <div class="text-center"><div class="text-lg font-black text-[#1E1B4B]">40г</div><div class="text-[10px] uppercase font-bold text-gray-400">Углеводы</div></div>
+                    </div>
+
+                    <h3 class="font-bold text-[#1E1B4B] mb-4 text-lg">Ингредиенты</h3>
+                    <ul class="space-y-3 mb-24">
+                        <li class="flex justify-between items-center"><span class="text-sm font-medium">Филе лосося</span><span class="text-sm font-bold text-gray-400">150 г</span></li>
+                        <li class="flex justify-between items-center"><span class="text-sm font-medium">Киноа</span><span class="text-sm font-bold text-gray-400">50 г</span></li>
+                        <li class="flex justify-between items-center"><span class="text-sm font-medium">Спаржа</span><span class="text-sm font-bold text-gray-400">100 г</span></li>
+                    </ul>
+                </div>
+                
+                <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-white via-white to-transparent">
+                    <button class="w-full py-5 rounded-2xl font-bold text-white text-lg shadow-xl shadow-[#7C3AED]/30 transition-transform active:scale-95" style="background-color: var(--primary);">
+                        Я приготовил это!
+                    </button>
+                </div>
+            </div>
+
+            <!-- Screen 3: Profile Settings -->
+            <div class="phone-mockup bg-gray-50">
+                <div class="notch"></div>
+                <div class="pt-16 px-6 pb-6 bg-white rounded-b-[32px] shadow-sm mb-6 text-center">
+                    <div class="w-24 h-24 mx-auto rounded-[24px] bg-gray-200 mb-4 bg-cover bg-center relative" style="background-image: url('https://i.pravatar.cc/150?img=11')">
+                        <button class="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-[var(--primary)] text-white flex items-center justify-center border-2 border-white"><i class="ph-bold ph-pencil-simple"></i></button>
+                    </div>
+                    <h2 class="text-2xl font-extrabold text-[#1E1B4B]">Андрей Иванов</h2>
+                    <p class="text-sm text-gray-400 mb-6">andrey@example.com</p>
+
+                    <div class="flex gap-4 justify-center">
+                        <div class="text-center px-4 py-2 bg-gray-50 rounded-xl"><div class="font-bold text-[#1E1B4B]">72 кг</div><div class="text-[10px] uppercase font-bold text-gray-400">Вес</div></div>
+                        <div class="text-center px-4 py-2 bg-gray-50 rounded-xl"><div class="font-bold text-[#1E1B4B]">180 см</div><div class="text-[10px] uppercase font-bold text-gray-400">Рост</div></div>
+                        <div class="text-center px-4 py-2 bg-gray-50 rounded-xl"><div class="font-bold text-[#1E1B4B]">28</div><div class="text-[10px] uppercase font-bold text-gray-400">Лет</div></div>
+                    </div>
+                </div>
+
+                <div class="px-6 pb-10">
+                    <!-- Subscription Status -->
+                    <div class="bg-[var(--dark-bg)] rounded-3xl p-5 mb-6 text-white flex justify-between items-center shadow-lg">
+                        <div>
+                            <div class="text-xs font-bold text-[var(--primary)] uppercase tracking-wider mb-1">Подписка</div>
+                            <div class="font-bold text-xl">Status Gold</div>
+                        </div>
+                        <button class="px-4 py-2 bg-white/10 rounded-xl text-sm font-bold">Управлять</button>
+                    </div>
+
+                    <!-- Toggles -->
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3 px-2">Настройки</h3>
+                    <div class="bg-white rounded-3xl p-2 mb-6 shadow-sm border border-gray-100">
+                        <div class="flex justify-between items-center p-4 border-b border-gray-50">
+                            <div class="flex items-center gap-3"><i class="ph-fill ph-moon text-xl text-gray-400"></i><span class="font-medium text-[#1E1B4B]">Тёмная тема</span></div>
+                            <div class="w-12 h-6 bg-gray-200 rounded-full relative"><div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div></div>
+                        </div>
+                        <div class="flex justify-between items-center p-4 border-b border-gray-50">
+                            <div class="flex items-center gap-3"><i class="ph-fill ph-bell text-xl text-gray-400"></i><span class="font-medium text-[#1E1B4B]">Уведомления</span></div>
+                            <div class="w-12 h-6 bg-[var(--primary)] rounded-full relative"><div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div></div>
+                        </div>
+                        <div class="flex justify-between items-center p-4">
+                            <div class="flex items-center gap-3"><i class="ph-fill ph-fingerprint text-xl text-gray-400"></i><span class="font-medium text-[#1E1B4B]">Биометрия (FaceID)</span></div>
+                            <div class="w-12 h-6 bg-[var(--primary)] rounded-full relative"><div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div></div>
+                        </div>
+                    </div>
+
+                    <button class="w-full p-4 bg-red-50 text-red-500 font-bold rounded-2xl flex items-center justify-center gap-2">
+                        <i class="ph-bold ph-sign-out"></i> Выйти из аккаунта
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>

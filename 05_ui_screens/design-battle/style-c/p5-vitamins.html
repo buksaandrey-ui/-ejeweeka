@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIDiet - P-5 Vitamin Schedule (Style C)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/duotone/style.css">
+  <style>
+    :root {
+      --color-primary: #F5922B;
+      --color-primary-gradient: linear-gradient(135deg, #F59520, #E07018);
+      --color-bg-page: linear-gradient(180deg, #FAFAFA 0%, #F0F4FF 100%);
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #5C6370;
+      --color-glass-card: rgba(255, 255, 255, 0.65);
+      --color-glass-border: rgba(255, 255, 255, 0.6);
+      --color-glass-shadow: 0 4px 24px rgba(0, 0, 10, 0.04);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #E5E7EB;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+    }
+    .phone {
+      width: 390px;
+      height: 844px;
+      background: var(--color-bg-page);
+      border-radius: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bg-shape-1 { position: absolute; top: -50px; left: -50px; width: 250px; height: 250px; background: rgba(66, 165, 245, 0.15); filter: blur(40px); border-radius: 50%; z-index: 0; pointer-events: none; }
+    .bg-shape-2 { position: absolute; top: 300px; right: -80px; width: 300px; height: 300px; background: rgba(245, 146, 43, 0.1); filter: blur(50px); border-radius: 50%; z-index: 0; pointer-events: none; }
+    
+    .status-bar {
+      height: 47px;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      flex-shrink: 0;
+      z-index: 20;
+    }
+    .status-bar-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 16px;
+    }
+
+    .badge-premium {
+      position: absolute;
+      top: 55px;
+      right: 20px;
+      background: linear-gradient(135deg, #FFD700, #C8A96E);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+      z-index: 30;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(200,169,110,0.4);
+    }
+    
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 20px 40px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      -ms-overflow-style: none;  
+      scrollbar-width: none;  
+      position: relative;
+      z-index: 5;
+    }
+    .content::-webkit-scrollbar { display: none; }
+    
+    .nav-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--color-glass-card);
+      border: 1px solid var(--color-glass-border);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      color: var(--color-text-primary);
+      font-size: 22px;
+      box-shadow: var(--color-glass-shadow);
+      transition: all 0.2s;
+    }
+    .icon-btn:hover { background: rgba(255, 255, 255, 0.85); box-shadow: 0 6px 16px rgba(0, 0, 10, 0.08); }
+    .icon-btn:active { transform: scale(0.95); }
+    
+    .date-indicator {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      margin-top: -12px;
+    }
+
+    .time-card {
+      background: var(--color-glass-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--color-glass-border);
+      box-shadow: var(--color-glass-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px; 
+    }
+    .card-morning { background: linear-gradient(135deg, rgba(255,253,248,0.7), rgba(255,255,255,0.4)); border-color: rgba(255,224,178,0.5); }
+    .card-evening { background: linear-gradient(135deg, rgba(248,250,255,0.7), rgba(255,255,255,0.4)); border-color: rgba(227,242,253,0.5); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+    
+    .vitamin-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .vitamin-item:hover { opacity: 0.85; }
+    .vitamin-item:hover .item-title { color: var(--color-primary); }
+    .checkbox-container {
+      position: relative;
+      width: 24px;
+      height: 24px;
+      margin-top: 2px;
+    }
+    .checkbox {
+      appearance: none;
+      width: 100%;
+      height: 100%;
+      border: 1.5px solid var(--color-text-tertiary);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(4px);
+      cursor: pointer;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .checkbox:hover:not(:checked) { border-color: rgba(245, 146, 43, 0.5); background: rgba(255,255,255,0.8); }
+    .checkbox:checked {
+      background: var(--color-primary-gradient);
+      border-color: transparent;
+      box-shadow: 0 2px 8px rgba(245,146,43,0.3);
+    }
+    .checkbox:checked::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: translate(-50%, -60%) rotate(45deg);
+    }
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .item-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .item-dose {
+      font-weight: 400;
+      color: var(--color-text-secondary);
+    }
+    .badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.9);
+      color: var(--color-text-secondary);
+      font-weight: 500;
+      display: inline-block;
+      align-self: flex-start;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    
+    .warning-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .notice-card {
+      padding: 16px;
+      border-radius: 12px;
+      display: flex;
+      gap: 12px;
+      background: var(--color-glass-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--color-glass-border);
+      box-shadow: var(--color-glass-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .notice-warning::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #F5922B;
+    }
+    .notice-info::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #42A5F5;
+    }
+    .notice-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-size: 22px;
+    }
+    .notice-text {
+      font-size: 14px;
+      color: var(--color-text-primary);
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    
+    <div class="bg-shape-1"></div>
+    <div class="bg-shape-2"></div>
+
+    <!-- Status Bar Mock -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph-duotone ph-cell-signal-medium"></i>
+        <i class="ph-duotone ph-wifi-high"></i>
+        <i class="ph-duotone ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Premium Badge -->
+    <div class="badge-premium">Black</div>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+      
+      <!-- Header -->
+      <div class="nav-header">
+        <button class="icon-btn">
+          <i class="ph-duotone ph-arrow-left"></i>
+        </button>
+        <span class="header-title">Витамины для Андрея</span>
+        <button class="icon-btn">
+          <i class="ph-duotone ph-calendar-blank"></i>
+        </button>
+      </div>
+
+      <div class="date-indicator">Сегодня, 15 апреля</div>
+
+      <!-- Morning Card -->
+      <div class="time-card card-morning">
+        <div class="card-header">
+          <i class="ph-duotone ph-sun-horizon" style="color: #F5922B; font-size: 24px;"></i>
+          Утро
+        </div>
+        
+        <label class="vitamin-item">
+          <div class="checkbox-container"><input type="checkbox" class="checkbox" checked></div>
+          <div class="item-info">
+            <div class="item-title">Витамин D3 <span class="item-dose">· 2000 МЕ</span></div>
+            <div class="badge">после завтрака</div>
+          </div>
+        </label>
+
+        <label class="vitamin-item">
+          <div class="checkbox-container"><input type="checkbox" class="checkbox"></div>
+          <div class="item-info">
+            <div class="item-title">Омега-3 <span class="item-dose">· 1000 мг</span></div>
+            <div class="badge">во время еды</div>
+          </div>
+        </label>
+
+        <label class="vitamin-item">
+          <div class="checkbox-container"><input type="checkbox" class="checkbox"></div>
+          <div class="item-info">
+            <div class="item-title">Витамин B12 <span class="item-dose">· 500 мкг</span></div>
+            <div class="badge">до еды</div>
+          </div>
+        </label>
+      </div>
+
+      <!-- Day Card -->
+      <div class="time-card">
+        <div class="card-header">
+          <i class="ph-duotone ph-sun" style="color: #F5922B; font-size: 24px;"></i>
+          День
+        </div>
+        
+        <label class="vitamin-item">
+          <div class="checkbox-container"><input type="checkbox" class="checkbox"></div>
+          <div class="item-info">
+            <div class="item-title">Железо <span class="item-dose">· 18 мг</span></div>
+            <div class="badge">между приёмами пищи</div>
+          </div>
+        </label>
+
+        <label class="vitamin-item">
+          <div class="checkbox-container"><input type="checkbox" class="checkbox"></div>
+          <div class="item-info">
+            <div class="item-title">Витамин C <span class="item-dose">· 500 мг</span></div>
+            <div class="badge">вместе с железом</div>
+          </div>
+        </label>
+      </div>
+
+      <!-- Evening Card -->
+      <div class="time-card card-evening">
+        <div class="card-header">
+          <i class="ph-duotone ph-moon" style="color: #42A5F5; font-size: 24px;"></i>
+          Вечер
+        </div>
+        
+        <label class="vitamin-item">
+          <div class="checkbox-container"><input type="checkbox" class="checkbox"></div>
+          <div class="item-info">
+            <div class="item-title">Магний <span class="item-dose">· 400 мг</span></div>
+            <div class="badge">перед сном</div>
+          </div>
+        </label>
+
+        <label class="vitamin-item">
+          <div class="checkbox-container"><input type="checkbox" class="checkbox"></div>
+          <div class="item-info">
+            <div class="item-title">Кальций <span class="item-dose">· 500 мг</span></div>
+            <div class="badge">после ужина</div>
+          </div>
+        </label>
+      </div>
+
+      <!-- Warnings -->
+      <div class="warning-section">
+        <div class="section-title">Совместимость</div>
+        
+        <div class="notice-card notice-warning">
+          <i class="ph-duotone ph-warning notice-icon" style="color: #F5922B;"></i>
+          <div class="notice-text">Кальций и Железо — принимай раздельно (интервал 2+ часа)</div>
+        </div>
+
+        <div class="notice-card notice-info">
+          <i class="ph-duotone ph-info notice-icon" style="color: #42A5F5;"></i>
+          <div class="notice-text">Витамин D лучше усваивается с жирной пищей</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

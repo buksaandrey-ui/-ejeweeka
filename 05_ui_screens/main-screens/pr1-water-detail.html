@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - Гидратация</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header { padding: 16px 20px; display: flex; align-items: center; gap: 16px; }
+    .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid var(--color-divider); color: var(--color-text-primary); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; }
+    .header-title { font-size: 20px; font-weight: 700; color: var(--color-text-primary); }
+    /* Water Ring */
+    .ring-card { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 24px; padding: 28px; display: flex; flex-direction: column; align-items: center; gap: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    .ring-container { position: relative; width: 160px; height: 160px; }
+    .ring-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+    .ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+    .ring-val { font-size: 32px; font-weight: 800; color: var(--color-water); line-height: 1; }
+    .ring-label { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); margin-top: 4px; }
+    .ring-percent { font-size: 14px; font-weight: 700; color: var(--color-water); margin-top: 4px; }
+    /* Quick Add Buttons */
+    .quick-add { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .add-btn { background: var(--color-water-bg); border: 1px solid #DBEAFE; border-radius: 14px; padding: 14px 8px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: transform 0.15s; }
+    .add-btn:active { transform: scale(0.95); }
+    .add-btn-icon { font-size: 22px; color: var(--color-water); }
+    .add-btn-label { font-size: 12px; font-weight: 700; color: var(--color-water); }
+    /* Bar Chart */
+    .chart-card { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 20px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    .chart-title { font-size: 14px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 16px; }
+    .bar-chart { display: flex; align-items: flex-end; gap: 10px; height: 120px; position: relative; }
+    .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+    .bar { width: 100%; border-radius: 6px 6px 0 0; background: var(--color-water); transition: height 0.3s; min-height: 4px; }
+    .bar.today { background: linear-gradient(180deg, #3B82F6, #2563EB); box-shadow: 0 2px 8px rgba(59,130,246,0.3); }
+    .bar-label { font-size: 10px; font-weight: 700; color: var(--color-text-secondary); }
+    .goal-line { position: absolute; left: 0; right: 0; height: 2px; border-top: 2px dashed rgba(59,130,246,0.3); }
+    /* AI Tip */
+    .ai-card { background: var(--color-water-bg); border: 1px solid #DBEAFE; border-radius: 18px; padding: 16px; display: flex; gap: 14px; align-items: flex-start; }
+    .ai-icon { width: 36px; height: 36px; border-radius: 10px; background: #FFFFFF; display: flex; justify-content: center; align-items: center; font-size: 20px; color: var(--color-water); flex-shrink: 0; }
+    .ai-text { font-size: 14px; font-weight: 500; color: #1E40AF; line-height: 1.45; }
+    /* Settings */
+    .settings-card { background: var(--color-surface); border: 1px solid var(--color-divider); border-radius: 18px; padding: 16px; }
+    .setting-row { display: flex; justify-content: space-between; align-items: center; }
+    .setting-label { font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+    .setting-val { font-size: 16px; font-weight: 800; color: var(--color-water); }
+    .slider { width: 100%; margin-top: 12px; accent-color: var(--color-water); }
+    /* Tab Bar */
+    .tab-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 84px; background-color: #FFFFFF; border-top: 1px solid var(--color-divider); display: flex; justify-content: space-around; padding: 12px 12px 30px 12px; z-index: 100; }
+    .tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--color-text-tertiary); text-decoration: none; flex: 1; }
+    .tab-item.active { color: var(--color-primary); }
+    .tab-item i { font-size: 24px; }
+    .tab-label { font-size: 10px; font-weight: 600; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <header class="header">
+      <button class="back-btn" onclick="history.back()" aria-label="Назад"><i class="ph ph-arrow-left"></i></button>
+      <h1 class="header-title">Гидратация</h1>
+    </header>
+
+    <div class="content">
+
+      <!-- Water Ring -->
+      <section class="ring-card">
+        <div class="ring-container">
+          <svg class="ring-svg" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="54" fill="none" stroke="#F3F4F6" stroke-width="12"/>
+            <circle cx="60" cy="60" r="54" fill="none" stroke="#3B82F6" stroke-width="12"
+              stroke-dasharray="339.29" stroke-dashoffset="122" stroke-linecap="round"/>
+          </svg>
+          <div class="ring-text">
+            <div class="ring-val">1.6 л</div>
+            <div class="ring-label">из 2.5 л</div>
+            <div class="ring-percent">64%</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Add -->
+      <section class="quick-add">
+        <div class="add-btn"><i class="ph ph-drop add-btn-icon"></i><span class="add-btn-label">+150 мл</span></div>
+        <div class="add-btn"><i class="ph ph-drop add-btn-icon"></i><span class="add-btn-label">+250 мл</span></div>
+        <div class="add-btn"><i class="ph ph-drop add-btn-icon"></i><span class="add-btn-label">+500 мл</span></div>
+        <div class="add-btn"><i class="ph ph-pencil-simple add-btn-icon"></i><span class="add-btn-label">Свой</span></div>
+      </section>
+
+      <!-- Week Chart -->
+      <section class="chart-card">
+        <div class="chart-title">За неделю</div>
+        <div class="bar-chart">
+          <div class="goal-line" style="bottom: 80%;"></div>
+          <div class="bar-col"><div class="bar" style="height: 90%;"></div><span class="bar-label">Пн</span></div>
+          <div class="bar-col"><div class="bar" style="height: 75%;"></div><span class="bar-label">Вт</span></div>
+          <div class="bar-col"><div class="bar" style="height: 100%;"></div><span class="bar-label">Ср</span></div>
+          <div class="bar-col"><div class="bar" style="height: 60%;"></div><span class="bar-label">Чт</span></div>
+          <div class="bar-col"><div class="bar" style="height: 85%;"></div><span class="bar-label">Пт</span></div>
+          <div class="bar-col"><div class="bar" style="height: 50%;"></div><span class="bar-label">Сб</span></div>
+          <div class="bar-col"><div class="bar today" style="height: 64%;"></div><span class="bar-label">Вс</span></div>
+        </div>
+      </section>
+
+      <!-- AI Tip -->
+      <section class="ai-card">
+        <div class="ai-icon"><i class="ph ph-sparkle"></i></div>
+        <div class="ai-text">Рекомендация: сегодня тепло (+28°C), лучше увеличить дневную норму на 500 мл — до 3 литров.</div>
+      </section>
+
+      <!-- Settings -->
+      <section class="settings-card">
+        <div class="setting-row">
+          <span class="setting-label">Дневная норма</span>
+          <span class="setting-val">2.5 л</span>
+        </div>
+        <input type="range" class="slider" min="1.0" max="4.0" step="0.1" value="2.5">
+      </section>
+
+    </div>
+
+    <nav class="tab-bar">
+      <a href="h1-dashboard.html" class="tab-item"><i class="ph ph-house"></i><span class="tab-label">Главная</span></a>
+      <a href="p1-weekly-plan.html" class="tab-item"><i class="ph ph-calendar-blank"></i><span class="tab-label">План</span></a>
+      <a href="s1-shopping-list.html" class="tab-item"><i class="ph ph-shopping-cart"></i><span class="tab-label">Покупки</span></a>
+      <a href="pr1-progress.html" class="tab-item active"><i class="ph ph-chart-line-up"></i><span class="tab-label">Прогресс</span></a>
+      <a href="u1-profile-main.html" class="tab-item"><i class="ph ph-user"></i><span class="tab-label">Профиль</span></a>
+    </nav>
+  </div>
+  <script src="water-state.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let currentWaterStr = localStorage.getItem('aidiet_water_log') || '1.6';
+        let currentWater = parseFloat(currentWaterStr);
+        let goalWater = 2.5;
+
+        const updateUI = () => {
+            const valEl = document.querySelector('.ring-val');
+            const pctEl = document.querySelector('.ring-percent');
+            const svgCircle = document.querySelector('.ring-svg circle:nth-child(2)');
+            
+            if (valEl) valEl.innerText = currentWater.toFixed(1) + ' л';
+            
+            let pct = Math.min((currentWater / goalWater) * 100, 100);
+            if (pctEl) pctEl.innerText = Math.round(pct) + '%';
+            
+            if (svgCircle) {
+                const offset = 339.29 - (pct / 100) * 339.29;
+                svgCircle.style.strokeDashoffset = offset;
+            }
+            
+            localStorage.setItem('aidiet_water_log', currentWater.toFixed(1));
+        };
+
+        const addBtns = document.querySelectorAll('.add-btn');
+        addBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const label = btn.querySelector('.add-btn-label').innerText;
+                if (label === 'Свой') {
+                    const custom = prompt('Введите объем в мл:', '200');
+                    if (custom && !isNaN(parseInt(custom))) {
+                        currentWater += parseInt(custom) / 1000;
+                        updateUI();
+                    }
+                } else {
+                    const ml = parseInt(label.replace('+', '').replace(' мл', ''));
+                    if (!isNaN(ml)) {
+                        currentWater += (ml / 1000);
+                        updateUI();
+                    }
+                }
+            });
+        });
+        
+        // initial render
+        updateUI();
+    });
+  </script>
+</body>
+</html>

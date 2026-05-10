@@ -1,0 +1,11 @@
+
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+*.m4a
+*.log
+*.pid
+
+# Environment secrets
+.env

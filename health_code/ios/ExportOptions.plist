@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- ExportOptions.plist for TestFlight upload via xcodebuild -exportArchive -->
+<plist version="1.0">
+<dict>
+    <!-- Distribution method for TestFlight -->
+    <key>method</key>
+    <string>app-store</string>
+
+    <!-- Your Apple Developer Team ID — fill in from developer.apple.com/account -->
+    <key>teamID</key>
+    <string>REPLACE_WITH_TEAM_ID</string>
+
+    <!-- Bundle ID must match App Store Connect -->
+    <key>bundleID</key>
+    <string>com.healthcode.healthCode</string>
+
+    <!-- Upload to App Store Connect / TestFlight -->
+    <key>uploadBitcode</key>
+    <false/>
+    <key>uploadSymbols</key>
+    <true/>
+    <key>compileBitcode</key>
+    <false/>
+
+    <!-- Provisioning profile (auto-managed by Xcode) -->
+    <key>signingStyle</key>
+    <string>automatic</string>
+
+    <!-- Destination -->
+    <key>destination</key>
+    <string>upload</string>
+
+    <!-- Strip swift symbols for smaller binary -->
+    <key>stripSwiftSymbols</key>
+    <true/>
+
+    <!-- Thinning: all compatible variants -->
+    <key>thinning</key>
+    <string>&lt;none&gt;</string>
+</dict>
+</plist>

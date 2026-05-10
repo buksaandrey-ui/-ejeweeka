@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIDiet - PR-1 Progress (Style B)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <style>
+    :root {
+      --color-primary: #F5922B;
+      --color-bg-main: #FAFAFA;
+      --color-surface: #FFFFFF;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B7280;
+      --color-divider: #E5E7EB;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #E5E7EB;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+    }
+    .phone {
+      width: 390px;
+      height: 844px;
+      background-color: var(--color-bg-main);
+      border-radius: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .status-bar {
+      height: 47px;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      flex-shrink: 0;
+      z-index: 20;
+    }
+    .status-bar-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      font-size: 16px;
+    }
+    
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px 100px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      -ms-overflow-style: none;  
+      scrollbar-width: none;  
+    }
+    .content::-webkit-scrollbar { display: none; }
+    
+    .nav-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+    
+    .switcher {
+      display: flex;
+      background-color: #F3F4F6;
+      border-radius: 8px;
+      padding: 4px;
+      gap: 4px;
+      border: 1px solid var(--color-divider);
+    }
+    .switch-tab {
+      flex: 1;
+      text-align: center;
+      padding: 6px 0;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .switch-tab:not(.active):hover {
+      color: var(--color-text-primary);
+      background-color: #E5E7EB;
+    }
+    .switch-tab.active {
+      background-color: var(--color-primary);
+      color: #FFFFFF;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    .switch-tab.active i { color: #FFFFFF; }
+    
+    .card {
+      background-color: var(--color-surface);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--color-divider);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--color-divider);
+      padding-bottom: 8px;
+    }
+    
+    .chart-area {
+      height: 140px;
+      width: 100%;
+      position: relative;
+    }
+    .chart-xaxis {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--color-text-secondary);
+    }
+    .current-val {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .diff {
+      font-size: 13px;
+      font-weight: 600;
+      color: #10B981;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      height: 100%;
+      gap: 12px;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      height: 100%;
+      background: #F3F4F6;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .bar-fill {
+      width: 100%;
+      background: var(--color-primary);
+      border-radius: 4px;
+      position: absolute;
+      bottom: 0;
+    }
+    .legend {
+      display: flex;
+      gap: 16px;
+      font-size: 11px;
+      color: var(--color-text-secondary);
+      margin-bottom: 16px;
+    }
+    .leg-item { display: flex; align-items: center; gap: 6px; }
+    .leg-dot { width: 8px; height: 8px; border-radius: 2px; }
+    
+    .locked-section {
+      position: relative;
+      margin-top: 8px;
+    }
+    .locked-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      border-radius: 12px;
+      border: 1px solid var(--color-divider);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      z-index: 10;
+    }
+    .locked-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .btn-outline {
+      padding: 6px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
+      font-weight: 600;
+      font-size: 13px;
+      background: #FFFFFF;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover { background-color: var(--color-primary); color: #FFFFFF; }
+    .bg-charts {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      opacity: 0.4;
+    }
+    .mini-chart {
+      height: 48px;
+      background: #F3F4F6;
+      border-radius: 8px;
+      border: 1px solid var(--color-divider);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .mini-circle { width: 24px; height: 24px; border-radius: 12px; background: #D1D5DB; }
+    .mini-line { flex: 1; height: 6px; background: #D1D5DB; border-radius: 3px; }
+    
+    .streak-card {
+      background-color: #FFFDF8;
+      border: 1px solid #FFE0B2;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+      padding: 20px;
+    }
+    .streak-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+    
+    /* Bottom Tab Bar */
+    .tab-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 84px;
+      background-color: var(--color-surface);
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      padding: 12px 20px 0 20px;
+      border-top: 1px solid var(--color-divider);
+    }
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--color-text-tertiary);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .tab-item:not(.active):hover { color: var(--color-primary); }
+    .tab-item.active {
+      color: var(--color-primary);
+    }
+    .tab-item i { font-size: 24px; }
+    .tab-label {
+      font-size: 10px;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    
+    <!-- Status Bar Mock -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="content">
+      
+      <div class="nav-header">
+        <span class="header-title">Прогресс Андрея</span>
+      </div>
+
+      <div class="switcher">
+        <div class="switch-tab active">Неделя</div>
+        <div class="switch-tab">Месяц <i class="ph ph-lock"></i></div>
+        <div class="switch-tab">3 месяца <i class="ph ph-lock"></i></div>
+        <div class="switch-tab">Всё время <i class="ph ph-lock"></i></div>
+      </div>
+
+      <!-- Weight Card -->
+      <div class="card">
+        <div class="current-val">
+          81.6 кг
+          <span class="diff"><i class="ph ph-trend-down"></i> 0.9 кг за неделю</span>
+        </div>
+        <div class="chart-area" style="margin-top: 12px;">
+          <!-- SVG Line Chart Mock -->
+          <svg width="100%" height="100%" viewBox="0 0 300 100" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#F5922B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="0,20 50,25 100,30 150,15 200,40 250,55 300,75"></polyline>
+            <circle cx="300" cy="75" r="4" fill="#FFFFFF" stroke="#F5922B" stroke-width="2"></circle>
+          </svg>
+        </div>
+        <div class="chart-xaxis">
+          <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+        </div>
+      </div>
+
+      <!-- Calories Card -->
+      <div class="card">
+        <div class="card-title">Калории</div>
+        <div class="legend">
+          <div class="leg-item"><div class="leg-dot" style="background:#E5E7EB;"></div> План</div>
+          <div class="leg-item"><div class="leg-dot" style="background:#F5922B;"></div> Факт</div>
+        </div>
+        <div class="chart-area">
+          <div class="bar-chart">
+            <div class="bar-col"><div class="bar-fill" style="height: 80%;"></div></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 105%; background: #EF4444;"></div></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 90%;"></div></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 95%;"></div></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 85%;"></div></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 100%;"></div></div>
+            <div class="bar-col"><div class="bar-fill" style="height: 70%;"></div></div>
+          </div>
+        </div>
+        <div class="chart-xaxis">
+          <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+        </div>
+      </div>
+      
+      <!-- Locked Section -->
+      <div class="locked-section">
+        <div class="locked-overlay">
+          <i class="ph ph-lock" style="font-size: 24px; color: var(--color-text-primary);"></i>
+          <span class="locked-text">Доступно в Black</span>
+          <button class="btn-outline">Подробнее</button>
+        </div>
+        <div class="bg-charts">
+          <div class="mini-chart">
+            <div class="mini-circle"></div>
+            <div class="mini-line" style="width:70%"></div>
+          </div>
+          <div class="mini-chart">
+            <div class="mini-circle"></div>
+            <div class="mini-line" style="width:40%"></div>
+          </div>
+          <div class="mini-chart">
+            <div class="mini-circle"></div>
+            <div class="mini-line" style="width:90%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Streak Card -->
+      <div class="card streak-card">
+        <i class="ph ph-fire" style="font-size: 32px; color: #F5922B;"></i>
+        <div class="streak-title">12 дней подряд</div>
+        <div style="font-size:13px; color: var(--color-text-secondary);">Отличная серия! Так держать! 🎉</div>
+      </div>
+
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <div class="tab-item">
+        <i class="ph ph-house"></i>
+        <span class="tab-label">Главная</span>
+      </div>
+      <div class="tab-item">
+        <i class="ph ph-calendar-check"></i>
+        <span class="tab-label">Планы</span>
+      </div>
+      <div class="tab-item">
+        <i class="ph ph-camera"></i>
+        <span class="tab-label">Фото</span>
+      </div>
+      <div class="tab-item active">
+        <i class="ph ph-chart-pie-slice"></i>
+        <span class="tab-label">Прогресс</span>
+      </div>
+      <div class="tab-item">
+        <i class="ph ph-user"></i>
+        <span class="tab-label">Профиль</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

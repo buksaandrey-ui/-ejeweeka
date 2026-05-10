@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - U-11 Напоминания</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--color-divider);background:#FFF}
+    .header-left{display:flex;align-items:center;gap:16px}
+    .back-btn{width:40px;height:40px;border-radius:12px;background:#FFF;border:1px solid var(--color-divider);color:var(--color-text-primary);display:flex;justify-content:center;align-items:center;font-size:20px;cursor:pointer}
+    .header-title{font-size:18px;font-weight:700;color:var(--color-text-primary)}
+    .save-btn{font-size:14px;font-weight:700;color:var(--color-primary);background:none;border:none;cursor:pointer;padding:8px 12px;border-radius:10px}
+    .subtitle{padding:24px 0 8px 0;font-size:12px;font-weight:700;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:1px}
+    .setting-list{background:#FFF;border:1px solid var(--color-divider);border-radius:20px;overflow:hidden}
+    .setting-item{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #F3F4F6}
+    .setting-item:last-child{border-bottom:none}
+    .setting-info{display:flex;flex-direction:column;gap:2px;flex:1}
+    .setting-title{font-size:15px;font-weight:600;color:var(--color-text-primary)}
+    .setting-desc{font-size:12px;color:var(--color-text-secondary)}
+    .toggle{width:48px;height:26px;border-radius:13px;background:#E5E7EB;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+    .toggle.active{background:#52B044}
+    .toggle.locked{opacity:.4;cursor:not-allowed}
+    .toggle-circle{width:22px;height:22px;border-radius:50%;background:#FFF;position:absolute;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+    .toggle.active .toggle-circle{transform:translateX(22px)}
+    .time-val{font-size:14px;font-weight:700;color:var(--color-primary);margin-right:12px}
+    .lock-badge{font-size:10px;font-weight:700;color:var(--color-primary);background:#FFF7ED;padding:3px 8px;border-radius:6px;margin-right:8px}
+    .dnd-time{display:none;margin-top:12px;padding:0 20px}
+    .dnd-time.visible{display:flex;gap:16px}
+    .dnd-input{flex:1;display:flex;flex-direction:column;gap:4px}
+    .dnd-label{font-size:12px;font-weight:600;color:var(--color-text-secondary)}
+    .dnd-box{height:44px;border-radius:12px;border:1px solid var(--color-divider);background:#FAFAFA;display:flex;justify-content:center;align-items:center;font-size:15px;font-weight:700;color:var(--color-text-primary)}
+    .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(80px);background:#166534;color:#FFF;padding:12px 24px;border-radius:14px;font-size:14px;font-weight:700;opacity:0;transition:all .3s;z-index:100}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body data-screen="u11">
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><div class="status-bar-icons"><i class="ph ph-cell-signal-medium"></i><i class="ph ph-wifi-high"></i><i class="ph ph-battery-full"></i></div></div>
+    <header class="header">
+      <div class="header-left">
+        <button class="back-btn" onclick="location.href='u1-profile-main.html'"><i class="ph ph-arrow-left"></i></button>
+        <h1 class="header-title">Напоминания</h1>
+      </div>
+      <button class="save-btn" onclick="saveNotifs()">Сохранить</button>
+    </header>
+    <div class="content">
+      <div>
+        <div class="subtitle">Приёмы пищи</div>
+        <div class="setting-list">
+          <div class="setting-item"><div class="setting-info"><div class="setting-title">Завтрак</div><div class="setting-desc">За 15 минут до приёма</div></div><div style="display:flex;align-items:center;gap:12px"><span class="time-val">08:00</span><div class="toggle active" data-key="notif_breakfast"><div class="toggle-circle"></div></div></div></div>
+          <div class="setting-item"><div class="setting-info"><div class="setting-title">Обед</div><div class="setting-desc">В момент начала</div></div><div style="display:flex;align-items:center;gap:12px"><span class="time-val">13:30</span><div class="toggle active" data-key="notif_lunch"><div class="toggle-circle"></div></div></div></div>
+          <div class="setting-item"><div class="setting-info"><div class="setting-title">Ужин</div><div class="setting-desc">За 30 минут до приёма</div></div><div style="display:flex;align-items:center;gap:12px"><span class="time-val">19:00</span><div class="toggle active" data-key="notif_dinner"><div class="toggle-circle"></div></div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="subtitle">Здоровье и вода</div>
+        <div class="setting-list">
+          <div class="setting-item"><div class="setting-info"><div class="setting-title">Водный баланс</div><div class="setting-desc">Каждые 2 часа</div></div><div class="toggle active" data-key="notif_water"><div class="toggle-circle"></div></div></div>
+          <div class="setting-item"><div class="setting-info"><div class="setting-title">Приём витаминов</div><div class="setting-desc">Согласно расписанию</div></div><div class="toggle active" data-key="notif_vitamins"><div class="toggle-circle"></div></div></div>
+          <div class="setting-item"><div class="setting-info"><div class="setting-title">Лекарства</div><div class="setting-desc">По расписанию врача</div></div><div class="toggle active" data-key="notif_medications"><div class="toggle-circle"></div></div></div>
+          <div class="setting-item"><div class="setting-info"><div class="setting-title">Тренировки</div><div class="setting-desc">Напоминание перед тренировкой</div></div><div class="toggle" data-key="notif_workouts"><div class="toggle-circle"></div></div></div>
+          <div class="setting-item"><div class="setting-info"><div class="setting-title">Взвешивание</div><div class="setting-desc">По понедельникам утром</div></div><div class="toggle" data-key="notif_weigh"><div class="toggle-circle"></div></div></div>
+          <div class="setting-item"><div class="setting-info"><div class="setting-title">Еженедельный отчёт</div><div class="setting-desc">AI-отчёт каждое воскресенье</div></div><div class="toggle active" data-key="notif_weekly"><div class="toggle-circle"></div></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="subtitle">Общие</div>
+        <div class="setting-list">
+          <div class="setting-item"><div class="setting-info"><div class="setting-title">Не беспокоить</div><div class="setting-desc">Тишина в выбранное время</div></div><div class="toggle" id="dndToggle" data-key="dnd_enabled"><div class="toggle-circle"></div></div></div>
+        </div>
+        <div class="dnd-time" id="dndTime">
+          <div class="dnd-input"><span class="dnd-label">С</span><div class="dnd-box">23:00</div></div>
+          <div class="dnd-input"><span class="dnd-label">До</span><div class="dnd-box">07:00</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast">✅ Настройки сохранены</div>
+<script>
+  // Toggle click handlers
+  document.querySelectorAll('.toggle:not(.locked)').forEach(t => {
+    t.addEventListener('click', () => { t.classList.toggle('active'); });
+  });
+  // DND toggle shows time pickers
+  const dndToggle = document.getElementById('dndToggle');
+  const dndTime = document.getElementById('dndTime');
+  dndToggle.addEventListener('click', () => {
+    dndTime.classList.toggle('visible', dndToggle.classList.contains('active'));
+  });
+
+  // Hydrate from profile
+  const profile = window.AIDiet ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+  if (profile['_u11state']) {
+    try {
+      const st = JSON.parse(profile['_u11state']);
+      document.querySelectorAll('.toggle[data-key]').forEach(t => {
+        const key = t.dataset.key;
+        if (st[key] === false) t.classList.remove('active');
+        else if (st[key] === true) t.classList.add('active');
+      });
+      if (st.dnd_enabled) dndTime.classList.add('visible');
+    } catch(e) {}
+  }
+
+  function saveNotifs() {
+    const state = {};
+    document.querySelectorAll('.toggle[data-key]').forEach(t => { state[t.dataset.key] = t.classList.contains('active'); });
+    if (window.AIDiet) window.AIDiet.saveField('_u11state', JSON.stringify(state));
+    const t = document.getElementById('toast'); t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000);
+  }
+</script>
+<script src="onboarding-state.js"></script>
+</body>
+</html>

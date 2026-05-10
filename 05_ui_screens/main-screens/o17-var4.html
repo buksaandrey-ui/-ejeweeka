@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>O-17 Variant 4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .tier-card { background: var(--color-surface); border: 1.5px solid var(--color-divider); border-radius: 20px; padding: 20px; margin-bottom: 16px; opacity: 0.7; }
+    .tier-card.active { border-color: var(--color-primary); box-shadow: 0 4px 20px rgba(245,146,43,0.15); opacity: 1; position: relative; }
+    .tier-badge { position: absolute; top: -10px; right: 16px; background: var(--color-primary-gradient); color: #FFF; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 8px; text-transform: uppercase; }
+    .tier-title { font-size: 20px; font-weight: 800; color: var(--color-text-primary); margin-bottom: 12px; }
+    .tier-list { display: flex; flex-direction: column; gap: 8px; }
+    .tier-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--color-text-secondary); line-height: 1.4; }
+    .tier-item i { color: var(--color-primary); font-size: 16px; margin-top: 1px; }
+  </style>
+</head>
+<body>
+  <div class="phone" style="overflow-y: auto;">
+    <div class="status-bar" style="position: sticky; top: 0; background: var(--color-background); z-index: 10;"><span>9:41</span><div><i class="ph ph-wifi-high"></i> <i class="ph ph-battery-full"></i></div></div>
+    <div class="content" style="padding-bottom: 100px;">
+      
+      <h1 style="font-size: 28px; font-weight: 800; margin-bottom: 8px; text-align: center;">Твои возможности</h1>
+      <p style="color: var(--color-text-secondary); font-size: 14px; text-align: center; margin-bottom: 24px;">Посмотри, что включает в себя система Health Code.</p>
+
+      <div class="tier-card">
+        <div class="tier-title">Статус Base</div>
+        <div class="tier-list">
+          <div class="tier-item"><i class="ph ph-check-circle"></i> Базовый дневник питания</div>
+          <div class="tier-item"><i class="ph ph-check-circle"></i> Трекер веса и выпитой воды</div>
+          <div class="tier-item"><i class="ph ph-check-circle"></i> Доступ к статьям по нутрициологии</div>
+        </div>
+      </div>
+
+      <div class="tier-card">
+        <div class="tier-title">Статус Black</div>
+        <div class="tier-list">
+          <div class="tier-item"><i class="ph ph-check-circle"></i> Индивидуальный расчет КБЖУ</div>
+          <div class="tier-item"><i class="ph ph-check-circle"></i> Еженедельные планы питания</div>
+          <div class="tier-item"><i class="ph ph-check-circle"></i> Детальные рецепты и список покупок</div>
+        </div>
+      </div>
+
+      <div class="tier-card active">
+        <div class="tier-badge">Активирован на 3 дня</div>
+        <div class="tier-title" style="color: var(--color-primary);">Статус Gold</div>
+        <div class="tier-list">
+          <div class="tier-item"><i class="ph ph-check-circle"></i> <b>Всё из Статуса Black</b></div>
+          <div class="tier-item"><i class="ph ph-check-circle"></i> Умный сканер еды по фото</div>
+          <div class="tier-item"><i class="ph ph-check-circle"></i> Персональные планы домашних тренировок</div>
+          <div class="tier-item"><i class="ph ph-check-circle"></i> Интеграция с Apple Health / Google Fit</div>
+          <div class="tier-item"><i class="ph ph-check-circle"></i> Протоколы витаминов и БАДов</div>
+        </div>
+      </div>
+
+      <div class="tier-card">
+        <div class="tier-title" style="background: linear-gradient(135deg, #FFD700, #F5922B); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Статус Gold Family</div>
+        <div class="tier-list">
+          <div class="tier-item"><i class="ph ph-users"></i> Доступ Gold для 4 членов семьи</div>
+          <div class="tier-item"><i class="ph ph-shopping-cart"></i> Синхронизация общих списков покупок</div>
+          <div class="tier-item"><i class="ph ph-cooking-pot"></i> Общие рецепты и порции на всю семью</div>
+        </div>
+      </div>
+
+    </div>
+    
+    <div style="position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 24px 34px; background: var(--color-background); border-top: 1px solid var(--color-divider);">
+      <button class="btn-primary" style="width: 100%;">Начать работу <i class="ph ph-arrow-right"></i></button>
+    </div>
+  </div>
+
+<script>
+// Универсальный фильтр фичей статуса
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const raw = localStorage.getItem('aidiet_profile');
+        if (!raw) return;
+        const p = JSON.parse(raw);
+        
+        const _meds = p['takes_medications'] || p['takes_medication']; const noMeds = (!_meds || _meds === 'Нет' || _meds === 'false');
+        const _supps = p['currently_takes_supplements'] || p['takes_supplements']; const noSupps = (!_supps || _supps === 'Нет' || _supps === 'false');
+        const actFreq = p['activity_frequency'];
+        const noTrain = (!actFreq || actFreq === 'Не готов(а) сейчас' || actFreq === 'Не готов сейчас');
+
+        const walkDOM = (node, func) => {
+            func(node);
+            node = node.firstChild;
+            while (node) {
+                walkDOM(node, func);
+                node = node.nextSibling;
+            }
+        };
+
+        walkDOM(document.body, (node) => {
+            if (node.nodeType === 3) { // Text node
+                const text = node.nodeValue.toLowerCase();
+                
+                // Лекарства -> заменяем
+                if (noMeds && text.includes('лекарств') && text.includes('совместимость')) {
+                    node.nodeValue = 'Интеграция с Health Connect и трекерами активности';
+                }
+                
+                // Витамины -> скрываем родителя
+                if (noSupps && (text.includes('витаминов') || text.includes('бадов')) && !node.parentElement.closest('#dynamicPlanBullet')) {
+                    // Ищем ближайший контейнер-строку (обычно div)
+                    const row = node.parentElement.closest('div');
+                    if (row && row.children.length > 0 && row.innerText.length < 100) {
+                        row.style.display = 'none';
+                    }
+                }
+                
+                // Тренировки -> скрываем родителя
+                if (noTrain && text.includes('тренировк') && !node.parentElement.closest('#dynamicPlanBullet')) {
+                    const row = node.parentElement.closest('div');
+                    if (row && row.children.length > 0 && row.innerText.length < 100) {
+                        row.style.display = 'none';
+                    }
+                }
+            }
+        });
+    } catch(e) {
+        console.warn('Error in status feature filter', e);
+    }
+});
+</script>
+</body>
+</html>

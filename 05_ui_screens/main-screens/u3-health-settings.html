@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - U-3 Здоровье</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--color-divider);background:#FFF}
+    .header-left{display:flex;align-items:center;gap:16px}
+    .back-btn{width:40px;height:40px;border-radius:12px;background:#FFF;border:1px solid var(--color-divider);color:var(--color-text-primary);display:flex;justify-content:center;align-items:center;font-size:20px;cursor:pointer}
+    .header-title{font-size:18px;font-weight:700;color:var(--color-text-primary)}
+    .save-btn{font-size:14px;font-weight:700;color:var(--color-primary);background:none;border:none;cursor:pointer;padding:8px 12px;border-radius:10px}
+    .section-title{font-size:12px;font-weight:700;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px}
+    .options-list{background:#FFF;border:1px solid var(--color-divider);border-radius:20px;overflow:hidden}
+    .option-item{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid #F3F4F6;cursor:pointer}
+    .option-item:last-child{border-bottom:none}
+    .option-item.active{background:#FFFBF7}
+    .option-label{font-size:15px;font-weight:600;color:var(--color-text-primary)}
+    .checkbox{width:22px;height:22px;border:2px solid var(--color-divider);border-radius:6px;display:flex;justify-content:center;align-items:center;color:transparent;flex-shrink:0}
+    .option-item.active .checkbox{background:var(--color-primary);border-color:var(--color-primary);color:#FFF}
+    .form-group{display:flex;flex-direction:column;gap:8px}
+    .textarea{width:100%;height:100px;padding:16px;border-radius:16px;border:1px solid var(--color-divider);background:#FFF;font-family:'Inter',sans-serif;font-size:15px;outline:none;line-height:1.5;resize:none}
+    .textarea:focus{border-color:var(--color-primary)}
+    .toggle-section{background:#FFF;border:1px solid var(--color-divider);border-radius:20px;padding:18px 20px;display:flex;justify-content:space-between;align-items:center}
+    .toggle-info{display:flex;flex-direction:column;gap:4px}
+    .toggle-title{font-size:15px;font-weight:700;color:var(--color-text-primary)}
+    .toggle-desc{font-size:12px;color:var(--color-text-secondary)}
+    .toggle{width:48px;height:26px;border-radius:13px;background:#E5E7EB;position:relative;cursor:pointer;flex-shrink:0}
+    .toggle.active{background:#52B044}
+    .toggle-circle{width:22px;height:22px;border-radius:50%;background:#FFF;position:absolute;top:2px;left:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+    .toggle.active .toggle-circle{transform:translateX(22px)}
+    .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(80px);background:#166534;color:#FFF;padding:12px 24px;border-radius:14px;font-size:14px;font-weight:700;opacity:0;transition:all .3s;z-index:100}
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body data-screen="u3">
+  <div class="phone">
+    <div class="status-bar"><span>9:41</span><div class="status-bar-icons"><i class="ph ph-cell-signal-medium"></i><i class="ph ph-wifi-high"></i><i class="ph ph-battery-full"></i></div></div>
+    <header class="header">
+      <div class="header-left">
+        <button class="back-btn" onclick="location.href='u1-profile-main.html'"><i class="ph ph-arrow-left"></i></button>
+        <h1 class="header-title">Здоровье</h1>
+      </div>
+      <button class="save-btn" onclick="saveAll()">Сохранить</button>
+    </header>
+    <div class="content">
+      <section>
+        <div class="section-title">Симптомы сейчас</div>
+        <div class="chip-grid" id="symptomsChips">
+          <div class="chip">Вздутие</div><div class="chip">Изжога</div><div class="chip">Повышенная кислотность</div>
+          <div class="chip">Тяжесть после еды</div><div class="chip">Запоры</div><div class="chip">Нестабильный стул</div>
+          <div class="chip">Тяга к сладкому</div><div class="chip">Сильный голод или переедание</div>
+          <div class="chip">Отёки</div><div class="chip">Хроническая усталость</div>
+          <div class="chip none-chip">Нет жалоб</div>
+        </div>
+      </section>
+      <section>
+        <div class="section-title">Хронические состояния</div>
+        <div class="options-list" id="conditionsList">
+          <div class="option-item"><span class="option-label">Диабет (1 тип)</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+          <div class="option-item"><span class="option-label">Диабет (2 тип)</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+          <div class="option-item"><span class="option-label">Преддиабет</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+          <div class="option-item"><span class="option-label">Инсулинорезистентность</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+          <div class="option-item"><span class="option-label">Повышенный холестерин</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+          <div class="option-item"><span class="option-label">Гипертония</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+          <div class="option-item"><span class="option-label">Гипотония</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+          <div class="option-item"><span class="option-label">Болезни щитовидной железы</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+          <div class="option-item"><span class="option-label">Заболевания ЖКТ</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+          <div class="option-item"><span class="option-label">Заболевания почек</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+          <div class="option-item"><span class="option-label">Подагра</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+          <div class="option-item" id="noConditionsItem"><span class="option-label">Нет / Не знаю</span><div class="checkbox"><i class="ph ph-check"></i></div></div>
+        </div>
+      </section>
+      <section>
+        <div class="section-title">Лекарства</div>
+        <div class="toggle-section">
+          <div class="toggle-info"><span class="toggle-title">Принимаешь лекарства?</span><span class="toggle-desc">Постоянно, по назначению врача</span></div>
+          <div class="toggle" id="medsToggle"><div class="toggle-circle"></div></div>
+        </div>
+        <div class="form-group" id="medsInputWrap" style="display:none;margin-top:12px">
+          <textarea class="textarea" id="medsText" placeholder="Укажи лекарства, которые принимаешь регулярно..."></textarea>
+          <div style="font-size:12px;color:var(--color-text-secondary)">AI учтёт совместимость с продуктами и БАДами.</div>
+        </div>
+      </section>
+      <section id="womensSection" style="display:none">
+        <div class="section-title">Женское здоровье</div>
+        <div class="chip-grid" id="womensChips">
+          <div class="chip">Беременность</div><div class="chip">Кормление грудью</div>
+          <div class="chip">Менопауза / перименопауза</div><div class="chip">Нерегулярный цикл</div>
+          <div class="chip">СПКЯ</div><div class="chip none-chip">Ничего из перечисленного</div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div class="toast" id="toast">✅ Изменения сохранены</div>
+<script>
+  const profile = window.AIDiet ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+  const sex = profile['Пол'] || '';
+  if (sex === 'Женский' || sex === 'Женщина') document.getElementById('womensSection').style.display = 'block';
+
+  function setupExclusiveChips(containerId, noneSelector) {
+    document.querySelectorAll(`#${containerId} .chip`).forEach(chip => {
+      chip.addEventListener('click', () => {
+        const isNone = chip.classList.contains('none-chip');
+        if (isNone) {
+          const was = chip.classList.contains('active');
+          document.querySelectorAll(`#${containerId} .chip`).forEach(c => c.classList.remove('active'));
+          if (!was) chip.classList.add('active');
+        } else {
+          document.querySelector(`#${containerId} .none-chip`)?.classList.remove('active');
+          chip.classList.toggle('active');
+        }
+      });
+    });
+  }
+  setupExclusiveChips('symptomsChips');
+  setupExclusiveChips('womensChips');
+
+  document.querySelectorAll('#conditionsList .option-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (item.id === 'noConditionsItem') {
+        const was = item.classList.contains('active');
+        document.querySelectorAll('#conditionsList .option-item').forEach(i => i.classList.remove('active'));
+        if (!was) item.classList.add('active');
+      } else {
+        document.getElementById('noConditionsItem')?.classList.remove('active');
+        item.classList.toggle('active');
+      }
+    });
+  });
+
+  const medsToggle = document.getElementById('medsToggle');
+  const medsWrap = document.getElementById('medsInputWrap');
+  medsToggle.addEventListener('click', () => {
+    medsToggle.classList.toggle('active');
+    medsWrap.style.display = medsToggle.classList.contains('active') ? 'flex' : 'none';
+  });
+
+  // Hydrate
+  const symptoms = (profile['Симптомы'] || '').split(',').map(s => s.trim()).filter(Boolean);
+  if (symptoms.length && symptoms[0] !== 'Нет') {
+    document.querySelectorAll('#symptomsChips .chip').forEach(c => { if (symptoms.includes(c.textContent.trim())) c.classList.add('active'); });
+  } else if (symptoms[0] === 'Нет') { document.querySelector('#symptomsChips .none-chip')?.classList.add('active'); }
+
+  const conditions = (profile['Хронические заболевания'] || '').split(',').map(s => s.trim()).filter(Boolean);
+  if (conditions.length && conditions[0] !== 'Нет') {
+    document.querySelectorAll('#conditionsList .option-item').forEach(i => { if (conditions.includes(i.querySelector('.option-label').textContent.trim())) i.classList.add('active'); });
+  } else if (conditions[0] === 'Нет') { document.getElementById('noConditionsItem')?.classList.add('active'); }
+
+  const meds = profile['Принимает лекарства'] || '';
+  if (meds && meds !== 'Нет') { medsToggle.classList.add('active'); medsWrap.style.display = 'flex'; document.getElementById('medsText').value = meds === 'Да (не указано)' ? '' : meds; }
+
+  const womens = (profile['Женское здоровье'] || '').split(',').map(s => s.trim()).filter(Boolean);
+  if (womens.length) { document.querySelectorAll('#womensChips .chip').forEach(c => { if (womens.includes(c.textContent.trim())) c.classList.add('active'); }); }
+
+  function saveAll() {
+    const s = Array.from(document.querySelectorAll('#symptomsChips .chip.active')).map(c => c.textContent.trim());
+    const c = Array.from(document.querySelectorAll('#conditionsList .option-item.active')).map(i => i.querySelector('.option-label').textContent.trim());
+    const hasMeds = medsToggle.classList.contains('active');
+    const medsVal = document.getElementById('medsText').value.trim();
+    const w = Array.from(document.querySelectorAll('#womensChips .chip.active')).map(c => c.textContent.trim());
+    if (window.AIDiet) {
+      window.AIDiet.saveField('symptoms', s.length ? s.join(', ') : 'Нет');
+      window.AIDiet.saveField('chronic_conditions', c.length ? c.join(', ') : 'Нет');
+      window.AIDiet.saveField('takes_medications', hasMeds ? (medsVal || 'Да (не указано)') : 'Нет');
+      if (w.length) window.AIDiet.saveField('womens_health', w.join(', '));
+    }
+    const t = document.getElementById('toast'); t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000);
+  }
+</script>
+<script src="onboarding-state.js"></script>
+</body>
+</html>

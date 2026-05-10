@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - PR-1 Прогресс</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header { padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .header-title { font-size: 24px; font-weight: 700; color: var(--color-text-primary); }
+    .btn-report { padding: 10px 16px; border-radius: 12px; background: #FFF7ED; color: #CC7000; border: 1px solid #FFE4CC; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    /* Period Selector */
+    .period-toggle { display: flex; background: #F3F4F6; padding: 4px; border-radius: 12px; }
+    .toggle-item { flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 600; border-radius: 8px; cursor: pointer; color: var(--color-text-secondary); }
+    .toggle-item.active { background: #FFFFFF; color: var(--color-text-primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .card { background: #FFFFFF; border: 1px solid var(--color-divider); border-radius: 20px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); cursor: pointer; transition: transform 0.15s; text-decoration: none; display: block; color: inherit; }
+    .card:active { transform: scale(0.98); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .card-title { font-size: 16px; font-weight: 700; color: var(--color-text-primary); }
+    .card-meta { font-size: 20px; font-weight: 800; color: var(--color-primary); }
+    /* Fake Charts */
+    .chart-box { width: 100%; height: 160px; position: relative; display: flex; align-items: flex-end; gap: 12px; padding: 10px 0; }
+    .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; }
+    .bar-fill { width: 100%; border-radius: 4px; background: #F3F4F6; position: relative; overflow: hidden; }
+    .bar-plan { position: absolute; bottom: 0; width: 100%; height: 100%; background: #E5E7EB; opacity: 0.5; }
+    .bar-fact { position: absolute; bottom: 0; width: 100%; background: var(--color-primary); border-top-left-radius: 4px; border-top-right-radius: 4px; }
+    .bar-label { font-size: 10px; font-weight: 700; color: var(--color-text-secondary); }
+    .streak-card { background: linear-gradient(135deg, #F5922B 0%, #E07018 100%); border-radius: 20px; padding: 20px; color: #FFFFFF; display: flex; align-items: center; gap: 20px; }
+    .streak-icon { font-size: 44px; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    .streak-info h3 { font-size: 24px; font-weight: 800; }
+    .streak-info p { font-size: 14px; opacity: 0.9; font-weight: 500; }
+    /* Tab Bar */
+    .tab-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 84px; background-color: #FFFFFF; border-top: 1px solid var(--color-divider); display: flex; justify-content: space-around; padding: 12px 12px 30px 12px; z-index: 100; }
+    .tab-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--color-text-tertiary); text-decoration: none; flex: 1; }
+    .tab-item.active, .tab-item:active { color: var(--color-primary); }
+    .tab-item i { font-size: 24px; }
+    .tab-label { font-size: 10px; font-weight: 600; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <h1 class="header-title">Прогресс</h1>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-report" style="background: #F0FDF4; color: #22A055; border-color: #C6F6D5;" onclick="location.href='pr1-health-score.html'"><i class="ph ph-heart"></i> Score</button>
+        <button class="btn-report" onclick="location.href='pr2-ai-report.html'"><i class="ph ph-sparkle"></i> AI Отчёт</button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+      
+      <!-- Period Selector -->
+      <div class="period-toggle">
+        <div class="toggle-item active">Неделя</div>
+        <div class="toggle-item">Месяц</div>
+        <div class="toggle-item">3 месяца</div>
+        <div class="toggle-item">Год</div>
+      </div>
+
+      <!-- Streak -->
+      <section class="streak-card">
+        <div class="streak-icon">🔥</div>
+        <div class="streak-info">
+          <h3>12 дней!</h3>
+          <p>Подряд по плану. Так держать!</p>
+        </div>
+      </section>
+
+      <!-- Weight Card -->
+      <a href="pr1-weight-detail.html" class="card">
+        <div class="card-header">
+          <span class="card-title">Вес тела</span>
+          <span class="card-meta">72.4 кг</span>
+        </div>
+        <div class="chart-box">
+          <!-- Fake line chart SVG placeholder -->
+          <svg width="100%" height="80" viewBox="0 0 300 80">
+            <path d="M0,60 Q50,55 100,50 T200,45 T300,40" fill="none" stroke="#F5922B" stroke-width="4" stroke-linecap="round" />
+            <circle cx="0" cy="60" r="4" fill="#F5922B" />
+            <circle cx="300" cy="40" r="4" fill="#F5922B" />
+          </svg>
+          <div style="display: flex; justify-content: space-between; width: 100%; margin-top: 10px;">
+            <span class="bar-label">Пн</span><span class="bar-label">Вт</span><span class="bar-label">Ср</span><span class="bar-label">Чт</span><span class="bar-label">Пт</span><span class="bar-label">Сб</span><span class="bar-label">Вс</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Calories Card -->
+      <section class="card" style="cursor: default;">
+        <div class="card-header">
+          <span class="card-title">Калории (Факт vs План)</span>
+          <span class="card-meta">Среднее: 2140</span>
+        </div>
+        <div class="chart-box">
+          <div class="bar-col"><div class="bar-fill" style="height: 80%;"><div class="bar-plan"></div><div class="bar-fact" style="height: 100%;"></div></div><span class="bar-label">Пн</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 80%;"><div class="bar-plan"></div><div class="bar-fact" style="height: 90%;"></div></div><span class="bar-label">Вт</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 80%;"><div class="bar-plan"></div><div class="bar-fact" style="height: 105%;"></div></div><span class="bar-label">Ср</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 80%;"><div class="bar-plan"></div><div class="bar-fact" style="height: 95%;"></div></div><span class="bar-label">Чт</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 80%;"><div class="bar-plan"></div><div class="bar-fact" style="height: 102%;"></div></div><span class="bar-label">Пт</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 80%;"><div class="bar-plan"></div><div class="bar-fact" style="height: 80%;"></div></div><span class="bar-label">Сб</span></div>
+          <div class="bar-col"><div class="bar-fill" style="height: 80%;"><div class="bar-plan"></div><div class="bar-fact" style="height: 70%;"></div></div><span class="bar-label">Вс</span></div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Tab Bar -->
+    <nav class="tab-bar">
+      <a href="h1-dashboard.html" class="tab-item">
+        <i class="ph ph-house"></i>
+        <span class="tab-label">Главная</span>
+      </a>
+      <a href="p1-weekly-plan.html" class="tab-item">
+        <i class="ph ph-calendar-blank"></i>
+        <span class="tab-label">План</span>
+      </a>
+      <a href="s1-shopping-list.html" class="tab-item">
+        <i class="ph ph-shopping-cart"></i>
+        <span class="tab-label">Покупки</span>
+      </a>
+      <a href="pr1-progress.html" class="tab-item active">
+        <i class="ph ph-chart-line-up"></i>
+        <span class="tab-label">Прогресс</span>
+      </a>
+      <a href="u1-profile-main.html" class="tab-item">
+        <i class="ph ph-user"></i>
+        <span class="tab-label">Профиль</span>
+      </a>
+    </nav>
+  </div>
+  <script src="health-analytics.js"></script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - O-14 Мотивация и срывы</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .selected-count { font-size: 12px; font-weight: 600; color: var(--color-primary); margin-bottom: 12px; }
+    .choice-list { display: flex; flex-direction: column; gap: 10px; }
+    .choice-item {
+      background: #FFFFFF; border: 1.5px solid var(--color-divider); border-radius: 16px;
+      padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .choice-item.active { border-color: var(--color-primary); background: #FFF7ED; }
+    .choice-item.disabled { opacity: 0.4; pointer-events: none; }
+    .checkbox-box {
+      width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--color-divider);
+      display: flex; justify-content: center; align-items: center; color: transparent;
+      font-size: 13px; flex-shrink: 0; margin-top: 1px; transition: all 0.15s;
+    }
+    .choice-item.active .checkbox-box { background: var(--color-primary); border-color: var(--color-primary); color: #FFFFFF; }
+    .choice-label { font-size: 14px; font-weight: 600; color: var(--color-text-primary); line-height: 1.35; }
+    .textarea {
+      width: 100%; min-height: 72px; padding: 14px 16px; border-radius: 14px;
+      border: 1.5px solid var(--color-divider); background: #FFFFFF;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+      outline: none; transition: border-color 0.2s; resize: none; color: var(--color-text-primary);
+      margin-top: 8px;
+    }
+    .textarea:focus { border-color: var(--color-primary); }
+    .textarea::placeholder { color: #9CA3AF; }
+    @media (max-width: 440px) {
+    }
+  </style>
+  <script src="app-utils.js"></script>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <div class="progress-header">
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="step-counter">Шаг 13 из 14</div>
+    </div>
+
+    <div class="content">
+      <h1 class="question-title">Мотивация и срывы</h1>
+      <p class="question-desc">Что обычно мешает придерживаться намеченного питания? <b>До 5 вариантов.</b></p>
+
+      <div id="selectedCount" class="selected-count" style="display:none;"></div>
+
+      <div class="choice-list" id="barrierList">
+        <div class="choice-item" data-val="hunger">
+          <div class="checkbox-box"><i class="ph ph-check"></i></div>
+          <span class="choice-label">Постоянный голод</span>
+        </div>
+        <div class="choice-item" data-val="sweets">
+          <div class="checkbox-box"><i class="ph ph-check"></i></div>
+          <span class="choice-label">Тяга к сладкому</span>
+        </div>
+        <div class="choice-item" data-val="evening">
+          <div class="checkbox-box"><i class="ph ph-check"></i></div>
+          <span class="choice-label">Срывы вечером или ночью</span>
+        </div>
+        <div class="choice-item" data-val="no_time">
+          <div class="checkbox-box"><i class="ph ph-check"></i></div>
+          <span class="choice-label">Нет времени готовить</span>
+        </div>
+        <div class="choice-item" data-val="on_the_go">
+          <div class="checkbox-box"><i class="ph ph-check"></i></div>
+          <span class="choice-label">Ем на ходу или в разъездах</span>
+        </div>
+        <div class="choice-item" data-val="habits">
+          <div class="checkbox-box"><i class="ph ph-check"></i></div>
+          <span class="choice-label">Сложно отказаться от привычной еды</span>
+        </div>
+        <div class="choice-item" data-val="emotional">
+          <div class="checkbox-box"><i class="ph ph-check"></i></div>
+          <span class="choice-label">Эмоциональное переедание</span>
+        </div>
+        <div class="choice-item" data-val="social">
+          <div class="checkbox-box"><i class="ph ph-check"></i></div>
+          <span class="choice-label">Праздники, семья, окружение</span>
+        </div>
+        <div class="choice-item" data-val="no_result">
+          <div class="checkbox-box"><i class="ph ph-check"></i></div>
+          <span class="choice-label">Не вижу результата и теряю мотивацию</span>
+        </div>
+        <div class="choice-item" data-val="not_tried">
+          <div class="checkbox-box"><i class="ph ph-check"></i></div>
+          <span class="choice-label">Пока не пробовал(а) всерьёз</span>
+        </div>
+        <div class="choice-item" id="otherBarrierItem" data-val="other">
+          <div class="checkbox-box"><i class="ph ph-check"></i></div>
+          <span class="choice-label">Другое</span>
+        </div>
+      </div>
+      <textarea class="textarea" id="otherBarrierText" placeholder="Опиши своими словами..." style="display:none;"></textarea>
+
+      <div class="onboarding-tip-card">
+        <div class="onboarding-tip-icon">💡</div>
+        <div class="onboarding-tip-text">
+          У 70% людей, начинающих менять питание, главный враг — не еда, а привычки и окружение. Если вечером срываешься на сладкое — это скорее всего не слабая воля, а недоедание днём: к вечеру организм требует быструю энергию. Мы учтём твои реальные барьеры и обойдём их — вместо того чтобы бороться с ними в лоб. Праздники, стресс, командировки, детский день рождения с тортом. Если мы знаем, где твои уязвимые точки — мы заложим стратегии обхода прямо в план, а не оставим тебя один на один со срывом.
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-cta">
+      <button class="btn-back" onclick="location.href='o13-supplements.html'">← Назад</button>
+      <button class="btn-primary disabled" id="btnNext" disabled>Далее <i class="ph ph-arrow-right"></i></button>
+    </div>
+  </div>
+
+  <script>
+    const MAX_SELECT = 5;
+    let selected = new Set();
+
+    function updateUI() {
+      const countEl = document.getElementById('selectedCount');
+      if (selected.size > 0) {
+        countEl.style.display = 'block';
+        countEl.textContent = `Выбрано: ${selected.size} из ${MAX_SELECT}`;
+      } else {
+        countEl.style.display = 'none';
+      }
+
+      // Disable unselected when limit reached
+      document.querySelectorAll('#barrierList .choice-item').forEach(item => {
+        const isSelected = item.classList.contains('active');
+        if (!isSelected && selected.size >= MAX_SELECT) {
+          item.classList.add('disabled');
+        } else {
+          item.classList.remove('disabled');
+        }
+      });
+
+      // Show/hide "Другое" textarea
+      const isOtherOn = document.getElementById('otherBarrierItem').classList.contains('active');
+      document.getElementById('otherBarrierText').style.display = isOtherOn ? 'block' : 'none';
+      if (!isOtherOn) document.getElementById('otherBarrierText').value = '';
+
+      const btn = document.getElementById('btnNext');
+      btn.disabled = selected.size === 0;
+      btn.classList.toggle('disabled', selected.size === 0);
+      saveO14State();
+    }
+    
+    document.getElementById('otherBarrierText').addEventListener('input', () => {
+        saveO14State();
+    });
+
+    document.querySelectorAll('#barrierList .choice-item').forEach(item => {
+      item.addEventListener('click', () => {
+        if (item.classList.contains('disabled')) return;
+        const val = item.dataset.val;
+        if (item.classList.contains('active')) {
+          item.classList.remove('active');
+          selected.delete(val);
+        } else {
+          if (selected.size >= MAX_SELECT) return;
+          item.classList.add('active');
+          selected.add(val);
+        }
+        updateUI();
+      });
+    });
+
+    function saveO14State() {
+      const barriers = [...selected];
+      const otherText = document.getElementById('otherBarrierText').value.trim();
+      if (barriers.includes('other') && otherText) {
+        barriers.push(`Другое: ${otherText}`);
+      }
+      // Map data-val to Russian labels for display
+      const barrierLabels = barriers.map(val => {
+        if (val.startsWith('Другое:')) return val;
+        const item = document.querySelector(`.choice-item[data-val="${val}"]`);
+        return item ? item.querySelector('.choice-label').textContent.trim() : val;
+      });
+      window.AIDiet && window.AIDiet.saveField('motivation_barriers', barrierLabels.join(', ') || 'Не указано');
+      window.AIDiet && window.AIDiet.saveField('_o14uiState', JSON.stringify({ barriers: [...selected], otherText }));
+    }
+
+    document.getElementById('btnNext').addEventListener('click', (e) => {
+      e.preventDefault();
+      saveO14State();
+      window.AIDiet.goNext('o15-preferences.html');
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const p = window.AIDiet ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+      if (p['_o14uiState']) {
+        try {
+          const st = JSON.parse(p['_o14uiState']);
+          if (st.barriers) {
+            st.barriers.forEach(val => {
+              const item = document.querySelector(`.choice-item[data-val="${val}"]`);
+              if (item) {
+                item.classList.add('active');
+                selected.add(val);
+              }
+            });
+          }
+          if (st.otherText) {
+            document.getElementById('otherBarrierText').value = st.otherText;
+          }
+          updateUI();
+        } catch(e) {}
+      }
+      window.__inlineHydrated = true;
+    });
+  </script>
+
+  <script src="onboarding-state.js"></script>
+</body>
+</html>

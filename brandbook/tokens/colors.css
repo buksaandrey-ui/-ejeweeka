@@ -1,0 +1,166 @@
+/**
+ * ejeweeka — Brand Color System
+ * CSS Custom Properties (Design Tokens)
+ * Version: 1.0.0
+ *
+ * Usage: import this file at the root of your app.
+ * All values reference the source design-tokens.json.
+ *
+ * Naming convention:
+ *   --color-{category}-{variant}
+ */
+
+:root {
+
+  /* ─── Brand Core ─── */
+  --color-brand-blackberry:       #4C1D95;
+  --color-brand-neon-violet:      #8B5CF6;
+  --color-brand-neon-magenta:     #D946EF;
+  --color-brand-bright-purple:    #A855F7;
+  --color-brand-glow-pink:        #F472B6;
+  --color-brand-glow-violet:      #7C3AED;
+  --color-brand-deep-purple:      #0D0618;
+
+  /* ─── Brand Gradients ─── */
+  --gradient-neon-mark:
+    linear-gradient(135deg,
+      #7C3AED 0%,
+      #A855F7 30%,
+      #D946EF 60%,
+      #C026D3 80%,
+      #9333EA 100%);
+
+  --gradient-neon-glow:
+    radial-gradient(ellipse at center,
+      rgba(217, 70, 239, 0.4) 0%,
+      rgba(139, 92, 246, 0.25) 40%,
+      transparent 70%);
+
+  --gradient-status-gold:
+    linear-gradient(135deg, #F59E0B 0%, #FCD34D 50%, #D97706 100%);
+
+  --gradient-status-family-gold:
+    linear-gradient(135deg, #D97706 0%, #FBBF24 50%, #B45309 100%);
+
+  /* ─── Backgrounds — Dark Theme ─── */
+  --color-bg-oled:                #000000;
+  --color-bg-oled-soft:           #050505;
+  --color-bg-dark:                #0D0618;
+  --color-surface-dark:           #1A0A35;
+  --color-surface-raised:         #221344;
+  --color-surface-glass:          rgba(255, 255, 255, 0.06);
+  --color-surface-glass-hover:    rgba(255, 255, 255, 0.09);
+
+  /* ─── Backgrounds — Light Theme ─── */
+  --color-bg-light:               #F9FAFB;
+  --color-surface-light:          #FFFFFF;
+  --color-surface-light-raised:   #F4F4F5;
+  --color-surface-light-glass:    rgba(0, 0, 0, 0.04);
+
+  /* ─── Text — Dark Theme ─── */
+  --color-text-primary-dark:      #FFFFFF;
+  --color-text-secondary-dark:    #A1A1AA;
+  --color-text-tertiary-dark:     #71717A;
+  --color-text-accent:            #A855F7;
+
+  /* ─── Text — Light Theme ─── */
+  --color-text-primary-light:     #18181B;
+  --color-text-secondary-light:   #71717A;
+  --color-text-tertiary-light:    #A1A1AA;
+
+  /* ─── Borders ─── */
+  --color-border-glass:           rgba(255, 255, 255, 0.08);
+  --color-border-glass-bright:    rgba(255, 255, 255, 0.14);
+  --color-border-soft:            #E4E4E7;
+  --color-border-accent:          rgba(139, 92, 246, 0.3);
+
+  /* ─── Status: White ─── */
+  --color-status-white-bg:        #F9FAFB;
+  --color-status-white-surface:   #FFFFFF;
+  --color-status-white-text:      #18181B;
+  --color-status-white-accent:    #4C1D95;
+  --color-status-white-border:    #E4E4E7;
+
+  /* ─── Status: Gold ─── */
+  --color-status-gold-bg:         #0D0618;
+  --color-status-gold-surface:    #1A0A35;
+  --color-status-gold:            #F59E0B;
+  --color-status-gold-soft:       #FCD34D;
+  --color-status-gold-glow:       rgba(245, 158, 11, 0.25);
+  --color-status-gold-text:       #FFFFFF;
+
+  /* ─── Status: Black ─── */
+  --color-status-black:           #000000;
+  --color-status-black-surface:   #0A0A0A;
+  --color-status-black-accent:    #8B5CF6;
+  --color-status-black-glow:      rgba(139, 92, 246, 0.35);
+  --color-status-black-text:      #FFFFFF;
+
+  /* ─── Status: Family Gold ─── */
+  --color-status-family-gold-bg:    #0D0618;
+  --color-status-family-gold:       #D97706;
+  --color-status-family-gold-warm:  #FBBF24;
+  --color-status-family-gold-glow:  rgba(217, 119, 6, 0.2);
+  --color-status-family-gold-text:  #FFFFFF;
+
+  /* ─── Semantic ─── */
+  --color-success:                #10B981;
+  --color-warning:                #F59E0B;
+  --color-error:                  #EF4444;
+  --color-info:                   #8B5CF6;
+
+  /* ─── Shadows / Glows ─── */
+  --shadow-glow-sm:               0 0 12px rgba(139, 92, 246, 0.25);
+  --shadow-glow-md:               0 0 24px rgba(139, 92, 246, 0.35);
+  --shadow-glow-lg:               0 0 48px rgba(139, 92, 246, 0.4);
+  --shadow-glow-pink:             0 0 32px rgba(217, 70, 239, 0.3);
+  --shadow-card-dark:             0 1px 0 rgba(255,255,255,0.06) inset, 0 20px 40px rgba(0,0,0,0.4);
+  --shadow-card-light:            0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05);
+
+  /* ─── Typography ─── */
+  --font-display:                 'SF Pro Display', Inter, system-ui, -apple-system, sans-serif;
+  --font-body:                    'SF Pro Text', Inter, system-ui, -apple-system, sans-serif;
+  --font-mono:                    'SF Mono', 'JetBrains Mono', Menlo, monospace;
+
+  /* ─── Border Radius ─── */
+  --radius-sm:                    8px;
+  --radius-md:                    12px;
+  --radius-lg:                    16px;
+  --radius-xl:                    24px;
+  --radius-xxl:                   32px;
+  --radius-full:                  9999px;
+
+  /* ─── Animation ─── */
+  --duration-fast:                150ms;
+  --duration-base:                250ms;
+  --duration-slow:                400ms;
+  --ease-default:                 cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out:                     cubic-bezier(0, 0, 0.2, 1);
+  --ease-spring:                  cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ─── Dark Theme Class ─── */
+[data-theme="dark"], .theme-dark {
+  color-scheme: dark;
+  --color-bg:             var(--color-bg-dark);
+  --color-surface:        var(--color-surface-dark);
+  --color-text-primary:   var(--color-text-primary-dark);
+  --color-text-secondary: var(--color-text-secondary-dark);
+  --color-border:         var(--color-border-glass);
+}
+
+/* ─── Light Theme Class ─── */
+[data-theme="light"], .theme-light {
+  color-scheme: light;
+  --color-bg:             var(--color-bg-light);
+  --color-surface:        var(--color-surface-light);
+  --color-text-primary:   var(--color-text-primary-light);
+  --color-text-secondary: var(--color-text-secondary-light);
+  --color-border:         var(--color-border-soft);
+}
+
+/* ─── Status Theme Helpers ─── */
+.status-white  { --status-bg: var(--color-status-white-bg);  --status-text: var(--color-status-white-text);  --status-accent: var(--color-status-white-accent); }
+.status-gold   { --status-bg: var(--color-status-gold-bg);   --status-text: var(--color-status-gold-text);   --status-accent: var(--color-status-gold); }
+.status-black  { --status-bg: var(--color-status-black);     --status-text: var(--color-status-black-text);  --status-accent: var(--color-status-black-accent); }
+.status-family { --status-bg: var(--color-status-family-gold-bg); --status-text: var(--color-status-family-gold-text); --status-accent: var(--color-status-family-gold); }

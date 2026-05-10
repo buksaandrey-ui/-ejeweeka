@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Health Code - U-5 Витамины и БАДы</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2/src/regular/style.css">
+  <link rel="stylesheet" href="global.css">
+  <style>
+    .header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--color-divider); background: #FFFFFF; }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .back-btn { width: 40px; height: 40px; border-radius: 12px; background: #FFFFFF; border: 1px solid var(--color-divider); color: var(--color-text-primary); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; }
+    .header-title { font-size: 18px; font-weight: 700; color: var(--color-text-primary); }
+    .save-btn { font-size: 14px; font-weight: 700; color: var(--color-primary); background: none; border: none; cursor: pointer; }
+    .section-title { font-size: 14px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+    /* Current Supplements */
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .textarea { width: 100%; height: 100px; padding: 16px; border-radius: 16px; border: 1px solid var(--color-divider); background: #FFFFFF; font-family: 'Inter', sans-serif; font-size: 15px; outline: none; line-height: 1.5; }
+    /* Compatibility Card */
+    .compatibility-box { background: #FFFFFF; border: 1px solid var(--color-divider); border-radius: 20px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+    .comp-header { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700; color: var(--color-text-primary); margin-bottom: 16px; }
+    .comp-item { display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid #F3F4F6; }
+    .comp-icon { font-size: 20px; color: #EF4444; }
+    .comp-text { font-size: 13px; font-weight: 500; color: var(--color-text-primary); line-height: 1.4; }
+    .comp-text span { font-weight: 700; color: #B91C1C; }
+    /* Readiness Select */
+    .select-item { padding: 16px 20px; background: #FFFFFF; border: 1px solid var(--color-divider); border-radius: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .select-label { font-size: 15px; font-weight: 600; color: var(--color-text-primary); }
+    .upgrade-lock { background: linear-gradient(135deg, #FFF9F3 0%, #FFF1E5 100%); border: 1px solid #FFE4CC; border-radius: 20px; padding: 20px; text-align: center; }
+    .lock-icon { font-size: 28px; color: var(--color-primary); margin-bottom: 8px; }
+    .lock-text { font-size: 14px; color: #995400; font-weight: 600; margin-bottom: 12px; }
+    .btn-upgrade { width: 100%; height: 44px; border-radius: 12px; background: var(--color-primary-gradient); color: #FFFFFF; border: none; font-size: 13px; font-weight: 700; cursor: pointer; }
+    @media (max-width: 440px) {
+      .bottom-cta, .bottom-nav { position: fixed !important; }
+    }
+  </style>
+  <script src="app-utils.js">
+    // === PROFILE PRE-FILL from onboarding ===
+    document.addEventListener("DOMContentLoaded", () => {
+    const d = (window.AIDiet && window.AIDiet.getProfile) ? window.AIDiet.getProfile() : JSON.parse(localStorage.getItem('aidiet_profile') || '{}');
+    const input = document.querySelector('#supplementsInput, #supplementsText, textarea');
+    if (input && d.current_supplements_text) input.value = d.current_supplements_text;
+
+    });
+</script>
+</head>
+<body>
+  <div class="phone">
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-bar-icons">
+        <i class="ph ph-cell-signal-medium"></i>
+        <i class="ph ph-wifi-high"></i>
+        <i class="ph ph-battery-full"></i>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="back-btn" onclick="history.back()" aria-label="Назад"><i class="ph ph-arrow-left"></i></button>
+        <h1 class="header-title">Витамины</h1>
+      </div>
+      <button class="save-btn">Сохранить</button>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Current Intake -->
+      <section>
+        <div class="section-title">Что принимаешь сейчас?</div>
+        <div class="form-group">
+          <textarea class="textarea" placeholder="Например: Витамин D 2000 ME, Омега-3, Магний..."></textarea>
+        </div>
+      </section>
+
+      <!-- Compatibility (Black Tier) -->
+      <section>
+        <div class="section-title">Проверка совместимости</div>
+        <div class="compatibility-box">
+          <div class="comp-header"><i class="ph ph-shield-check-fill" style="color: var(--color-success);"></i> Всё отлично!</div>
+          <div class="comp-item">
+            <div class="comp-icon" style="color: var(--color-primary);"><i class="ph ph-info-fill"></i></div>
+            <div class="comp-text">Принимай <span>Витамин D3</span> только во время завтрака (с жирами) для лучшего усвоения.</div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-icon"><i class="ph ph-warning-circle-fill"></i></div>
+            <div class="comp-text"><span>Магний</span> и <span>Кальций</span> конфликтуют. Мы разнесли их в твоём расписании на 4 часа.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Readiness -->
+      <section>
+        <div class="section-title">Готовность к добавкам</div>
+        <div class="select-item">
+          <span class="select-label">Да, предложите, что нужно</span>
+          <i class="ph ph-caret-down"></i>
+        </div>
+      </section>
+
+      <!-- Upsell if Base -->
+      <section class="upgrade-lock">
+        <div class="lock-icon"><i class="ph ph-crown-fill"></i></div>
+        <div class="lock-text">Автоматическая проверка конфликтов с лекарствами доступна в Black</div>
+        <button class="btn-upgrade">Повысить статус</button>
+      </section>
+
+    </div>
+
+  </div>
+<script src="onboarding-state.js"></script>
+</body>
+</html>
