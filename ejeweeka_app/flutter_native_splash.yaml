@@ -1,0 +1,9 @@
+flutter_native_splash:
+  color: "#FAFAFA" # Background color matching the app theme
+  image: "assets/logo/eje-mark-transparent@3x.png"
+  
+  android: true
+  ios: true
+
+  # Set minimum display time, but we'll remove the native splash manually when the flutter splash finishes
+  fullscreen: true

@@ -19,7 +19,7 @@
   --color-brand-bright-purple:    #A855F7;
   --color-brand-glow-pink:        #F472B6;
   --color-brand-glow-violet:      #7C3AED;
-  --color-brand-deep-purple:      #0D0618;
+  --color-brand-deep-purple:      #2D0A4E;
 
   /* ─── Brand Gradients ─── */
   --gradient-neon-mark:
@@ -64,8 +64,8 @@
   --color-text-accent:            #A855F7;
 
   /* ─── Text — Light Theme ─── */
-  --color-text-primary-light:     #18181B;
-  --color-text-secondary-light:   #71717A;
+  --color-text-primary-light:     var(--color-brand-deep-purple);
+  --color-text-secondary-light:   #4C1D95;
   --color-text-tertiary-light:    #A1A1AA;
 
   /* ─── Borders ─── */

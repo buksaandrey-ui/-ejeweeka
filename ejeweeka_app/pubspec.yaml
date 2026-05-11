@@ -1,0 +1,91 @@
+name: ejeweeka_app
+description: ejeweeka — персональная wellness-система. План питания, КБЖУ, витамины и анализ еды по фото.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # ── State Management ─────────────────────────────────────────
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # ── Local Storage (Offline-First, Zero-Knowledge) ─────────────
+  # SharedPreferences for profile (typed wrapper, no codegen conflicts)
+  shared_preferences: ^2.3.3
+  flutter_secure_storage: ^9.2.2  # Keychain/Keystore for auth tokens + encryption key
+
+  # ── Navigation ───────────────────────────────────────────────
+  go_router: ^14.2.7
+
+  # ── Network ──────────────────────────────────────────────────
+  dio: ^5.7.0
+  http: ^1.2.2
+
+  # ── UI & Typography ──────────────────────────────────────────
+  google_fonts: ^6.2.1
+  cached_network_image: ^3.4.1
+  shimmer: ^3.0.0
+  lottie: ^3.1.2
+  percent_indicator: ^4.2.3
+
+  # ── Camera & Photo Analysis (PH-1) ───────────────────────────
+  camera: ^0.11.0+2
+  image_picker: ^1.1.2
+
+  # ── Health Connect / Apple Health (HC-1, HC-2) ───────────────
+  health: ^13.3.1
+
+  # ── Push Notifications ───────────────────────────────────────
+  firebase_core: ^3.6.0
+  firebase_messaging: ^15.1.3
+  flutter_local_notifications: ^18.0.1
+
+  # ── Utils ────────────────────────────────────────────────────
+  uuid: ^4.5.1
+  url_launcher: ^6.3.1
+  intl: ^0.20.0
+  collection: ^1.18.0
+  path_provider: ^2.1.4
+  connectivity_plus: ^6.1.0
+
+  # ── Monitoring ───────────────────────────────────────────────
+  sentry_flutter: ^8.10.1
+
+  cupertino_icons: ^1.0.8
+  flutter_native_splash: ^2.4.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # ── Code Generation ──────────────────────────────────────────
+  riverpod_generator: ^2.4.3
+  build_runner: ^2.4.13
+
+  flutter_lints: ^4.0.0
+  integration_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/animations/
+    - assets/icons/
+    - assets/brand/
+    - assets/logo/
+    - assets/data/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon.png"

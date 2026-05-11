@@ -124,3 +124,7 @@ Minimum clear space around the symbol = 1× the height of the smallest node.
 | Email Signature | `healthcode-logo-light.png` | Small horizontal |
 | Presentations | `healthcode-logo-dark.png` | On dark slide backgrounds |
 | Watermarks | `healthcode-logo-monochrome.png` | At 15-20% opacity |
+
+
+## Строгие Правила Логотипов и Темы (System Enforced)
+Смотрите файл `05_ui_screens/logo-usage.md`.

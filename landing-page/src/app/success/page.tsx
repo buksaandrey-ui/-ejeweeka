@@ -54,7 +54,7 @@ function SuccessContent() {
   }, [paymentId]);
 
   return (
-    <div className="min-h-screen bg-[var(--bg)] text-white flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-md bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-8 text-center shadow-2xl">
         <div className="w-20 h-20 bg-green-500/20 text-green-400 rounded-full flex items-center justify-center mx-auto mb-6">
           <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,37 +63,37 @@ function SuccessContent() {
         </div>
         
         <h1 className="text-3xl font-extrabold mb-4">Оплата прошла успешно!</h1>
-        <p className="text-[#A1A1A6] mb-8">
+        <p className="text-[var(--text-muted)] mb-8">
           Твой индивидуальный алгоритм активирован. Остался последний шаг — запустить приложение.
         </p>
 
         {status === 'loading' && (
           <div className="py-6">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F5922B] mx-auto mb-4"></div>
-            <p className="text-[#F5922B] font-medium animate-pulse">Генерируем твой Magic Code...</p>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary)] mx-auto mb-4"></div>
+            <p className="text-[var(--primary)] font-medium animate-pulse">Генерируем твой Magic Code...</p>
           </div>
         )}
 
         {status === 'success' && code && (
           <div className="mb-8">
-            <div className="text-sm text-[#A1A1A6] mb-2 uppercase tracking-wider font-bold">Твой код доступа</div>
-            <div className="bg-[#0A0A0A] border border-[#F5922B]/30 rounded-2xl py-6 px-4">
-              <span className="text-4xl font-black text-[#F5922B] tracking-[0.2em]">{code}</span>
+            <div className="text-sm text-[var(--text-muted)] mb-2 uppercase tracking-wider font-bold">Твой код доступа</div>
+            <div className="bg-[var(--surface)] border border-[var(--primary)]/30 rounded-2xl py-6 px-4">
+              <span className="text-4xl font-black text-[var(--primary)] tracking-[0.2em]">{code}</span>
             </div>
-            <p className="text-sm text-[#A1A1A6] mt-4">
-              Скопируйте этот код и введите его при первом входе в мобильное приложение Health Code.
+            <p className="text-sm text-[var(--text-muted)] mt-4">
+              Скопируй этот код и введи его при первом входе в мобильное приложение ejeweeka.
             </p>
           </div>
         )}
 
         {status === 'error' && (
           <div className="py-6 bg-red-500/10 border border-red-500/20 rounded-2xl mb-8">
-            <p className="text-red-400">Не удалось получить код. Пожалуйста, проверьте почту, мы продублировали его туда.</p>
+            <p className="text-red-400">Не удалось получить код. Пожалуйста, проверь почту, мы продублировали его туда.</p>
           </div>
         )}
 
         <button 
-          className="w-full bg-[#F5922B] hover:bg-[#E08120] text-black font-bold py-4 px-6 rounded-2xl transition-all"
+          className="w-full bg-[var(--primary)] text-white hover:opacity-90 font-bold py-4 px-6 rounded-2xl transition-all"
           onClick={() => window.location.href = 'https://apps.apple.com/app/health-code'}
         >
           Скачать в App Store
@@ -105,7 +105,7 @@ function SuccessContent() {
 
 export default function SuccessPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[var(--bg)] text-white flex items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[var(--bg)] text-[var(--text-main)] flex items-center justify-center">Loading...</div>}>
       <SuccessContent />
     </Suspense>
   );

@@ -1,6 +1,6 @@
-# AIDiet — План масштабирования UI-стека
+# ejeweeka — План масштабирования UI-стека
 
-> Этот документ описывает 3 фазы эволюции фронтенда AIDiet.
+> Этот документ описывает 3 фазы эволюции фронтенда ejeweeka.
 > Каждая фаза строится на предыдущей и запускается по триггеру (метрике).
 > **НЕ переходить к следующей фазе, пока не достигнут триггер.**
 
@@ -12,8 +12,8 @@
 
 ### Что имеем
 - 51 HTML-экран (Style B Material Premium)
-- `aidiet_profile` SSOT архитектура (localStorage)
-- API на Render (`aidiet-api.onrender.com`)
+- `ejeweeka_profile` SSOT архитектура (localStorage)
+- API на Render (`ejeweeka-api.onrender.com`)
 - Capacitor обёртка с iOS/Android проектами
 
 ### Плюсы этой фазы
@@ -44,13 +44,13 @@
 ├── Настроить React Router (react-router-dom)
 ├── Создать Layout компоненты (Phone, BottomNav, StatusBar)
 ├── Перенести global.css → CSS Modules или Tailwind
-├── Настроить Context API для aidiet_profile (замена localStorage)
+├── Настроить Context API для ejeweeka_profile (замена localStorage)
 └── Мигрировать api-connector.js → React hook (useAPI)
 
 Неделя 2: Экраны (онбординг)
 ├── O-1..O-15 → React компоненты
 ├── O-16 Summary → читает из Context
-├── O-17 Statuswall → TG deep link (@healthcode_bot) вместо IAP
+├── O-17 Statuswall → TG deep link (@ejeweeka_bot) вместо IAP
 └── Общий OnboardingWizard с прогресс-баром
 
 Неделя 3: Экраны (основные)
@@ -112,7 +112,7 @@
 └── Push: react-native-push-notification
 
 Неделя 5-6: Интеграции
-├── Telegram Deep Link: url_launcher → @healthcode_bot (Premium Stealth)
+├── Telegram Deep Link: url_launcher → @ejeweeka_bot (Premium Stealth)
 ├── HealthKit: react-native-health
 ├── Camera: react-native-camera (Gemini Vision)
 └── Тестирование: Jest + Detox E2E

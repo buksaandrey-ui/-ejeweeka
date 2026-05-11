@@ -87,12 +87,12 @@ const featureSVGs: Record<string, React.ReactNode> = {
   ),
   fasting: (
     <svg viewBox="0 0 120 120" className="w-full h-full">
-      <circle cx="60" cy="60" r="40" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5"/>
+      <circle cx="60" cy="60" r="40" fill="none" stroke="var(--border-accent)" strokeWidth="1.5"/>
       <path d="M60 20 A40 40 0 0 1 97 73" fill="none" stroke="#4C1D95" strokeWidth="4" opacity="0.8" strokeLinecap="round"/>
-      <path d="M97 73 A40 40 0 0 1 23 73" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="4" strokeLinecap="round"/>
-      <path d="M23 73 A40 40 0 0 1 60 20" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="4" strokeLinecap="round"/>
+      <path d="M97 73 A40 40 0 0 1 23 73" fill="none" stroke="var(--border-accent)" strokeWidth="4" strokeLinecap="round"/>
+      <path d="M23 73 A40 40 0 0 1 60 20" fill="none" stroke="var(--border-accent)" strokeWidth="4" strokeLinecap="round"/>
       <circle cx="60" cy="60" r="2" fill="#4C1D95"/>
-      <text x="60" y="56" textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="7">16:8</text>
+      <text x="60" y="56" textAnchor="middle" fill="var(--text-muted)" fontSize="7">16:8</text>
     </svg>
   ),
 };
@@ -141,7 +141,7 @@ export default function HomePage() {
   const scrollToContent = () => window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
 
   return (
-    <div className="min-h-screen" style={{ background: "#0F0A1A", color: "rgba(255,255,255,0.9)" }}>
+    <div className="min-h-screen" style={{ background: "#0F0A1A", color: "var(--text-muted)" }}>
 
       {/* ── Sticky Nav (appears on scroll) ── */}
       <nav
@@ -154,24 +154,24 @@ export default function HomePage() {
         }}
       >
         <div className="max-w-[1200px] mx-auto flex justify-between items-center h-16 px-6">
-          <Image src="/brand/logo-horizontal-clean.png" alt="ejeweeka" width={160} height={50} priority style={{ height: 'auto' }} />
+          <Image src="/brand/ejeweeka-inline-wordmark.png" alt="ejeweeka" width={160} height={50} priority style={{ height: 'auto' }} />
           <div className="flex items-center gap-6">
-            <a href="#features" className="text-sm hover:text-white transition-colors" style={{ color: "rgba(255,255,255,0.5)" }}>О продукте</a>
+            <a href="#features" className="text-sm hover:text-[var(--text-main)] transition-colors" style={{ color: "var(--text-muted)" }}>О продукте</a>
             <Link href="/variant-a" className="text-sm font-semibold transition-colors" style={{ color: "#4C1D95" }}>Начать</Link>
           </div>
         </div>
       </nav>
 
       {/* ── SCREEN 1: Hero (100vh) ── */}
-      <section className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden" style={{ background: "linear-gradient(145deg, #3a3f47 0%, #0F0A1A 25%, #23272d 50%, #0F0A1A 75%, #353a41 100%)" }}>
+      <section className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden" style={{ background: "var(--bg)" }}>
         {/* Subtle light spots — like a textured wall */}
-        <div className="absolute top-[20%] left-[15%] w-[500px] h-[500px] rounded-full opacity-[0.06]" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.4), transparent 60%)" }} />
+        <div className="absolute top-[20%] left-[15%] w-[500px] h-[500px] rounded-full opacity-[0.06]" style={{ background: "radial-gradient(circle, var(--text-muted), transparent 60%)" }} />
         <div className="absolute top-[60%] right-[10%] w-[400px] h-[400px] rounded-full opacity-[0.04]" style={{ background: "radial-gradient(circle, rgba(255,255,255,0.3), transparent 60%)" }} />
         <div className="absolute top-[10%] right-[30%] w-[300px] h-[300px] rounded-full opacity-[0.03]" style={{ background: "radial-gradient(circle, rgba(76,29,149,0.3), transparent 60%)" }} />
 
         <div className={`relative z-10 flex flex-col items-center transition-all duration-[2s] ease-out ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
           <Image
-            src="/brand/logo-horizontal-clean.png"
+            src="/brand/ejeweeka-inline-wordmark.png"
             alt="ejeweeka — be more · feel alive"
             width={853}
             height={268}
@@ -181,7 +181,7 @@ export default function HomePage() {
           <button
             onClick={scrollToContent}
             className={`mt-12 px-12 py-4 rounded-full text-lg font-medium transition-all duration-[2s] delay-500 hover:bg-white/5 cursor-pointer ${heroVisible ? 'opacity-100' : 'opacity-0'}`}
-            style={{ border: "1px solid rgba(255,255,255,0.18)", color: "rgba(255,255,255,0.7)" }}
+            style={{ border: "1px solid var(--border)", color: "var(--text-muted)" }}
           >
             Начать
           </button>
@@ -189,13 +189,13 @@ export default function HomePage() {
       </section>
 
       {/* ── SCREEN 2: Key Message ── */}
-      <section className="py-32 md:py-40 px-6 relative overflow-hidden" style={{ background: "linear-gradient(180deg, #0F0A1A 0%, #000000 100%)" }}>
+      <section className="py-32 md:py-40 px-6 relative overflow-hidden" style={{ background: "var(--bg)" }}>
         {/* Decorative brand symbol */}
         <div className="absolute -right-16 top-1/2 -translate-y-1/2 opacity-[0.04] pointer-events-none">
-          <Image src="/brand/icon-symbol-orange.png" alt="" width={400} height={400} aria-hidden />
+          <Image src="/brand/eje-app-icon-master.png" alt="" width={400} height={400} aria-hidden />
         </div>
         <div className="absolute -left-20 top-[30%] opacity-[0.03] pointer-events-none rotate-45">
-          <Image src="/brand/icon-symbol-orange.png" alt="" width={250} height={250} aria-hidden />
+          <Image src="/brand/eje-app-icon-master.png" alt="" width={250} height={250} aria-hidden />
         </div>
         <RevealSection>
           <div className="max-w-[900px] mx-auto text-center relative z-10">
@@ -203,14 +203,14 @@ export default function HomePage() {
               ejeweeka — персональный наставник
               <span className="block" style={{ color: "#4C1D95" }}>по питанию, сну и активности</span>
             </h2>
-            <p className="max-w-[700px] mx-auto text-base md:text-lg leading-relaxed mb-14" style={{ color: "rgba(255,255,255,0.45)" }}>
+            <p className="max-w-[700px] mx-auto text-base md:text-lg leading-relaxed mb-14" style={{ color: "var(--text-muted)" }}>
               Учитывает цель, город, бюджет, продукты рядом, время на готовку, тренировки, ограничения, витамины и вкусы — чтобы собрать план, который реально можно соблюдать.
             </p>
             <div className="flex items-center justify-center gap-8 md:gap-12">
               {[{ num: "60+", label: "параметров" }, { num: "12", label: "недель" }, { num: "24/7", label: "адаптация" }].map((s, i) => (
                 <div key={i} className="text-center">
                   <div className="text-3xl md:text-4xl font-extrabold" style={{ color: "#4C1D95" }}>{s.num}</div>
-                  <div className="text-xs md:text-sm mt-1" style={{ color: "rgba(255,255,255,0.3)" }}>{s.label}</div>
+                  <div className="text-xs md:text-sm mt-1" style={{ color: "var(--text-muted)" }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -240,8 +240,8 @@ export default function HomePage() {
                   <div className={`${f.large ? 'w-32 h-32 md:w-40 md:h-40' : 'w-16 h-16'} mx-auto mb-4 transition-transform duration-300 group-hover:scale-110`}>
                     {featureSVGs[f.key]}
                   </div>
-                  <h3 className={`font-bold text-white mb-2 ${f.large ? 'text-xl' : 'text-base'}`}>{f.title}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.4)" }}>{f.desc}</p>
+                  <h3 className={`font-bold text-[var(--text-main)] mb-2 ${f.large ? 'text-xl' : 'text-base'}`}>{f.title}</h3>
+                  <p className="text-sm leading-relaxed" style={{ color: "var(--text-muted)" }}>{f.desc}</p>
                 </div>
               ))}
             </div>
@@ -257,7 +257,7 @@ export default function HomePage() {
           <div className="max-w-[800px] mx-auto text-center">
             <p className="text-sm tracking-[0.25em] uppercase font-medium mb-4" style={{ color: "#4C1D95" }}>Сравнение</p>
             <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ letterSpacing: "-0.02em" }}>Трекер калорий vs. ejeweeka</h2>
-            <p className="mb-12" style={{ color: "rgba(255,255,255,0.4)" }}>7 функций, которых нет в обычных приложениях для подсчёта калорий.</p>
+            <p className="mb-12" style={{ color: "var(--text-muted)" }}>7 функций, которых нет в обычных приложениях для подсчёта калорий.</p>
             <Image src="/brand/homepage/comparison.png" alt="ejeweeka vs Calorie Tracker" width={800} height={800} className="w-full" />
           </div>
         </RevealSection>
@@ -273,7 +273,7 @@ export default function HomePage() {
             <h2 className="text-center text-3xl md:text-4xl font-bold mb-16" style={{ letterSpacing: "-0.02em" }}>Как работает ejeweeka</h2>
             <div className="relative">
               {/* Vertical line */}
-              <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px" style={{ background: "linear-gradient(180deg, transparent, #4C1D95 20%, #4C1D95 80%, transparent)" }} />
+              <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px" style={{ background: "var(--bg)" }} />
               {[
                 { time: "07:00", title: "Наглядный план", desc: "Один взгляд на экран — и ты знаешь, что на завтрак и какие витамины выпить с едой." },
                 { time: "13:00", title: "Фото вместо весов", desc: "Ешь в кафе? Просто сфотографируй тарелку. Калории и макросы посчитаются сами." },
@@ -284,8 +284,8 @@ export default function HomePage() {
                   <div className="absolute left-6 md:left-1/2 -translate-x-1/2 w-3 h-3 rounded-full" style={{ background: "#4C1D95", boxShadow: "0 0 12px rgba(76,29,149,0.5)" }} />
                   <div className={`ml-14 md:ml-0 md:w-1/2 ${i % 2 === 0 ? 'md:pr-12' : 'md:pl-12'}`}>
                     <div className="text-sm font-bold mb-1" style={{ color: "#4C1D95" }}>{t.time}</div>
-                    <h3 className="text-xl font-bold text-white mb-2">{t.title}</h3>
-                    <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>{t.desc}</p>
+                    <h3 className="text-xl font-bold text-[var(--text-main)] mb-2">{t.title}</h3>
+                    <p className="text-sm" style={{ color: "var(--text-muted)" }}>{t.desc}</p>
                   </div>
                 </div>
               ))}
@@ -299,12 +299,12 @@ export default function HomePage() {
       {/* ── SCREEN 6: CTA ── */}
       <section className="py-32 px-6 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none">
-          <Image src="/brand/icon-symbol-orange.png" alt="" width={500} height={500} aria-hidden />
+          <Image src="/brand/eje-app-icon-master.png" alt="" width={500} height={500} aria-hidden />
         </div>
         <RevealSection className="text-center">
           <div className="max-w-[600px] mx-auto relative z-10">
             <Image
-              src="/brand/icon-symbol-orange.png"
+              src="/brand/eje-app-icon-master.png"
               alt="ejeweeka"
               width={180}
               height={180}
@@ -312,11 +312,11 @@ export default function HomePage() {
               style={{ filter: "drop-shadow(0 0 60px rgba(76,29,149,0.3))" }}
             />
             <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ letterSpacing: "-0.02em" }}>Попробуй бесплатно</h2>
-            <p className="mb-8" style={{ color: "rgba(255,255,255,0.4)" }}>Без привязки карт. Без ограничений по времени.</p>
+            <p className="mb-8" style={{ color: "var(--text-muted)" }}>Без привязки карт. Без ограничений по времени.</p>
             <Link
               href="/variant-a"
               className="inline-block px-10 py-4 text-lg font-semibold rounded-2xl transition-all duration-300 hover:scale-[1.03]"
-              style={{ background: "linear-gradient(135deg, #E85D04 0%, #4C1D95 50%, #FFB347 100%)", color: "#000" }}
+              style={{ background: "var(--gradient-neon-mark)", color: "#FFF" }}
             >
               Начать
             </Link>
@@ -325,23 +325,23 @@ export default function HomePage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="py-16 px-6" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <footer className="py-16 px-6" style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-[1000px] mx-auto flex flex-col items-center gap-6">
           <div className="flex items-center gap-4">
-            <Image src="/brand/icon-symbol-orange.png" alt="" width={32} height={32} className="opacity-40" />
-            <Image src="/brand/logo-horizontal-clean.png" alt="ejeweeka" width={160} height={50} style={{ height: 'auto' }} />
+            <Image src="/brand/eje-app-icon-master.png" alt="" width={32} height={32} className="opacity-40" />
+            <Image src="/brand/ejeweeka-inline-wordmark.png" alt="ejeweeka" width={160} height={50} style={{ height: 'auto' }} />
           </div>
-          <p className="text-xs tracking-[0.2em] uppercase" style={{ color: "rgba(255,255,255,0.25)" }}>be more · feel alive</p>
-          <div className="flex items-center gap-6 text-sm" style={{ color: "rgba(255,255,255,0.3)" }}>
-            <Link href="/variant-a" className="hover:text-white transition-colors">О продукте</Link>
-            <Link href="/subscribe" className="hover:text-white transition-colors">Статусы</Link>
+          <p className="text-xs tracking-[0.2em] uppercase" style={{ color: "var(--text-muted)" }}>be more · feel alive</p>
+          <div className="flex items-center gap-6 text-sm" style={{ color: "var(--text-muted)" }}>
+            <Link href="/variant-a" className="hover:text-[var(--text-main)] transition-colors">О продукте</Link>
+            <Link href="/subscribe" className="hover:text-[var(--text-main)] transition-colors">Статусы</Link>
           </div>
           <div className="mt-4 max-w-[600px] text-center p-4 rounded-xl" style={{ background: "rgba(255,255,255,0.02)" }}>
-            <p className="text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.15)" }}>
+            <p className="text-xs leading-relaxed" style={{ color: "var(--text-muted)" }}>
               ejeweeka — информационный wellness-сервис. Не является медицинской рекомендацией, диагностикой или лечением.
             </p>
           </div>
-          <p className="text-xs" style={{ color: "rgba(255,255,255,0.12)" }}>© 2026 ejeweeka</p>
+          <p className="text-xs" style={{ color: "var(--text-muted)" }}>© 2026 ejeweeka</p>
         </div>
       </footer>
     </div>

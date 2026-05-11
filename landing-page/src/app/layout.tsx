@@ -8,13 +8,12 @@ const inter = Inter({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#0D0618",
+  themeColor: "#F9FAFB",
 };
 
 export const metadata: Metadata = {
   title: "ejeweeka — premium wellness intelligence app",
   description: "Умный наставник, который учитывает цель, город, бюджет, ограничения, витамины и вкусы — чтобы собрать план, который реально можно соблюдать.",
-  manifest: "/manifest.json",
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -35,7 +34,8 @@ export default function RootLayout({
   return (
     <html
       lang="ru"
-      className={`${inter.variable} h-full antialiased`}
+      data-theme="light"
+      className={`${inter.variable} h-full antialiased theme-light`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

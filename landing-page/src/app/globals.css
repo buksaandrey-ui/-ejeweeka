@@ -1,66 +1,87 @@
 @import "tailwindcss";
 
 /**
- * ejeweeka — Brand Color System
- * CSS Custom Properties (Design Tokens)
- * Version: 1.0.0
- *
- * Usage: import this file at the root of your app.
- * All values reference the source design-tokens.json.
- *
- * Naming convention:
- *   --color-{category}-{variant}
+ * ejeweeka — Global Styles
+ * Light Theme by default. All colors from brandbook tokens.
  */
 
+/* ─── Brand Token Definitions (inline — source of truth: brandbook/tokens/colors.css) ─── */
 :root {
-  --bg: var(--color-bg-light);
-  --surface: var(--color-surface-light);
-  --text-main: var(--color-text-primary-light);
-  --text-muted: var(--color-text-secondary-light);
-  --border: var(--color-border-soft);
-  --border-hover: var(--color-border-accent);
-  --radius-md: 24px;
-  --radius-lg: 32px;
+  /* Brand Core */
+  --color-brand-blackberry:       #4C1D95;
+  --color-brand-neon-violet:      #8B5CF6;
+  --color-brand-neon-magenta:     #D946EF;
+  --color-brand-bright-purple:    #A855F7;
+  --color-brand-glow-pink:        #F472B6;
+  --color-brand-glow-violet:      #7C3AED;
+  --color-brand-deep-purple:      #2D0A4E;
+
+  /* Brand Gradients */
+  --gradient-neon-mark:
+    linear-gradient(135deg,
+      #7C3AED 0%,
+      #A855F7 30%,
+      #D946EF 60%,
+      #C026D3 80%,
+      #9333EA 100%);
+
+  --gradient-neon-glow:
+    radial-gradient(ellipse at center,
+      rgba(217, 70, 239, 0.4) 0%,
+      rgba(139, 92, 246, 0.25) 40%,
+      transparent 70%);
+
+  /* Backgrounds */
+  --color-bg-light:               #F9FAFB;
+  --color-surface-light:          #FFFFFF;
+  --color-border-soft:            #E4E4E7;
+  --color-border-accent:          rgba(139, 92, 246, 0.3);
+
+  /* Text — Light Theme (ЕЖЕВИЧНЫЕ оттенки, НЕ черные!) */
+  --color-text-primary-light:     #2D0A4E;   /* deep blackberry purple */
+  --color-text-secondary-light:   #4C1D95;   /* mid-purple for secondary/muted */
+  --color-text-tertiary-light:    #6D28D9;   /* lighter purple for subtle elements */
+
+  /* ═══════════════════════════════════════════════════
+     LIGHT THEME — DEFAULT (applied to :root)
+     All shorthand vars point to light tokens.
+     ═══════════════════════════════════════════════════ */
+  --bg:             var(--color-bg-light);
+  --surface:        var(--color-surface-light);
+  --text-main:      var(--color-text-primary-light);
+  --text-muted:     var(--color-text-secondary-light);
+  --primary:        var(--color-brand-neon-violet);
+  --border:         var(--color-border-soft);
+  --border-accent:  var(--color-border-accent);
+  --border-hover:   var(--color-border-accent);
+  --radius-md:      24px;
+  --radius-lg:      32px;
 }
 
-/* ─── Dark Theme Class ─── */
-[data-theme="dark"], .theme-dark {
-  color-scheme: dark;
-  --color-bg:             var(--color-bg-dark);
-  --color-surface:        var(--color-surface-dark);
-  --color-text-primary:   var(--color-text-primary-dark);
-  --color-text-secondary: var(--color-text-secondary-dark);
-  --color-border:         var(--color-border-glass);
-}
-
-/* ─── Light Theme Class ─── */
+/* Force light theme — ignore OS preference */
 [data-theme="light"], .theme-light {
   color-scheme: light;
-  --color-bg:             var(--color-bg-light);
-  --color-surface:        var(--color-surface-light);
-  --color-text-primary:   var(--color-text-primary-light);
-  --color-text-secondary: var(--color-text-secondary-light);
-  --color-border:         var(--color-border-soft);
+  --bg:             var(--color-bg-light);
+  --surface:        var(--color-surface-light);
+  --text-main:      var(--color-text-primary-light);
+  --text-muted:     var(--color-text-secondary-light);
+  --primary:        var(--color-brand-neon-violet);
+  --border:         var(--color-border-soft);
 }
 
-/* ─── Status Theme Helpers ─── */
-.status-white  { --status-bg: var(--color-status-white-bg);  --status-text: var(--color-status-white-text);  --status-accent: var(--color-status-white-accent); }
-.status-gold   { --status-bg: var(--color-status-gold-bg);   --status-text: var(--color-status-gold-text);   --status-accent: var(--color-status-gold); }
-.status-black  { --status-bg: var(--color-status-black);     --status-text: var(--color-status-black-text);  --status-accent: var(--color-status-black-accent); }
-.status-family { --status-bg: var(--color-status-family-gold-bg); --status-text: var(--color-status-family-gold-text); --status-accent: var(--color-status-family-gold); }
-
-
-:root {
-  --bg: var(--color-bg-dark);
-  --surface: var(--color-surface-glass);
-  --text-main: var(--color-text-primary-dark);
-  --text-muted: var(--color-text-secondary-dark);
-  --border: var(--color-border-glass);
-  --border-hover: var(--color-border-accent);
-  --radius-md: 24px;
-  --radius-lg: 32px;
+/* Override prefers-color-scheme to always light */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:             var(--color-bg-light);
+    --surface:        var(--color-surface-light);
+    --text-main:      var(--color-text-primary-light);
+    --text-muted:     var(--color-text-secondary-light);
+    --primary:        var(--color-brand-neon-violet);
+    --border:         var(--color-border-soft);
+  }
 }
 
+/* ─── Base Typography ─── */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--bg);
@@ -70,13 +91,18 @@ body {
   line-height: 1.6;
 }
 
+h1, h2, h3 {
+  color: var(--text-main);
+}
+
 h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 800; letter-spacing: -0.04em; line-height: 1.05; margin-bottom: 1.5rem; }
 h2 { font-size: clamp(2rem, 4.5vw, 3.2rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1.2rem; }
 h3 { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.8rem; }
-p { font-size: 1.125rem; color: var(--text-muted); margin-bottom: 1rem; }
+p  { font-size: 1.125rem; color: var(--text-muted); margin-bottom: 1rem; }
 
 .section-padding { padding: 7rem 0; }
 
+/* ─── Brand Badge ─── */
 .badge-eje {
   display: inline-block; padding: 8px 16px; border-radius: 100px;
   background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(168,85,247,0.05));
@@ -86,30 +112,29 @@ p { font-size: 1.125rem; color: var(--text-muted); margin-bottom: 1rem; }
   box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1), inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
+/* ─── Navigation (Light Theme) ─── */
 .nav-eje {
   position: fixed; top: 0; width: 100%; z-index: 100;
-  background: rgba(5, 5, 5, 0.7); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  background: rgba(249, 250, 251, 0.85);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid var(--border);
 }
 
+/* ─── Primary CTA Button ─── */
 .btn-primary-eje {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 16px 32px; border-radius: 100px; font-size: 1rem; font-weight: 600; text-decoration: none;
   transition: all 0.3s; cursor: pointer;
-  background: linear-gradient(135deg, var(--color-brand-glow-violet), var(--color-brand-bright-purple));
+  background: var(--gradient-neon-mark);
   color: #fff;
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4), inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -4px 0 rgba(0,0,0,0.15);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4), inset 0 2px 0 rgba(255,255,255,0.2);
 }
 .btn-primary-eje:hover {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.6), inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -4px 0 rgba(0,0,0,0.2);
-}
-.btn-primary-eje:active {
-  transform: translateY(2px) scale(0.98);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3), inset 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.6), inset 0 2px 0 rgba(255,255,255,0.3);
 }
 
+/* ─── Text Gradient ─── */
 .text-gradient {
   background: linear-gradient(135deg, var(--color-brand-glow-violet), var(--color-brand-neon-magenta));
   -webkit-background-clip: text;
@@ -117,131 +142,13 @@ p { font-size: 1.125rem; color: var(--text-muted); margin-bottom: 1rem; }
   filter: drop-shadow(0 4px 12px rgba(139, 92, 246, 0.3));
 }
 
+/* ─── Hero Glow (subtle violet on light bg) ─── */
 .hero-glow {
   position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%);
-  width: 800px; height: 800px; background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 60%);
+  width: 800px; height: 800px; background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 60%);
   filter: blur(60px); z-index: -1;
 }
 
-.iphone-frame {
-  width: 320px;
-  height: 680px;
-  border-radius: 48px;
-  border: 14px solid #1A1A1A;
-  background: #000;
-  overflow: hidden;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(255,255,255,0.1);
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease;
-  will-change: transform;
-}
-.iphone-frame iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  pointer-events: none;
-}
-.scenario-row .iphone-frame {
-  transform: translateY(var(--parallax-y, 0px)) scale(1.02);
-}
-.scenario-row:nth-child(odd) .iphone-frame:hover {
-  transform: translateY(var(--parallax-y, 0px)) rotateY(-8deg) rotateX(4deg) scale(1.08) translateY(-10px) !important;
-  box-shadow: 20px 40px 80px rgba(139,92,246,0.15), inset 0 0 0 2px rgba(255,255,255,0.1) !important;
-}
-.scenario-row:nth-child(even) .iphone-frame:hover {
-  transform: translateY(var(--parallax-y, 0px)) rotateY(8deg) rotateX(4deg) scale(1.08) translateY(-10px) !important;
-  box-shadow: -20px 40px 80px rgba(139,92,246,0.15), inset 0 0 0 2px rgba(255,255,255,0.1) !important;
-}
-.hero-iphone-frame {
-  transform: translateY(var(--parallax-y, 0px)) rotateY(0deg) rotateX(12deg) scale(1.15);
-  box-shadow: 0 40px 100px rgba(0,0,0,0.8), inset 0 0 0 2px rgba(255,255,255,0.1);
-}
-.hero-iphone-frame:hover {
-  transform: translateY(var(--parallax-y, 0px)) rotateY(0) rotateX(0) scale(1.15) !important;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 2px rgba(255,255,255,0.1) !important;
-}
-.iphone-glow {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-  width: 120%; height: 120%;
-  background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 60%);
-  filter: blur(40px); z-index: -1;
-}
-
-.chaos-visual {
-  position: relative; height: 400px; display: flex; align-items: center; justify-content: center;
-}
-.chaos-orb {
-  position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(245, 66, 66, 0.15) 0%, transparent 60%);
-  filter: blur(40px); z-index: 0;
-}
-.chaos-pill {
-  position: absolute; background: rgba(30, 30, 35, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05);
-  padding: 16px 24px; border-radius: 100px; font-weight: 500; font-size: 0.95rem; color: #ccc;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 1;
-  animation: float 6s ease-in-out infinite;
-}
-@keyframes float {
-  0% { transform: translateY(0px) rotate(var(--r)); }
-  50% { transform: translateY(-10px) rotate(var(--r)); }
-  100% { transform: translateY(0px) rotate(var(--r)); }
-}
-
-.stat-card {
-  background: rgba(20, 20, 22, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05);
-  padding: 32px; border-radius: 24px; text-align: left;
-  transition: transform 0.3s ease, border-color 0.3s ease;
-}
-.stat-card:hover { transform: translateY(-5px); border-color: rgba(139, 92, 246, 0.3); }
-.stat-number { font-size: 3rem; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1; background: linear-gradient(135deg, #FFF, #A1A1A6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-.bento-glow-1 {
-  position: absolute; top: 10%; left: 0%; width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 60%);
-  filter: blur(80px); z-index: 0; pointer-events: none;
-}
-.bento-glow-2 {
-  position: absolute; bottom: 0%; right: 0%; width: 700px; height: 700px;
-  background: radial-gradient(circle, rgba(146,43,245,0.08) 0%, transparent 60%);
-  filter: blur(80px); z-index: 0; pointer-events: none;
-}
-.bento-card {
-  background: rgba(24, 24, 27, 0.4);
-  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 32px;
-  padding: 40px;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.4s ease, box-shadow 0.4s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-.bento-card:hover {
-  transform: translateY(-8px);
-  border-color: rgba(139, 92, 246, 0.4);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 40px rgba(139,92,246,0.1);
-}
-.bento-icon {
-  position: absolute; top: 32px; left: 32px; width: 72px; height: 72px;
-  background: linear-gradient(135deg, rgba(124,58,237,0.18), rgba(168,85,247,0.07));
-  border-radius: 20px; display: flex; align-items: center; justify-content: center;
-  color: var(--color-brand-neon-violet); border: 1px solid rgba(139, 92, 246, 0.35);
-  box-shadow: 0 12px 24px rgba(139, 92, 246, 0.15), inset 0 2px 4px rgba(255,255,255,0.12), inset 0 -2px 4px rgba(0,0,0,0.08);
-}
-.bento-icon svg { width: 48px !important; height: 48px !important; }
-.bento-bg-text {
-  position: absolute; right: -10px; bottom: -20px; font-size: 160px; font-weight: 800;
-  color: rgba(255, 255, 255, 0.02); line-height: 1; z-index: 0; letter-spacing: -0.05em;
-  user-select: none; transition: color 0.4s ease;
-}
-.bento-card:hover .bento-bg-text { color: rgba(139, 92, 246, 0.05); }
-.bento-bg-gradient {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 100%); z-index: 1;
-}
-
+/* ─── Reveal Animation ─── */
 .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
 .reveal.active { opacity: 1; transform: translateY(0); }

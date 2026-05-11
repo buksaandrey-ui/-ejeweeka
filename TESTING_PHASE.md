@@ -19,7 +19,7 @@ cd 05_ui_screens/main-screens && python3 e2e_full_audit.py
 | PROFILE-MAP | 21 | Все обязательные поля маппятся в getProfileSummary() |
 | API-PAYLOAD | 31 | buildProfilePayload() содержит все 30 полей |
 | BACKEND | 27 | assembler.py: JSON schema, guardrails, беременность. plan.py: floor calories, JSON validation, allergen check |
-| FLOOR-CAL | 2 | 1000♀/1300♂ синхронизированы frontend↔backend |
+| FLOOR-CAL | 2 | 1200♀/1500♂ синхронизированы frontend↔backend (WHO safe minimums) |
 | STORAGE | 3 | food_log отделён, лимит фото = 10, SSOT comment |
 | THEME | 14 | 8 тем, tier-gates, engine API |
 | STATUS_WALL | 8 | экран статусов.js, tab screens, White/Black/Gold |
@@ -146,8 +146,8 @@ cd aidiet-backend && python3 -m pytest tests/ -v
 | B-02 | POST /generate без обязательных полей | 422 Validation Error |
 | B-03 | POST /generate с аллергиями | allergen_warnings в ответе |
 | B-04 | POST /analyze (фото) | 200 OK + calories > 0 |
-| B-05 | Floor calories ♀ = 1000 | target_kcal ≥ 1000 при минимальных параметрах |
-| B-06 | Floor calories ♂ = 1300 | target_kcal ≥ 1300 |
+| B-05 | Floor calories ♀ = 1200 | target_kcal ≥ 1200 при минимальных параметрах |
+| B-06 | Floor calories ♂ = 1500 | target_kcal ≥ 1500 |
 | B-07 | meals_per_day = 4 при meal_pattern «4+ приёма» | Промпт содержит 4 приёма |
 | B-08 | Pregnancy safety | Промпт содержит БЕРЕМЕННОСТЬ guardrails |
 
@@ -219,7 +219,7 @@ ID:         T-XX
 - ✅ Поле `diets` во Flutter конвертируется в массив `restrictions` на бэкенде (согласно логике `_buildRestrictions`). 422 ошибки исключены.
 
 **AI & Logic (Backend):**
-- 🐛 **FIXED BUG (BUG-06):** Обнаружено несоответствие: в `plan.py` floor_calories для мужчин составлял `1500`, тогда как спецификация B-06 требует `1300`. **Исправлено.**
+- 🐛 **FIXED BUG (BUG-06):** Floor calories синхронизированы с WHO safe minimums: ♀ 1200 kcal, ♂ 1500 kcal. **Исправлено в specs и plan.py.**
 - ✅ Sarcopenia Guardrails внедрены: при возрасте 45+ `archetypes.py` жестко форсирует 1.2–1.5 г/кг белка.
 - ✅ Беременность и особенности женского здоровья корректно интегрируются в системный промпт через `womens_health`.
 
