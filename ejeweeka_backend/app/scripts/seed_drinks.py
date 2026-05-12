@@ -96,13 +96,18 @@ def main():
     Base.metadata.create_all(bind=engine, tables=[DrinkCache.__table__])
     db = SessionLocal()
     try:
-        if db.query(DrinkCache).count() > 0:
-            print(f"⚠️ drinks_library already has {db.query(DrinkCache).count()} entries, skipping seed")
-            return
+        added = 0
+        skipped = 0
         for d in DRINKS:
+            existing = db.query(DrinkCache).filter(DrinkCache.name == d['name']).first()
+            if existing:
+                skipped += 1
+                continue
             db.add(DrinkCache(**d))
+            added += 1
         db.commit()
-        print(f"✅ Seeded {len(DRINKS)} drinks into drinks_library")
+        total = db.query(DrinkCache).count()
+        print(f"✅ Drinks seed: +{added} added, {skipped} skipped (already existed). Total: {total}")
     finally:
         db.close()
 

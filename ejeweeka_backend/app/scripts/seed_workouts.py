@@ -337,13 +337,18 @@ def main():
     Base.metadata.create_all(bind=engine, tables=[WorkoutCache.__table__])
     db = SessionLocal()
     try:
-        if db.query(WorkoutCache).count() > 0:
-            print(f"⚠️ workouts_library already has {db.query(WorkoutCache).count()} entries, skipping seed")
-            return
+        added = 0
+        skipped = 0
         for w in WORKOUTS:
+            existing = db.query(WorkoutCache).filter(WorkoutCache.name == w['name']).first()
+            if existing:
+                skipped += 1
+                continue
             db.add(WorkoutCache(**w))
+            added += 1
         db.commit()
-        print(f"✅ Seeded {len(WORKOUTS)} workouts into workouts_library")
+        total = db.query(WorkoutCache).count()
+        print(f"✅ Workouts seed: +{added} added, {skipped} skipped. Total: {total}")
     finally:
         db.close()
 
