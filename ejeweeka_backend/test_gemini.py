@@ -1,7 +1,7 @@
 import os
 from google import genai
 
-client = genai.Client(api_key="AIzaSyAEY2pJk0VURXFHJiJl4CIUFl7G5bUleRg")
+client = genai.Client(api_key="AIzaSyCAahi4mtgesspBrQ7VSAqm2LU9UbeSdqg")
 try:
     response = client.models.generate_content(
         model='gemini-2.5-flash',
