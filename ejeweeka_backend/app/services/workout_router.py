@@ -79,9 +79,9 @@ class WorkoutRouter:
                 new_w = WorkoutCache(
                     name=w_data.get("name", "Сгенерированная тренировка"),
                     location=location,
+                    workout_type=w_data.get("workout_type", "bodyweight"),
                     difficulty_level=w_data.get("difficulty_level", "beginner"),
                     target_goal=w_data.get("target_goal", "health"),
-                    equipment_needed=equipment,
                     safety_tags=w_data.get("safety_tags", []),
                     exercises=w_data.get("exercises", [])
                 )

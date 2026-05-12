@@ -6,7 +6,7 @@ class Endpoints {
   static const baseUrl = 'https://ejeweeka-api.onrender.com';
   
   // Auth
-  static const authInit = '/api/v1/auth/anonymous-init';
+  static const authInit = '/api/v1/auth/init';
   static const authDelete = '/api/v1/auth/delete';
   static const billingRestore = '/api/v1/billing/restore';
 

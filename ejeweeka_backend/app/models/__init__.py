@@ -9,6 +9,7 @@ from app.models.recipe_cache import MealCache, RecipeImageCache
 from app.models.grocery_price import GroceryPrice
 from app.models.push_device import PushDevice
 from app.models.workout_cache import WorkoutCache
+from app.models.drink_cache import DrinkCache
 from app.models.subscription import Subscription, ActivationCode
 from app.models.safety_tables import VitaminInteraction, DrugFoodInteraction, IngredientReference
 from app.models.report_cache import ReportCache
@@ -23,6 +24,7 @@ __all__ = [
     "GroceryPrice",
     "PushDevice",
     "WorkoutCache",
+    "DrinkCache",
     "Subscription",
     "ActivationCode",
     "VitaminInteraction",

@@ -69,7 +69,7 @@ class ApiClient {
       data: {'anonymous_uuid': uuid},
     );
 
-    final token = response.data['access_token'] as String?;
+    final token = response.data['token'] as String?;
     if (token != null) {
       await SecureStorageService.saveAuthToken(token);
     }

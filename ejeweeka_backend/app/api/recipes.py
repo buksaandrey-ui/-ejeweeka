@@ -46,6 +46,7 @@ def get_or_generate_recipe_image(req: RecipeImageRequest, db: Session = Depends(
     
     # Use negative prompting format for Imagen 4 if available, and strong natural language constraints.
     # Imagen 4 responds well to explicit "NO X" commands.
+    allergen_clause = ""
     negative_prompt_add = ""
     if req.excluded_allergens:
         excluded_str = ', '.join(req.excluded_allergens)

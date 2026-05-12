@@ -35,5 +35,5 @@ class RecipeImageCache(Base):
     __tablename__ = "recipe_image_cache"
     id = Column(Integer, primary_key=True, index=True)
     ingredients_hash = Column(String(64), unique=True, index=True, nullable=False)
-    title = Column(String(255), nullable=False)
+    recipe_title = Column(String(255), nullable=False)
     image_url = Column(String(500), nullable=True)
