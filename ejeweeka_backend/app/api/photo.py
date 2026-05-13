@@ -38,7 +38,7 @@ class PhotoAnalysisResponse(BaseModel):
     calories: int = Field(description="Примерная общая калорийность порции в ккал")
     macros: Macros
     portion_grams: int = Field(description="Примерный вес порции в граммах")
-    verdict: str = Field(description="Краткий медицинский вердикт диетолога (2-3 предложения)")
+    verdict: str = Field(description="Краткий wellness вердикт нутрициолога (2-3 предложения)")
     warnings: list[str] = Field(description="Список предупреждений: аллергены, скрытый сахар, трансжиры, противопоказания. Пустой список если нет угроз.")
 
 
@@ -129,7 +129,7 @@ async def analyze_photo(
     rag_block = ""
     if rag_advice:
         rag_block = f"""
-    МЕДИЦИНСКАЯ БАЗА ЗНАНИЙ (учти при формировании вердикта):
+    ПРОФЕССИОНАЛЬНАЯ БАЗА ЗНАНИЙ (учти при формировании вердикта):
     {rag_advice}
     """
 

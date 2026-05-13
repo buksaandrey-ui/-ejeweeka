@@ -16,14 +16,26 @@ class WorkoutCache(Base):
     workout_type = Column(String(50), nullable=True) # aerobic, bodyweight, free_weights
     
     # Метаданные для роутинга (ИИ использует их для подбора)
-    target_goal = Column(String(50), index=True) # похудение, набор массы, тонус
-    difficulty_level = Column(String(50), index=True) # новичок, средний, про
-    location = Column(String(50), index=True) # дома, зал
+    target_goal = Column(String(255), index=True) # похудение, набор массы, тонус
+    difficulty_level = Column(String(100), index=True) # новичок, средний, про
+    location = Column(String(100), index=True) # дома, зал
     
     description = Column(Text, nullable=True)
     
+    # Целевые группы мышц: ["Ноги", "Ягодицы", "Кор"] или ["Верх", "Грудь", "Спина"]
+    muscle_groups = Column(JSON, nullable=True, default=[])
+    
+    # Реальная длительность тренировки в минутах
+    estimated_minutes = Column(Integer, nullable=True, default=45)
+    
+    # Необходимый инвентарь: ["гантели", "коврик"] или []
+    equipment_required = Column(JSON, nullable=True, default=[])
+    
+    # Противопоказания: ["грыжа", "варикоз", "колени"]
+    contraindications = Column(JSON, nullable=True, default=[])
+    
     # Полная программа тренировки в формате JSON
-    # Ожидаемая структура: [{"exercise_name": "...", "sets": 3, "reps": 12, "video_url": "...", "rest_sec": 60}]
+    # Ожидаемая структура: [{"name": "...", "sets": 3, "reps_or_time": "12 раз", "rest_seconds": 60}]
     exercises = Column(JSON, nullable=False)
     
     # Дополнительные метки для безопасности (например, "без_прыжков", "для_грыжи")

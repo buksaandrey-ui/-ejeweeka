@@ -21,6 +21,11 @@ try:
     print("Adding wellness_rationale...")
     db.execute(text("ALTER TABLE meals_library ADD COLUMN IF NOT EXISTS wellness_rationale VARCHAR(500);"))
     
+    print("Adding batch cooking columns...")
+    db.execute(text("ALTER TABLE meals_library ADD COLUMN IF NOT EXISTS storage_instructions VARCHAR(500);"))
+    db.execute(text("ALTER TABLE meals_library ADD COLUMN IF NOT EXISTS reheating_instructions VARCHAR(500);"))
+    db.execute(text("ALTER TABLE meals_library ADD COLUMN IF NOT EXISTS freezable BOOLEAN DEFAULT FALSE;"))
+    
     db.commit()
     print("Migration completed successfully.")
 except Exception as e:

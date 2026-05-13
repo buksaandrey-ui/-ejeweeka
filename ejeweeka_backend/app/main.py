@@ -58,8 +58,8 @@ else:
 
 app = FastAPI(
     title="ejeweeka Core API",
-    description="Backend for ejeweeka: RAG Engine, PostgreSQL, LLM integrations, TG Concierge",
-    version="2.2.0",
+    description="Backend for ejeweeka: RAG Engine, PostgreSQL, LLM integrations, Hybrid Monetization",
+    version="3.0.0",
 )
 
 
@@ -170,6 +170,8 @@ from app.api.push import router as push_router
 from app.api.subscription import router as subscription_router
 from app.api.config import router as config_router
 from app.api.drinks import router as drinks_router
+from app.api.entitlement import router as entitlement_router
+from app.api.web_billing import router as web_billing_router
 
 app.include_router(plan_router, prefix="/api/v1/plan", tags=["Meal Plan"])
 app.include_router(photo_router, prefix="/api/v1/photo", tags=["Photo Analysis"])
@@ -182,6 +184,9 @@ app.include_router(push_router, prefix="/api/v1/push", tags=["Push Notifications
 app.include_router(subscription_router, prefix="/api/v1/subscription", tags=["Subscription"])
 app.include_router(config_router, prefix="/api/v1/config", tags=["Config"])
 app.include_router(drinks_router, prefix="/api/v1")
+# Hybrid Monetization (v3.0)
+app.include_router(entitlement_router, tags=["Entitlements"])
+app.include_router(web_billing_router, tags=["Web Billing (RU)"])
 
 
 # ============================================================

@@ -13,6 +13,11 @@ from app.models.drink_cache import DrinkCache
 from app.models.subscription import Subscription, ActivationCode
 from app.models.safety_tables import VitaminInteraction, DrugFoodInteraction, IngredientReference
 from app.models.report_cache import ReportCache
+from app.models.billing import (
+    BillingAccount, AppProfile, Entitlement, AppStoreTransaction,
+    WebOrder, WebSubscription, PromoCode, MagicLoginToken,
+    ConsentLog, BillingEvent,
+)
 
 __all__ = [
     "User",
@@ -31,6 +36,17 @@ __all__ = [
     "DrugFoodInteraction",
     "IngredientReference",
     "ReportCache",
+    # Billing & Entitlement (Hybrid Monetization)
+    "BillingAccount",
+    "AppProfile",
+    "Entitlement",
+    "AppStoreTransaction",
+    "WebOrder",
+    "WebSubscription",
+    "PromoCode",
+    "MagicLoginToken",
+    "ConsentLog",
+    "BillingEvent",
 ]
 
 

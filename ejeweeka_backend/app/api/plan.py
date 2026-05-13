@@ -111,9 +111,11 @@ def normalize_plan_for_frontend(plan_data, budget_level="Средний"):
     from app.services.shopping_list_builder import build_shopping_list
     # Мы пока не знаем budget_level в этой функции, 
     # но можем попробовать извлечь его или поставить дефолт.
-    shopping_list_data = build_shopping_list(plan_data, budget_level)
+    shopping_list_data = build_shopping_list(plan_data, budget_level, country=getattr(profile, 'country', 'RU') if 'profile' in dir() else 'RU')
     normalized['shopping_list'] = shopping_list_data['items']
-    normalized['estimated_cost'] = shopping_list_data['total_estimated_cost_rub']
+    normalized['estimated_cost'] = shopping_list_data.get('total_estimated_cost', shopping_list_data.get('total_estimated_cost_rub', 0))
+    normalized['currency_code'] = shopping_list_data.get('currency_code', 'RUB')
+    normalized['currency_symbol'] = shopping_list_data.get('currency_symbol', '₽')
 
     return normalized
 
@@ -156,6 +158,31 @@ class UserProfilePayload(BaseModel):
     motivation_barriers: Optional[List[str]] = []  # Барьеры прошлого
     tier: str = "T1"
     activity_multiplier: Optional[float] = None  # Точный коэффициент активности (1.2 — 1.725)
+    
+    # ── Новые поля из Flutter ProfileModel (Zero-Knowledge) ──
+    water_target_ml: Optional[int] = None
+    notif_meals: Optional[bool] = None
+    notif_vitamins: Optional[bool] = None
+    notif_medications: Optional[bool] = None
+    notif_workouts: Optional[bool] = None
+    notif_water: Optional[bool] = None
+    notif_weekly_report: Optional[bool] = None
+    hc_sleep: Optional[bool] = None
+    hc_steps: Optional[bool] = None
+    hc_workouts: Optional[bool] = None
+    hc_weight: Optional[bool] = None
+    disclaimer_accepted: Optional[bool] = None
+    onboarding_complete: Optional[bool] = None
+    schema_version: Optional[int] = None
+    first_launch: Optional[str] = None
+    trial_start: Optional[str] = None
+    chosen_status: Optional[str] = None
+    target_daily_calories: Optional[float] = None
+    tdee_calculated: Optional[float] = None
+    selected_theme: Optional[str] = None
+
+    recent_meal_hashes: Optional[List[str]] = [] # 14-day history to prevent repeats
+    favorite_meal_hashes: Optional[List[str]] = [] # User favorites to prioritize
     # Медицинские данные, которые раньше не передавались
     womens_health: Optional[List[str]] = None  # Беременность, СПКЯ, менопауза (массив)
     takes_contraceptives: Optional[str] = None  # Гормональные препараты/КОК
@@ -176,6 +203,10 @@ class UserProfilePayload(BaseModel):
     beverages: Optional[List[Dict[str, Any]]] = []  # Логи напитков за сегодня
 
     cooking_style: Optional[str] = None  # daily | batch_2_3_days | batch_weekly | none
+    
+    # Горизонт планирования и любимые блюда (Zero-Knowledge)
+    recent_meal_hashes: Optional[List[str]] = []
+    favorite_meal_hashes: Optional[List[str]] = []
     shopping_frequency: Optional[str] = None  # daily | few_days | weekly
     
     # Логи для корректировки плана
@@ -323,45 +354,39 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
 
     days_to_generate = 3 if profile.tier.lower() == 't1' or profile.tier == 'free' else 7
     meal_pattern = (profile.meal_pattern or '').lower()
-    if '4' in meal_pattern or '5' in meal_pattern or 'перекус' in meal_pattern:
+    if '5' in meal_pattern:
+        meals_per_day = 5
+    elif '4' in meal_pattern or 'перекус' in meal_pattern:
         meals_per_day = 4
     elif '2' in meal_pattern:
         meals_per_day = 2
     else:
         meals_per_day = 3
 
-    # ЭТАП 1: Попытка собрать план через Smart Router (Hybrid Cache)
+    # ЭТАП 1: Сборка плана через Smart Router (Hybrid Cache)
     from app.services.plan_router import PlanRouter
     
-    final_plan = {}
-    missing_days = False
-    
-    for day_index in range(1, days_to_generate + 1):
-        day_key = f"day_{day_index}"
-        day_plan = PlanRouter.assemble_day(db, day_index, profile, target_kcal)
-        if day_plan:
-            final_plan[day_key] = day_plan
-        else:
-            missing_days = True
-            break
-            
-    # Если собрали весь план из БД - пропускаем Gemini
-    matrix_data = {}
-    if not missing_days:
-        print("✅ План успешно собран из Smart Router Cache (0 вызовов LLM).")
-        matrix_data = final_plan
+    status = (profile.tier or 'white').lower()
+    if status == 'black':
+        variants_count = 2
+    elif 'gold' in status:
+        variants_count = 3
     else:
-        print("⚠️ Cache Miss в Smart Router. Включаем генерацию Gemini...")
-        # Генерируем матрицу (Скелет)
-        matrix_prompt = PromptAssembler.build_matrix_prompt(
-            profile=profile, context_text=context_text, bmr=bmr, tdee=tdee,
-            target_kcal=target_kcal, days=days_to_generate, meals_per_day=meals_per_day
-        )
+        variants_count = 1
         
+    # Пытаемся собрать план (variants_count варианта на каждый приём пищи)
+    final_plan = PlanRouter.assemble_plan(
+        db=db, profile=profile, target_kcal=target_kcal, 
+        days=days_to_generate, meals_per_day=meals_per_day, variants_per_meal=variants_count
+    )
+    
+    if final_plan:
+        print("✅ План успешно собран из Smart Router Cache (0 вызовов LLM).")
+    else:
+        print("⚠️ Cache Miss в Smart Router. Включаем Auto-Seeding (Gemini)...")
         GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
         client = genai.Client(api_key=GEMINI_API_KEY)
         
-        # Helper для Retry при 503 ошибке от Gemini (High Demand)
         async def generate_with_retry(prompt_contents, max_retries=3):
             for attempt in range(max_retries):
                 try:
@@ -371,118 +396,98 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
                     if "503" in err_str or "high demand" in err_str or "servererror" in err_str:
                         if attempt == max_retries - 1:
                             raise e
-                        wait_time = 2 ** attempt
+                        wait_time = 4 * (2 ** attempt)
                         print(f"⚠️ Gemini High Demand. Retrying in {wait_time}s (Attempt {attempt+1}/{max_retries})...")
                         await asyncio.sleep(wait_time)
                     else:
                         raise
-        
-        try:
-            print("🤖 Отправляем запрос на Матрицу...")
-            response = await generate_with_retry(matrix_prompt)
-            matrix_text = response.text.replace("```json", "").replace("```", "").strip()
-            matrix_data = json.loads(matrix_text)
-            final_plan = {} # Сбрасываем кэш, используем то, что дал LLM
-        except Exception as e:
-            print("GEMINI ERROR OR 503:", e)
-            print("⚠️ Запускаем Hardcoded Fallback JSON...")
-            # Fallback 503 strategy
-            fallback_path = os.path.join(os.path.dirname(__file__), "..", "data", "fallback_plan.json")
-            if os.path.exists(fallback_path):
-                with open(fallback_path, "r", encoding="utf-8") as f:
-                    matrix_data = json.load(f)
-                    final_plan = {}
-            else:
-                raise HTTPException(status_code=500, detail="Ошибка генерации и резервный план недоступен.")
-
-    # ЭТАП 2: Поиск в Кэше
-    from app.models.recipe_cache import MealCache
-    missing_meals = []
-    final_plan = {}
-    
-    # Собираем уникальные названия для поиска
-    all_names = set()
-    for day_key, day_data in matrix_data.items():
-        if not day_key.startswith('day_'): continue
-        final_plan[day_key] = {"meals": []}
-        meals = day_data.get('meals', []) if isinstance(day_data, dict) else day_data
-        for meal in meals:
-            all_names.add(meal.get('name', ''))
-
-    # Ищем в базе
-    cached = db.query(MealCache).filter(MealCache.name.in_(list(all_names))).all()
-    cache_map = {c.name: c for c in cached}
-    
-    for day_key, day_data in matrix_data.items():
-        if not day_key.startswith('day_'): continue
-        meals = day_data.get('meals', []) if isinstance(day_data, dict) else day_data
-        for meal in meals:
-            name = meal.get('name')
-            if name in cache_map:
-                c = cache_map[name]
-                meal.update({
-                    'calories': c.calories, 'protein': c.protein, 'fat': c.fat, 'carbs': c.carbs, 'fiber': c.fiber,
-                    'ingredients': c.ingredients, 'steps': c.steps, 'image_url': c.image_url
-                })
-                final_plan[day_key]['meals'].append(meal)
-            else:
-                missing_meals.append(name)
-                final_plan[day_key]['meals'].append(meal) # Placeholder
-
-    # ЭТАП 3: Генерация недостающих рецептов
-    new_recipes = {}
-    if missing_meals:
-        print(f"🤖 Генерируем недостающие рецепты: {len(missing_meals)} шт...")
-        recipe_prompt = PromptAssembler.build_recipe_prompt(profile, missing_meals, target_kcal)
-        resp_recipes = await generate_with_retry(recipe_prompt)
-        rec_text = resp_recipes.text.replace("```json", "").replace("```", "").strip()
-        try:
-            new_recipes = json.loads(rec_text)
-        except:
-            print("⚠️ Ошибка парсинга новых рецептов")
-
-        # Запускаем генерацию картинок в фоне для новых рецептов
-        from app.services.image_generator import generate_meal_image
+                        
+        if meals_per_day == 2:
+            meal_types = ["Завтрак", "Ужин"]
+        elif meals_per_day == 3:
+            meal_types = ["Завтрак", "Обед", "Ужин"]
+        elif meals_per_day == 5:
+            meal_types = ["Завтрак", "Перекус 1", "Обед", "Перекус 2", "Ужин"]
+        else:
+            meal_types = ["Завтрак", "Обед", "Перекус", "Ужин"]
+            
+        from app.models.recipe_cache import MealCache
         import hashlib
         
-        async def save_new_meals(recipes_dict):
-            from app.scripts.seed_meal_images import get_pexels_url
-            
-            # Шаг 1: Сохраняем все рецепты СРАЗУ с fallback картинками (FORCE-SAVE)
-            saved_meals = []
-            for r_name, r_data in recipes_dict.items():
-                ing_text = ", ".join([i.get("name", "") for i in r_data.get("ingredients", [])])
-                h = hashlib.sha256(ing_text.encode()).hexdigest()
-                
-                # Заглушка, чтобы рецепт не потерялся
-                fallback_url = get_pexels_url(r_name)
-                
-                new_meal = MealCache(
-                    ingredients_hash=h, name=r_name, image_url=fallback_url,
-                    calories=r_data.get('calories',0), protein=r_data.get('proteins',0),
-                    fat=r_data.get('fats',0), carbs=r_data.get('carbs',0), fiber=r_data.get('fiber',0),
-                    ingredients=r_data.get('ingredients',[]), steps=r_data.get('steps',[])
-                )
-                db.add(new_meal)
-                saved_meals.append((new_meal, ing_text, r_name))
-            
+        ALLERGEN_KEYWORDS = {
+            'молоко': 'Лактоза', 'кефир': 'Лактоза', 'творог': 'Лактоза', 'сыр': 'Лактоза',
+            'сливки': 'Лактоза', 'сметана': 'Лактоза', 'йогурт': 'Лактоза',
+            'арахис': 'Орехи', 'миндаль': 'Орехи', 'грецкий': 'Орехи', 'фундук': 'Орехи', 'кешью': 'Орехи',
+            'пшеница': 'Глютен', 'мука': 'Глютен', 'хлеб': 'Глютен', 'макароны': 'Глютен',
+            'соевый': 'Соя', 'тофу': 'Соя', 'соя': 'Соя',
+            'креветки': 'Морепродукты', 'кальмар': 'Морепродукты', 'мидии': 'Морепродукты',
+            'яйцо': 'Яйца', 'яйца': 'Яйца',
+        }
+        
+        seeded_recipes_for_images = []
+        
+        for m_type in meal_types:
+            print(f"🤖 Генерируем 5 новых рецептов для '{m_type}'...")
+            prompt = PromptAssembler.build_seeding_prompt(profile, m_type, target_kcal, count=5)
             try:
+                response = await generate_with_retry(prompt)
+                rec_text = response.text.replace("```json", "").replace("```", "").strip()
+                
+                start_idx = rec_text.find('{')
+                if start_idx >= 0:
+                    rec_text = rec_text[start_idx:]
+                    
+                new_recipes = json.loads(rec_text)
+                
+                from app.scripts.seed_meal_images import get_pexels_url
+                
+                for r_name, r_data in new_recipes.items():
+                    if not isinstance(r_data, dict):
+                        continue
+                    ing_text = ", ".join([i.get("name", "") for i in r_data.get("ingredients", [])])
+                    h = hashlib.sha256(ing_text.encode()).hexdigest()
+                    
+                    fallback_url = get_pexels_url(r_name)
+                    
+                    detected_allergens = set()
+                    for ing in r_data.get('ingredients', []):
+                        ing_name_lower = (ing.get('name') or '').lower()
+                        for keyword, allergen_tag in ALLERGEN_KEYWORDS.items():
+                            if keyword in ing_name_lower:
+                                detected_allergens.add(allergen_tag)
+                    
+                    safe_diseases = list(profile.diseases or []) if profile.diseases else []
+                    
+                    new_meal = MealCache(
+                        ingredients_hash=h, name=r_name, image_url=fallback_url,
+                        calories=r_data.get('calories',0), 
+                        protein=r_data.get('proteins', r_data.get('protein', 0)),
+                        fat=r_data.get('fats', r_data.get('fat', 0)), 
+                        carbs=r_data.get('carbs',0), 
+                        fiber=r_data.get('fiber',0),
+                        meal_type=m_type,
+                        allergens_present=list(detected_allergens),
+                        safe_for_diseases=safe_diseases,
+                        wellness_rationale=r_data.get('wellness_rationale', ''),
+                        storage_instructions=r_data.get('storage_instructions', ''),
+                        reheating_instructions=r_data.get('reheating_instructions', ''),
+                        freezable=r_data.get('freezable', False),
+                        ingredients=r_data.get('ingredients',[]), steps=r_data.get('steps',[])
+                    )
+                    db.add(new_meal)
+                    seeded_recipes_for_images.append((new_meal, ing_text, r_name))
                 db.commit()
+                print(f"✅ Успешно сохранено в БД для '{m_type}'")
+                
             except Exception as e:
-                print(f"⚠️ Ошибка FORCE-SAVE рецептов: {e}")
+                print(f"⚠️ Ошибка Seeding для '{m_type}': {e}")
                 db.rollback()
-                return
-
-            # Шаг 2: Асинхронно генерируем качественные картинки
-            excluded_items = []
-            if profile:
-                excluded_items.extend(profile.allergies or [])
-                excluded_items.extend(profile.disliked_foods or [])
-                if hasattr(profile, 'effective_restrictions'):
-                    excluded_items.extend(profile.effective_restrictions or [])
-            excluded_items = list(set([item.strip() for item in excluded_items if item.strip()]))
-
-            for meal_obj, ing_text, r_name in saved_meals:
+        
+        # Запускаем фоновую генерацию картинок для новых блюд
+        async def process_images(recipes_list, prof):
+            from app.services.image_generator import generate_meal_image
+            excluded_items = list(prof.allergies or []) + list(prof.disliked_foods or []) + list(getattr(prof, 'effective_restrictions', []))
+            for meal_obj, ing_text, r_name in recipes_list:
                 try:
                     img_url = await generate_meal_image(r_name, ing_text, excluded_items)
                     meal_obj.image_url = img_url
@@ -490,32 +495,36 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
                 except Exception as e:
                     print(f"⚠️ Ошибка Imagen для {r_name}: {e}")
                     db.rollback()
-            
-        background_tasks.add_task(save_new_meals, new_recipes)
+                    
+        background_tasks.add_task(process_images, seeded_recipes_for_images, profile)
+        
+        # Пробуем собрать план еще раз после пополнения БД
+        final_plan = PlanRouter.assemble_plan(
+            db=db, profile=profile, target_kcal=target_kcal, 
+            days=days_to_generate, meals_per_day=meals_per_day, variants_per_meal=3
+        )
+        
+        if not final_plan:
+            print("⚠️ Критическая ошибка: после Seeding план все равно не собирается. Используем Fallback.")
+            fallback_path = os.path.join(os.path.dirname(__file__), "..", "data", "fallback_plan.json")
+            if os.path.exists(fallback_path):
+                with open(fallback_path, "r", encoding="utf-8") as f:
+                    final_plan = json.load(f)
+            else:
+                raise HTTPException(status_code=500, detail="Ошибка генерации и резервный план недоступен.")
     
-    # Вливаем новые рецепты в план
+    # Post-validation аллергенов
     allergen_warnings = []
     allergens_lower = [a.lower().strip() for a in profile.allergies if a] if profile.allergies else []
-    
     for day_key, day_data in final_plan.items():
-        for meal in day_data['meals']:
-            name = meal.get('name')
-            if name in new_recipes:
-                r = new_recipes[name]
-                meal.update({
-                    'calories': r.get('calories',0), 'protein': r.get('proteins',0), 'fat': r.get('fats',0),
-                    'carbs': r.get('carbs',0), 'fiber': r.get('fiber',0), 'ingredients': r.get('ingredients',[]),
-                    'steps': r.get('steps',[])
-                })
-            
-            # Post-validation аллергенов
+        for meal in day_data.get('meals', []):
             for ing in meal.get('ingredients', []):
                 ing_name = (ing.get('name') or '').lower()
                 for allergen in allergens_lower:
                     if allergen and allergen in ing_name:
                         allergen_warnings.append(f"{day_key}: '{ing.get('name')}' содержит '{allergen}'")
-
-    # ЭТАП 3.3: Post-LLM Macro Sanity Check (ingredients_reference)
+                        
+    # ЭТАП 3.3: Post-LLM Macro Sanity Check
     macro_warnings = []
     try:
         from app.models.safety_tables import IngredientReference
@@ -529,17 +538,14 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
                 meal_cal = meal.get('calories', 0)
                 if not meal_cal or meal_cal == 0:
                     continue
-                # Estimate expected calories from ingredients
                 estimated_cal = 0
                 matched_ingredients = 0
                 for ing in meal.get('ingredients', []):
                     ing_name = (ing.get('name') or '').lower()
                     amount_g = ing.get('amount', 0)
                     unit = (ing.get('unit') or '').lower()
-                    # Convert шт to approximate grams
                     if 'шт' in unit:
-                        amount_g = amount_g * 60  # rough: 1 egg ~ 60g
-                    # Find reference
+                        amount_g = amount_g * 60
                     for ref_name, ref in ref_map.items():
                         if ref_name in ing_name or ing_name in ref_name:
                             estimated_cal += (ref.calories * amount_g / 100)
@@ -560,13 +566,24 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
     try:
         training_days_count = profile.training_days or 3
         if training_days_count > 0 and profile.training_schedule != "Без регулярных тренировок":
+            # Определяем дни голодания из final_plan
+            fasting_days_list = []
+            for i in range(1, days_to_generate + 1):
+                day_key = f"day_{i}"
+                if final_plan.get(day_key, {}).get('fasting_day') == True:
+                    fasting_days_list.append(i)
+                    
             workout_schedule = await WorkoutRouter.assign_workouts(
                 db=db,
                 training_days=training_days_count,
                 location=profile.workout_location or "Дома",
                 equipment=profile.equipment_available or [],
                 limitations=profile.physical_limitations or [],
-                plan_days=days_to_generate
+                plan_days=days_to_generate,
+                activity_types=profile.activity_types or [],
+                fasting_days=fasting_days_list,
+                fitness_level=profile.fitness_level or "Новичок",
+                target_goal=profile.target_goal if hasattr(profile, 'target_goal') and profile.target_goal else "Похудение"
             )
             # Вливаем тренировки в план дней
             for day_key, workout_obj in workout_schedule.items():
@@ -577,6 +594,28 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
 
     # ЭТАП 4: Нормализация
     normalized_data = normalize_plan_for_frontend(final_plan, profile.budget_level)
+    
+    # ЭТАП 5: Генерация Cheat Sheet (Zero-Knowledge Caching)
+    import hashlib
+    prohibited_foods = []
+    has_constraints = bool((profile.allergies) or (profile.diseases) or (profile.restrictions))
+    
+    if has_constraints:
+        # Хэшируем комбинацию ограничений, чтобы не дергать LLM для одинаковых профилей
+        constraint_str = "".join(sorted(profile.allergies or [])) + "".join(sorted(profile.diseases or [])) + "".join(sorted(profile.restrictions or []))
+        profile_hash = hashlib.md5(constraint_str.encode('utf-8')).hexdigest()
+        
+        from app.models.recipe_cache import CheatSheetCache
+        cached_sheet = db.query(CheatSheetCache).filter(CheatSheetCache.profile_hash == profile_hash).first()
+        
+        if cached_sheet:
+            prohibited_foods = cached_sheet.prohibited_foods
+        else:
+            prohibited_foods = await PromptAssembler.generate_cheat_sheet(profile)
+            if prohibited_foods:
+                new_sheet = CheatSheetCache(profile_hash=profile_hash, prohibited_foods=prohibited_foods)
+                db.add(new_sheet)
+                db.commit()
     
     return {
         "status": "success",
@@ -591,7 +630,8 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
         "model_used": 'gemini-2.5-flash (2-step)',
         "archetype_used": PromptAssembler._last_archetype_code,
         "allergen_warnings": allergen_warnings,
-        "macro_warnings": macro_warnings
+        "macro_warnings": macro_warnings,
+        "prohibited_foods_sheet": prohibited_foods
     }
 
 

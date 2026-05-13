@@ -44,6 +44,7 @@ class PromptAssembler:
         prompt_parts.append(PromptAssembler._build_geo_restrictions(profile))
         # Layer 3: Lifestyle parameters
         prompt_parts.append(PromptAssembler._build_lifestyle(profile))
+        prompt_parts.append(PromptAssembler._build_meal_history(profile))
         prompt_parts.append(PromptAssembler._build_log_correction_rules(profile))
         prompt_parts.append(PromptAssembler._build_rag_context(context_text))
         prompt_parts.append(PromptAssembler._build_matrix_json_schema(days, meals_per_day, profile.tier))
@@ -105,8 +106,69 @@ class PromptAssembler:
         prompt_parts.append(PromptAssembler._build_wellness_guardrails(profile, target_kcal))
         prompt_parts.append(PromptAssembler._build_geo_restrictions(profile))
         prompt_parts.append(PromptAssembler._build_lifestyle(profile))
-        prompt_parts.append(PromptAssembler._build_recipe_json_schema(missing_meals))
+        prompt_parts.append(PromptAssembler._build_batch_cooking_context(profile))
+        prompt_parts.append(PromptAssembler._build_recipe_json_schema(missing_meals, profile))
         return "\n\n".join(prompt_parts)
+
+    @staticmethod
+    def _build_meal_history(profile) -> str:
+        s = ""
+        recent = getattr(profile, 'recent_meal_hashes', [])
+        favorites = getattr(profile, 'favorite_meal_hashes', [])
+        
+        if recent or favorites:
+            s += "[ИСТОРИЯ ПИТАНИЯ (ИСКЛЮЧЕНИЕ ПОВТОРОВ И ПРЕДПОЧТЕНИЯ)]\n"
+            if recent:
+                s += f"Учти, что пользователь недавно ел блюда с хэшами (id): {', '.join(recent)}. ПОСТАРАЙССЯ НЕ ПРЕДЛАГАТЬ ИХ СНОВА, чтобы меню было разнообразным.\n"
+            if favorites:
+                s += f"Любимые блюда пользователя имеют хэши: {', '.join(favorites)}. ПРИОРИТЕТНО ВСТРАИВАЙ ИХ в новое меню, если они подходят по КБЖУ и ограничениям.\n"
+        return s
+
+    @staticmethod
+    def _build_batch_cooking_context(profile) -> str:
+        """Генерирует инструкции для batch-cooking на основе стиля готовки пользователя."""
+        cook_style = (getattr(profile, 'cooking_style', None) or '').lower()
+        shop_freq = (getattr(profile, 'shopping_frequency', None) or '').lower()
+        
+        if not cook_style and not shop_freq:
+            return ""
+        
+        s = "\n[BATCH-COOKING И ХРАНЕНИЕ]\n"
+        
+        if 'batch_weekly' in cook_style or 'раз в неделю' in cook_style:
+            s += """⚠️ КРИТИЧЕСКОЕ ПРАВИЛО BATCH-COOKING (РАЗ В НЕДЕЛЮ):
+Пользователь готовит ВСЮ еду на неделю за 1 кулинарный сеанс (обычно в воскресенье).
+КАЖДЫЙ рецепт ОБЯЗАН:
+1. Хорошо храниться в холодильнике минимум 4-5 дней ИЛИ быть пригодным для заморозки.
+2. Не терять текстуру и вкус при разогреве (исключи: салаты с сырыми листьями, блюда с хрустящей корочкой, сырые соусы).
+3. Включать поле "storage_instructions" с точными инструкциями хранения.
+4. Включать поле "reheating" с инструкциями по разогреву.
+5. Включать поле "batch_portions" — на сколько порций готовить.
+6. Включать поле "freezable" (true/false) — можно ли заморозить.
+
+ИДЕАЛЬНЫЕ ФОРМАТЫ: рагу, запеканки, тушёное мясо, густые супы, котлеты/тефтели, каши, варёные крупы + отдельный соус.\n"""
+        elif 'batch_2_3' in cook_style or '2-3 дня' in cook_style:
+            s += """ПРАВИЛО BATCH-COOKING (РАЗ В 2-3 ДНЯ):
+Пользователь готовит еду заготовками на 2-3 дня.
+Рецепты должны хорошо храниться 2-3 дня в холодильнике.
+Включай поля "storage_instructions" и "reheating".\n"""
+        elif 'none' in cook_style or 'не готов' in cook_style or 'заказ' in cook_style:
+            s += """⚠️ КРИТИЧЕСКОЕ ПРАВИЛО (БЕЗ ГОТОВКИ):
+Пользователь НЕ ГОТОВИТ ВООБЩЕ или тратит минимум времени.
+ВСЕ рецепты должны быть сборными (без варки, жарки, запекания) ИЛИ готовыми к заказу:
+1. Заказ готовой еды (поке-боул из доставки, готовый салат из ВкусВилл/супермаркета).
+2. Сборные блюда за 2 минуты: творог с фруктами, протеиновый батончик, нарезка сыра и куриной грудки, консервированный тунец с готовыми листьями салата.
+3. Максимум 2 шага (открыл упаковку, смешал).
+4. Никакой сложной термической обработки!
+В массиве "steps" должно быть не более 2-х пунктов.\n"""
+        
+        if 'weekly' in shop_freq or 'раз в неделю' in shop_freq:
+            s += """ПРАВИЛО ЗАКУПОК (РАЗ В НЕДЕЛЮ):
+Пользователь закупается 1 раз в неделю. К концу недели (дни 5-7) исключи скоропортящиеся продукты:
+свежие ягоды, салатные листья, авокадо, свежую зелень. Замени на:
+корнеплоды, капусту, замороженные овощи/ягоды, консервы (тунец, нут), сухофрукты.\n"""
+        
+        return s
 
     # _last_archetype_code — set by build_matrix_prompt for response logging
     _last_archetype_code: str = 'UNKNOWN'
@@ -344,6 +406,8 @@ class PromptAssembler:
         cook_style = (getattr(profile, 'cooking_style', None) or '').lower()
         if 'batch_weekly' in cook_style or 'раз в неделю (заготовки)' in cook_style:
             s += "- СТИЛЬ ГОТОВКИ: Заготовки раз в неделю (Batch prep). Предлагай рецепты, которые идеально хранятся в холодильнике до 5 дней или подлежат заморозке (рагу, густые супы, запеканки, котлеты, тушеное мясо). Строго исключи блюда, теряющие текстуру при разогреве.\n"
+        elif 'none' in cook_style or 'не готовлю' in cook_style:
+            s += "- СТИЛЬ ГОТОВКИ: Без готовки. Предлагай только сборку из готовых продуктов (нарезки, творог, йогурты, консервы) или ресторанные/готовые блюда (доставка). Никаких плит, духовок и варки.\n"
         
         s += f"- Время на готовку: {profile.cooking_time}.\n"
         if profile.fasting_type == 'daily':
@@ -591,6 +655,47 @@ class PromptAssembler:
         return "\n[РЕЗУЛЬТАТЫ БИОМАРКЕРОВ]\n" + "\n".join(interpretations) + "\n"
 
     @staticmethod
+    async def generate_cheat_sheet(profile) -> list:
+        """
+        Генерирует топ-15 запрещенных продуктов на основе профиля.
+        """
+        from google import genai
+        import os
+        import json
+        
+        client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+        
+        allergies = profile.allergies or []
+        diseases = profile.diseases or []
+        restrictions = profile.restrictions or []
+        
+        if not allergies and not diseases and not restrictions:
+            return []
+            
+        prompt = f"""
+        Ты - эксперт-нутрициолог. Пользователь имеет следующие ограничения:
+        Аллергии: {', '.join(allergies) if allergies else 'Нет'}
+        Заболевания: {', '.join(diseases) if diseases else 'Нет'}
+        Ограничения: {', '.join(restrictions) if restrictions else 'Нет'}
+        
+        Составь топ-15 (или меньше, если ограничений мало) самых популярных продуктов, которые ему КАТЕГОРИЧЕСКИ НЕЛЬЗЯ.
+        Верни ТОЛЬКО валидный JSON массив строк. Больше ничего.
+        Пример: ["Молоко", "Сыр", "Говядина"]
+        """
+        
+        try:
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=prompt,
+                config={'temperature': 0.1}
+            )
+            text = response.text.replace("```json", "").replace("```", "").strip()
+            return json.loads(text)
+        except Exception as e:
+            print(f"⚠️ Cheat sheet generation error: {e}")
+            return []
+
+    @staticmethod
     def _build_rag_context(context_text: str) -> str:
         if not context_text or "Специфических медицинских рекомендаций не найдено" in context_text:
             return ""
@@ -650,35 +755,74 @@ class PromptAssembler:
 }}"""
 
     @staticmethod
-    def _build_recipe_json_schema(missing_meals: list) -> str:
+    def _build_recipe_json_schema(missing_meals: list, profile) -> str:
+        names_text = "названия блюд из списка: " + ", ".join(missing_meals) if missing_meals else "названия блюд"
         return f"""[СТРОГИЙ ФОРМАТ ОТВЕТА (JSON)]
-Ты должен вернуть ТОЛЬКО валидный JSON, без маркдауна, без комментариев.
-Верни объект, где ключами являются точные названия блюд, а значениями - их полные рецепты.
+Верни объект, где ключами являются точные {names_text}.
+Каждый объект блюда должен содержать:
+- "calories", "protein", "fat", "carbs", "fiber": числа
+- "wellness_rationale": краткое обоснование
+- "storage_instructions": как хранить блюдо (особенно если batch cooking)
+- "reheating_instructions": как разогревать
+- "freezable": boolean (можно ли заморозить)
+- "ingredients": массив объектов {{"name": "название", "amount": 100, "unit": "г/шт/мл"}}
+- "steps": массив строк (шаги приготовления)
 
-ОБЯЗАТЕЛЬНЫЕ ПОЛЯ для каждого блюда:
-- "calories": общая калорийность порции (число, ккал)
-- "proteins": белки (число, г)
-- "fats": жиры (число, г)
-- "carbs": углеводы (число, г)
-- "fiber": клетчатка (число, г)
-- "has_probiotics": содержит ли блюдо ферментированные/пробиотические продукты (true/false). Пробиотические продукты: кефир, йогурт, квашеная капуста, кимчи, мисо, темпе, комбуча, натто.
-- "prep_time_min": время приготовления (число, минут)
-- "ingredients": массив ингредиентов [{{"name": "...", "amount": число, "unit": "г/мл/шт"}}]
-- "steps": массив шагов приготовления (строки)
-
-Шаблон ответа:
+Шаблон:
 {{
-  "Яичница со шпинатом": {{
-    "calories": 320,
-    "proteins": 22,
-    "fats": 18,
-    "carbs": 12,
-    "fiber": 4,
-    "prep_time_min": 10,
+  "Название блюда 1": {{
+    "calories": 400,
+    "protein": 30,
+    "fat": 15,
+    "carbs": 40,
+    "fiber": 8,
+    "wellness_rationale": "...",
+    "storage_instructions": "В контейнере до 3 дней",
+    "reheating_instructions": "В микроволновке 2 мин",
+    "freezable": true,
     "ingredients": [
-      {{"name": "Яйцо", "amount": 2, "unit": "шт"}},
-      {{"name": "Шпинат", "amount": 50, "unit": "г"}}
+      {{"name": "Куриное филе", "amount": 150, "unit": "г"}}
     ],
-    "steps": ["Шаг 1", "Шаг 2"]
+    "steps": [
+      "Шаг 1", "Шаг 2"
+    ]
   }}
 }}"""
+
+    @staticmethod
+    def build_seeding_prompt(profile, meal_type: str, target_kcal: float, count: int = 3) -> str:
+        """
+        Генерирует N новых рецептов для заданного типа приема пищи и профиля.
+        Используется для пополнения пула базы данных (Auto-Seeding).
+        """
+        guardrails = PromptAssembler._build_wellness_guardrails(profile, target_kcal)
+        geo = PromptAssembler._build_geo_restrictions(profile)
+        lifestyle = PromptAssembler._build_lifestyle(profile)
+        batch_context = PromptAssembler._build_batch_cooking_context(profile)
+        
+        json_schema = PromptAssembler._build_recipe_json_schema([], profile)
+        
+        # Модифицируем шаблон ответа, так как мы не передаем точные названия блюд
+        # Заставляем LLM придумать названия
+        json_schema = json_schema.replace(
+            "Верни объект, где ключами являются точные названия блюд",
+            f"Верни объект, где ключами являются {count} уникальных названий придуманных тобой блюд (соответствующих типу {meal_type})"
+        )
+        
+        return f"""Твоя задача — сгенерировать ровно {count} уникальных рецептов для типа приема пищи: {meal_type.upper()}.
+
+[ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ]
+{guardrails}
+{geo}
+{lifestyle}
+{batch_context}
+
+[ИНСТРУКЦИЯ]
+1. Придумай {count} уникальных блюд для: {meal_type.upper()}. 
+2. Названия должны быть аппетитными и ресторанными (например, "Омлет Пуляр с трюфельным маслом и шпинатом", а не просто "Яичница").
+3. Блюда ОБЯЗАТЕЛЬНО должны строго соответствовать всем аллергиям и ограничениям пользователя! Это вопрос жизни и смерти.
+4. Средняя калорийность каждого блюда должна быть около {int(target_kcal)} ккал (±15%).
+5. Не используй одни и те же ингредиенты во всех блюдах. Сделай их максимально разнообразными.
+
+{json_schema}"""
+

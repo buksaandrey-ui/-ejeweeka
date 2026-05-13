@@ -204,6 +204,40 @@ def revenuecat_webhook(
         user.subscription_status = "free"
         user.subscription_expires_at = None
     
+    
     db.commit()
     
     return {"status": "ok", "event_processed": event.event_type}
+
+
+class YookassaWebhookEvent(BaseModel):
+    type: str
+    event: str
+    object: dict
+
+@router.post("/yookassa/webhook")
+def yookassa_webhook(
+    event: YookassaWebhookEvent,
+    db: Session = Depends(get_db),
+):
+    """
+    Webhook для ЮKassa.
+    
+    Сюда приходят уведомления о статусе платежа (payment.succeeded, payment.canceled и т.д.)
+    В объекте платежа (event.object) мы ожидаем метаданные с `user_id` и `tier`.
+    """
+    logger.info(f"📦 ЮKassa webhook: {event.event} - {event.object.get('id')}")
+    
+    if event.event == "payment.succeeded":
+        metadata = event.object.get("metadata", {})
+        user_id = metadata.get("user_id")
+        tier = metadata.get("tier", "black")  # по умолчанию black
+        
+        if user_id:
+            user = _get_or_create_user(db, user_id)
+            user.subscription_status = tier
+            user.subscription_expires_at = datetime.now(timezone.utc) + timedelta(days=30)
+            db.commit()
+            logger.info(f"[YooKassa] Подписка активирована для {user_id} на уровень {tier}")
+            
+    return {"status": "ok"}

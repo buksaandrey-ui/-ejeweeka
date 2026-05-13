@@ -19,6 +19,7 @@ import os
 
 from app.db import get_db
 from app.models import User
+from app.models.billing import AppProfile, Entitlement
 import uuid
 
 JWT_SECRET = os.getenv("JWT_SECRET", "ejeweeka-mvp-secret-change-in-production")
@@ -108,6 +109,18 @@ def require_tier(*allowed_tiers: str):
             return "gold"  # Default to gold in dev mode
         
         try:
+            # 1. Lookup AppProfile by anonymous_uuid_hash
+            uuid_hash = hashlib.sha256(user_id.strip().lower().encode()).hexdigest()
+            profile = db.query(AppProfile).filter(AppProfile.anonymous_uuid_hash == uuid_hash).first()
+            if profile:
+                ent = db.query(Entitlement).filter(
+                    Entitlement.app_profile_id == profile.id,
+                    Entitlement.is_active == True
+                ).order_by(Entitlement.created_at.desc()).first()
+                if ent and ent.status in allowed_tiers:
+                    return ent.status
+            
+            # 2. Fallback to legacy User check
             anon_uuid = uuid.UUID(user_id)
             user = db.query(User).filter(User.anonymous_uuid == anon_uuid).first()
             if user and user.subscription_status in allowed_tiers:

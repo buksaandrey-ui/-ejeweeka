@@ -14,6 +14,8 @@ from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from app.db import get_db
 from app.models import User
+from app.models.billing import AppProfile, Entitlement
+from datetime import timedelta
 
 import uuid
 import hashlib
@@ -45,6 +47,10 @@ def _create_token(anonymous_uuid: str) -> str:
     ).hexdigest()[:32]
     return f"{payload_b64}.{signature}"
 
+def _hash(value: str) -> str:
+    """SHA-256 hash for anonymous_uuid and email."""
+    return hashlib.sha256(value.strip().lower().encode()).hexdigest()
+
 
 def _verify_token(token: str) -> Optional[str]:
     """Проверяет токен, возвращает anonymous_uuid или None."""
@@ -70,6 +76,12 @@ class InitResponse(BaseModel):
     anonymous_uuid: str
     token: str
     expires_in: int = 30 * 24 * 3600  # 30 дней в секундах
+    app_profile_id: str
+    entitlement_status: str
+    entitlement_source: str
+    is_trial: bool
+    trial_ends_at: Optional[str] = None
+    expires_at: Optional[str] = None
 
 
 class TokenVerifyRequest(BaseModel):
@@ -81,29 +93,58 @@ def anonymous_init(db: Session = Depends(get_db)):
     """
     Создаёт анонимный UUID, сохраняет в PostgreSQL, и возвращает токен.
     Zero-Knowledge: сервер хранит ТОЛЬКО anonymous_uuid + tier.
-    Токен используется для rate-limiting и идентификации тарифа.
+    Токен используется для rate-limiting и идентификации статуса пользователя.
     """
     anon_uuid = uuid.uuid4()
     token = _create_token(str(anon_uuid))
 
-    # Persist user in PostgreSQL
+    # Persist user in PostgreSQL (Legacy)
     user = User(
         anonymous_uuid=anon_uuid,
         subscription_status="free",
     )
     db.add(user)
+
+    # Persist AppProfile & Entitlement (Hybrid Monetization)
+    uuid_hash = _hash(str(anon_uuid))
+    profile = AppProfile(
+        anonymous_uuid_hash=uuid_hash,
+        platform="ios",
+    )
+    db.add(profile)
+    db.flush()
+
+    # Create trial entitlement (3-day gold)
+    now = datetime.now(timezone.utc)
+    trial_end = now + timedelta(days=3)
+    ent = Entitlement(
+        app_profile_id=profile.id,
+        status="gold",
+        source="trial",
+        is_active=True,
+        started_at=now,
+        expires_at=trial_end,
+        trial_started_at=now,
+        trial_ends_at=trial_end,
+    )
+    db.add(ent)
+
     try:
         db.commit()
-        logger.info(f"[Auth] Created new anonymous user: {anon_uuid}")
+        logger.info(f"[Auth] Created new anonymous user & profile: {anon_uuid}")
     except Exception as e:
         db.rollback()
-        logger.warning(f"[Auth] Failed to persist user (may be duplicate): {e}")
-        # If somehow this UUID already exists, just continue
-        pass
+        logger.warning(f"[Auth] Failed to persist user/profile (may be duplicate): {e}")
 
     return InitResponse(
         anonymous_uuid=str(anon_uuid),
-        token=token
+        token=token,
+        app_profile_id=str(profile.id),
+        entitlement_status="gold",
+        entitlement_source="trial",
+        is_trial=True,
+        trial_ends_at=trial_end.isoformat(),
+        expires_at=trial_end.isoformat(),
     )
 
 

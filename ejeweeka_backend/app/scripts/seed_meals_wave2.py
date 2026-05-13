@@ -17,7 +17,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 _backend_root = Path(__file__).resolve().parent.parent.parent
-load_dotenv(_backend_root / ".env")
+load_dotenv(_backend_root / ".env", override=True)
 sys.path.insert(0, str(_backend_root))
 
 from app.db import SessionLocal
@@ -66,6 +66,9 @@ def build_prompt(meal_type, diseases, allergens, budget, goal):
         prompt += f"- Аллергии: {', '.join(allergens)}. КАТЕГОРИЧЕСКИ ЗАПРЕЩЕНЫ эти продукты и их производные.\n"
 
     prompt += """
+СТРОГОЕ ПРАВИЛО ДЛЯ ШАГОВ (НАРЕЗКА):
+При любом упоминании нарезки, шинковки или кусков (кубиками, соломкой, слайсами) ОБЯЗАТЕЛЬНО указывай примерный физический размер в мм или см (например, "нарежьте кубиками 1х1 см", "соломкой толщиной 2 мм", "слайсами по 5 мм").
+
 Верни СТРОГО JSON-массив (без markdown, без ```):
 [
   {
