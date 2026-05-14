@@ -371,10 +371,10 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
     # ЭТАП 1: Сборка плана через Smart Router (Hybrid Cache)
     from app.services.plan_router import PlanRouter
     
-    status = (profile.tier or 'white').lower()
-    if status == 'black':
+    status = (profile.tier or 'T1').upper()
+    if status == 'T2':
         variants_count = 2
-    elif 'gold' in status:
+    elif status == 'T3':
         variants_count = 3
     else:
         variants_count = 1
@@ -430,22 +430,31 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
         }
         
         seeded_recipes_for_images = []
+        from app.scripts.seed_meal_images import get_pexels_url
+        import hashlib
         
-        for m_type in meal_types:
+        async def fetch_recipes_from_ai(m_type):
             print(f"🤖 Генерируем 5 новых рецептов для '{m_type}'...")
             prompt = PromptAssembler.build_seeding_prompt(profile, m_type, target_kcal, count=5)
             try:
                 response = await generate_with_retry(prompt)
                 rec_text = response.text.replace("```json", "").replace("```", "").strip()
-                
                 start_idx = rec_text.find('{')
                 if start_idx >= 0:
                     rec_text = rec_text[start_idx:]
-                    
-                new_recipes = json.loads(rec_text)
-                
-                from app.scripts.seed_meal_images import get_pexels_url
-                
+                return m_type, json.loads(rec_text)
+            except Exception as e:
+                print(f"⚠️ Ошибка Seeding (API) для '{m_type}': {e}")
+                return m_type, {}
+
+        # Выполняем запросы к Gemini ПАРАЛЛЕЛЬНО
+        api_results = await asyncio.gather(*(fetch_recipes_from_ai(m_type) for m_type in meal_types))
+        
+        # Последовательно сохраняем результаты в базу, чтобы не сломать SQLAlchemy сессию
+        for m_type, new_recipes in api_results:
+            if not new_recipes:
+                continue
+            try:
                 for r_name, r_data in new_recipes.items():
                     if not isinstance(r_data, dict):
                         continue
@@ -483,9 +492,8 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
                     seeded_recipes_for_images.append((new_meal, ing_text, r_name))
                 db.commit()
                 print(f"✅ Успешно сохранено в БД для '{m_type}'")
-                
             except Exception as e:
-                print(f"⚠️ Ошибка Seeding для '{m_type}': {e}")
+                print(f"⚠️ Ошибка сохранения Seeding для '{m_type}': {e}")
                 db.rollback()
         
         # Запускаем фоновую генерацию картинок для новых блюд

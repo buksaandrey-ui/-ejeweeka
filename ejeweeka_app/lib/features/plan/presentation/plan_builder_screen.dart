@@ -6,6 +6,7 @@ import 'package:ejeweeka_app/core/router/route_names.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
 import 'package:ejeweeka_app/features/plan/data/meal_plan_model.dart';
 import 'package:ejeweeka_app/features/plan/providers/plan_provider.dart';
+import 'package:intl/intl.dart';
 
 class PlanBuilderScreen extends ConsumerStatefulWidget {
   final MealPlan rawPlan;
@@ -135,13 +136,16 @@ class _PlanBuilderScreenState extends ConsumerState<PlanBuilderScreen> {
       groupedMeals.putIfAbsent(m.mealType, () => []).add(m);
     }
 
+    final date = DateTime.now().add(Duration(days: day.dayNumber - 1));
+    final dateStr = DateFormat('d MMMM, EEEE', 'ru').format(date);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('День ${day.dayNumber}',
-            style: const TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w800)),
+          Text(dateStr,
+            style: const TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.primary)),
           const SizedBox(height: 12),
           ...groupedMeals.entries.map((e) => _buildMealVariantsSelector(day.dayNumber, e.key, e.value)),
         ],
