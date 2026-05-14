@@ -15,7 +15,6 @@ import 'package:ejeweeka_app/core/widgets/status_gate.dart';
 import 'package:ejeweeka_app/features/plan/data/meal_plan_model.dart';
 import 'package:ejeweeka_app/features/plan/presentation/full_recipe_screen.dart';
 import 'package:ejeweeka_app/features/plan/presentation/meal_swap_screen.dart';
-import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 
 class MealDetailScreen extends ConsumerWidget {
   final MealItem meal;
@@ -214,13 +213,14 @@ class MealDetailScreen extends ConsumerWidget {
           children: meal.ingredients.asMap().entries.map((entry) {
             final i = entry.value;
             final name = i['name'] ?? i['ingredient'] ?? '';
-            final amount = i['amount'] ?? i['quantity'] ?? '';
+            final rawAmount = i['amount'] ?? i['quantity'] ?? i['grams'] ?? '';
+            final amount = (rawAmount is num) ? '$rawAmountг' : rawAmount.toString();
             final isLast = entry.key == meal.ingredients.length - 1;
             return Column(children: [
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Row(children: [
-                  Container(width: 6, height: 6, decoration: BoxDecoration(
+                  Container(width: 6, height: 6, decoration: const BoxDecoration(
                     color: AppColors.primary, shape: BoxShape.circle)),
                   const SizedBox(width: 12),
                   Expanded(child: Text(name.toString(), style: const TextStyle(
@@ -229,7 +229,7 @@ class MealDetailScreen extends ConsumerWidget {
                     fontSize: 13, color: AppColors.textSecondary, fontWeight: FontWeight.w600)),
                 ]),
               ),
-              if (!isLast) Divider(height: 1, color: const Color(0xFFF3F4F6)),
+              if (!isLast) const Divider(height: 1, color: Color(0xFFF3F4F6)),
             ]);
           }).toList(),
         ),
@@ -277,8 +277,8 @@ class MealDetailScreen extends ConsumerWidget {
                   // Step number circle
                   Container(
                     width: 28, height: 28,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
                         colors: [Color(0xFF4C1D95), Color(0xFFE85D04)]),
                       shape: BoxShape.circle,
                     ),
@@ -369,7 +369,7 @@ class MealDetailScreen extends ConsumerWidget {
           label: const Text('Заменить', style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700)),
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.primary,
-            side: BorderSide(color: AppColors.primary),
+            side: const BorderSide(color: AppColors.primary),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
         )),
       ),

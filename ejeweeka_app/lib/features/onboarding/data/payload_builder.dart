@@ -7,7 +7,7 @@ import 'package:ejeweeka_app/features/onboarding/data/profile_model.dart';
 /// Converts local [UserProfile] into the JSON payload expected by
 /// POST /api/v1/plan/generate  (UserProfilePayload in plan.py)
 class ProfilePayloadBuilder {
-  static Map<String, dynamic> build(UserProfile p, {List<Map<String, dynamic>> snacks = const [], List<Map<String, dynamic>> drinks = const []}) {
+  static Map<String, dynamic> build(UserProfile p, {List<Map<String, dynamic>> snacks = const [], List<Map<String, dynamic>> drinks = const [], List<String> recentMeals = const [], List<String> favoriteMeals = const []}) {
     // Map canonical activity_level → human-readable string for backend
     final trainingSchedule = _trainingSchedule(p.activityLevel);
 
@@ -56,6 +56,7 @@ class ProfilePayloadBuilder {
       // ─── Optional biometrics ────────────────────────────────────
       'target_weight': p.targetWeight,
       'target_timeline_weeks': p.targetTimelineWeeks,
+      'wants_to_lose_weight': p.wantsToLoseWeight,
       'bmi': p.bmi?.toString(),
       'bmi_class': p.bmiClass,
       'waist': p.waist?.toString(),
@@ -130,9 +131,39 @@ class ProfilePayloadBuilder {
       // ─── Subscription tier ──────────────────────────────────────
       'tier': tier,
       
+      // ─── Zero-Knowledge History & Favorites ──────────────────────
+      'recent_meal_hashes': recentMeals,
+      'favorite_meal_hashes': favoriteMeals,
+      
       // ─── Logs for AI Corrections ────────────────────────────────
       'extra_snacks': snacks,
       'beverages': drinks,
+
+      // ─── Missing App Status & Sync Fields (ADDED IN AUDIT) ──────
+      'schema_version': p.schemaVersion,
+      'first_launch': p.firstLaunch?.toIso8601String(),
+      'trial_start': p.trialStart?.toIso8601String(),
+      'chosen_status': p.chosenStatus,
+      'target_daily_calories': p.targetDailyCalories,
+      'tdee_calculated': p.tdeeCalculated,
+      'selected_theme': p.selectedTheme,
+      'onboarding_complete': p.onboardingComplete,
+      'disclaimer_accepted': p.disclaimerAccepted,
+      
+      // ─── Notifications ────────────────────────────────────────────
+      'notif_meals': p.notifMeals,
+      'notif_vitamins': p.notifVitamins,
+      'notif_medications': p.notifMedications,
+      'notif_workouts': p.notifWorkouts,
+      'notif_water': p.notifWater,
+      'notif_weekly_report': p.notifWeeklyReport,
+      
+      // ─── Health Connect & Trackers ──────────────────────────────
+      'water_target_ml': p.waterTargetMl,
+      'hc_sleep': p.hcSleep,
+      'hc_steps': p.hcSteps,
+      'hc_workouts': p.hcWorkouts,
+      'hc_weight': p.hcWeight,
     };
   }
 

@@ -105,6 +105,7 @@ class _O10ActivityScreenState extends ConsumerState<O10ActivityScreen> {
       'target_daily_calories': targetCal,
       'target_daily_fiber': targetFiber,
     });
+    if (GoRouterState.of(context).uri.queryParameters["fromSummary"] == "true") return;
     if (mounted) context.go(Routes.o11Budget);
   }
 
@@ -143,7 +144,7 @@ class _O10ActivityScreenState extends ConsumerState<O10ActivityScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Частота
-          _label('Сколько раз в неделю готов(а) к активности?'),
+          _label('Сколько раз в неделю есть готовность к активности?'),
           const SizedBox(height: 10),
           _frequencyDropdown(),
 
@@ -197,7 +198,7 @@ class _O10ActivityScreenState extends ConsumerState<O10ActivityScreen> {
 
   Widget _frequencyDropdown() {
     const opts = [
-      ('none', 'Не готов(а) сейчас', null),
+      ('none', 'Пока нет возможности', null),
       ('once', '1 раз в неделю', null),
       ('twice', '2 раза в неделю', null),
       ('three', '3 раза в неделю', null),
@@ -226,17 +227,16 @@ class _O10ActivityScreenState extends ConsumerState<O10ActivityScreen> {
   }
 
   Widget _multiplierBadge() {
-    final mult = BmrCalculator.activityMultiplier(_frequency ?? 'none', duration: _duration);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(color: const Color(0xFFFFF7ED), borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.primary.withValues(alpha: 0.3))),
-      child: Row(children: [
-        const Icon(Icons.bolt_rounded, color: AppColors.primary, size: 18),
-        const SizedBox(width: 8),
-        Text('Коэффициент активности: ×${mult.toStringAsFixed(3)}',
-          style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600,
-            color: AppColors.primary)),
+      child: const Row(children: [
+        Icon(Icons.bolt_rounded, color: AppColors.primary, size: 18),
+        SizedBox(width: 8),
+        Expanded(child: Text('Твоя физическая активность будет учтена при расчёте калорий',
+          style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600,
+            color: AppColors.primary))),
       ]),
     );
   }

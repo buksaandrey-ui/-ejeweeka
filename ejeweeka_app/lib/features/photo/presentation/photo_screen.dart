@@ -15,7 +15,6 @@ import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ejeweeka_app/core/network/api_client.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
-import 'package:ejeweeka_app/features/auth/data/auth_service.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 import 'package:ejeweeka_app/features/photo/data/photo_analysis_result.dart';
 import 'package:ejeweeka_app/features/plan/providers/plan_provider.dart';
@@ -267,13 +266,13 @@ class _PhotoScreenState extends ConsumerState<PhotoScreen> {
     padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20),
       border: Border.all(color: const Color(0xFFE5E7EB))),
-    child: Column(children: [
-      const CircularProgressIndicator(color: AppColors.primary),
-      const SizedBox(height: 16),
-      const Text('🧠 Анализируем фото...', style: TextStyle(fontFamily: 'Inter', fontSize: 16,
+    child: const Column(children: [
+      CircularProgressIndicator(color: AppColors.primary),
+      SizedBox(height: 16),
+      Text('🧠 Анализируем фото...', style: TextStyle(fontFamily: 'Inter', fontSize: 16,
         fontWeight: FontWeight.w700)),
-      const SizedBox(height: 4),
-      const Text('Gemini Vision определяет блюдо и считает КБЖУ',
+      SizedBox(height: 4),
+      Text('Gemini Vision определяет блюдо и считает КБЖУ',
         style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.textSecondary),
         textAlign: TextAlign.center),
     ]),

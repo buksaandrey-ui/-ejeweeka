@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
+import 'package:ejeweeka_app/core/utils/motivation_engine.dart';
+import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 
 class HydrationScreen extends ConsumerStatefulWidget {
   const HydrationScreen({super.key});
@@ -189,7 +191,7 @@ class _HydrationScreenState extends ConsumerState<HydrationScreen>
           alignment: Alignment.center,
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             const Icon(Icons.water_drop_outlined, size: 18, color: Color(0xFF42A5F5)),
-            Text('+${ml}мл', style: const TextStyle(fontFamily: 'Inter',
+            Text('+$mlмл', style: const TextStyle(fontFamily: 'Inter',
               fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF42A5F5))),
           ]),
         ),
@@ -278,7 +280,7 @@ class _HydrationScreenState extends ConsumerState<HydrationScreen>
               final dayIdx = DateTime.parse(key).weekday - 1;
 
               return Expanded(child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                Text('${(ml / 1000).toStringAsFixed(1)}', style: TextStyle(fontFamily: 'Inter',
+                Text((ml / 1000).toStringAsFixed(1), style: TextStyle(fontFamily: 'Inter',
                   fontSize: 9, fontWeight: FontWeight.w600,
                   color: isToday ? const Color(0xFF42A5F5) : AppColors.textSecondary)),
                 const SizedBox(height: 4),
@@ -307,12 +309,13 @@ class _HydrationScreenState extends ConsumerState<HydrationScreen>
 
   // ── Блок 4: HC-совет ─────────────────────────────────────────
   Widget _buildTip() {
+    final profile = ref.watch(profileProvider);
     final tipText = _consumedMl < 500
         ? 'Начни день со стакана воды! Это запустит метаболизм и улучшит концентрацию.'
         : _consumedMl < (_dailyGoalL * 1000 * 0.5)
             ? 'Половина нормы ещё впереди. Поставь напоминание каждый час!'
             : _consumedMl >= (_dailyGoalL * 1000)
-                ? 'Отлично! Ты выполнил(а) дневную норму. Продолжай в том же духе!'
+                ? '${MotivationEngine.getProgressMotivation(profile, 1.0)}! Дневная норма выполнена. Продолжай в том же духе!'
                 : 'Хороший прогресс! Осталось ${((_dailyGoalL * 1000 - _consumedMl) / 1000).toStringAsFixed(1)} л до цели.';
 
     return Container(
@@ -382,7 +385,7 @@ class _RingPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2 - 12;
-    final strokeWidth = 14.0;
+    const strokeWidth = 14.0;
 
     // Background arc
     canvas.drawCircle(center, radius,

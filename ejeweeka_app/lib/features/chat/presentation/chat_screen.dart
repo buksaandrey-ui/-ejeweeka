@@ -8,11 +8,8 @@ import 'package:ejeweeka_app/shared/widgets/hc_gradient_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dio/dio.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:ejeweeka_app/core/network/api_client.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
-import 'package:ejeweeka_app/features/auth/data/auth_service.dart';
-import 'package:ejeweeka_app/features/chat/data/chat_message_model.dart';
 import 'package:ejeweeka_app/features/chat/data/chat_message_model.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 import 'package:ejeweeka_app/features/plan/providers/plan_provider.dart';
@@ -46,7 +43,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     // Welcome message
     _messages.add(ChatMessageModel(
       role: 'assistant',
-      content: 'Привет! Я HC-нутрициолог ejeweeka. Отвечаю на вопросы о питании, витаминах и здоровье на основе медицинской базы знаний. Чем могу помочь?',
+      content: 'Привет! Я HC-нутрициолог ejeweeka. Отвечаю на вопросы о питании, витаминах и здоровье на основе профессиональной базы знаний. Чем могу помочь?',
     ));
   }
 
@@ -327,7 +324,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     curve: Curves.easeInOut,
     builder: (_, v, __) => Opacity(opacity: v,
       child: Container(width: 8, height: 8,
-        decoration: BoxDecoration(color: AppColors.primary, shape: BoxShape.circle))),
+        decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle))),
   );
 
   Widget _inputBar() => Container(
@@ -381,11 +378,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       const Expanded(child: Text('HC-чат доступен в ejeweeka Gold',
         style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: Colors.white70))),
       HcGradientButton(
-        onPressed: () => launchUrl(
-          Uri.parse('https://ejeweeka.app/subscribe'),
-          mode: LaunchMode.externalApplication,
-        ),
-        text: 'Повысить статус',
+        onPressed: () => context.push('/profile/status'),
+        text: 'Улучшить статус',
       ),
     ]),
   );

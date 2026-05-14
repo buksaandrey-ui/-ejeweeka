@@ -25,13 +25,13 @@ class ReportHistoryScreen extends ConsumerWidget {
           title: const Text('История отчётов',
             style: TextStyle(fontFamily: 'Inter', fontSize: 17, fontWeight: FontWeight.w700)),
           centerTitle: true),
-        body: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.lock_outline_rounded, size: 48, color: AppColors.textSecondary),
-          const SizedBox(height: 16),
-          const Text('История отчётов', style: TextStyle(fontFamily: 'Inter',
+        body: const Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Icon(Icons.lock_outline_rounded, size: 48, color: AppColors.textSecondary),
+          SizedBox(height: 16),
+          Text('История отчётов', style: TextStyle(fontFamily: 'Inter',
             fontSize: 20, fontWeight: FontWeight.w800)),
-          const SizedBox(height: 8),
-          const Text('Доступно со статусом Black и выше',
+          SizedBox(height: 8),
+          Text('Доступно со статусом Black и выше',
             style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.textSecondary)),
         ])),
       );

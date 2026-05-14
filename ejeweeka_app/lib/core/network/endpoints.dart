@@ -4,7 +4,7 @@
 class Endpoints {
   // Production backend (Render)
   static const baseUrl = 'https://ejeweeka-api.onrender.com';
-  
+  // static const baseUrl = 'http://127.0.0.1:8000';
   // Auth
   static const authInit = '/api/v1/auth/init';
   static const authDelete = '/api/v1/auth/delete';

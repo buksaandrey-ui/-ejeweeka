@@ -278,13 +278,13 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
     });
   }
 
-  Widget _emptyState() => Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-    const Text('🛒', style: TextStyle(fontSize: 56)),
-    const SizedBox(height: 16),
-    const Text('Список пуст', style: TextStyle(fontFamily: 'Inter', fontSize: 18,
+  Widget _emptyState() => const Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+    Text('🛒', style: TextStyle(fontSize: 56)),
+    SizedBox(height: 16),
+    Text('Список пуст', style: TextStyle(fontFamily: 'Inter', fontSize: 18,
       fontWeight: FontWeight.w800)),
-    const SizedBox(height: 8),
-    const Text('Сначала создайте план питания\n— список покупок сформируется автоматически',
+    SizedBox(height: 8),
+    Text('Сначала создайте план питания\n— список покупок сформируется автоматически',
       textAlign: TextAlign.center,
       style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.textSecondary, height: 1.5)),
   ]));

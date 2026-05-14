@@ -69,7 +69,7 @@ class MealSwapScreen extends ConsumerWidget {
                 color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6)),
               child: Text('$altCount вариант${altCount > 1 ? (altCount < 5 ? 'а' : 'ов') : ''}',
-                style: TextStyle(fontFamily: 'Inter', fontSize: 11,
+                style: const TextStyle(fontFamily: 'Inter', fontSize: 11,
                   fontWeight: FontWeight.w600, color: AppColors.primary)),
             ),
           ]),
@@ -171,6 +171,7 @@ class MealSwapScreen extends ConsumerWidget {
           _macroChip('Б: ${alt.protein}г', const Color(0xFF667EEA)),
           _macroChip('Ж: ${alt.fat}г', const Color(0xFFEF4444)),
           _macroChip('У: ${alt.carbs}г', const Color(0xFF10B981)),
+          _macroChip('Кл: ${alt.fiber}г', const Color(0xFF8D6E63)),
         ]),
         const SizedBox(height: 10),
         // Select button
@@ -216,11 +217,11 @@ class MealSwapScreen extends ConsumerWidget {
   List<_AltMeal> _generatePlaceholderAlts(int count) {
     final baseKcal = currentMeal.calories;
     final alts = <_AltMeal>[
-      _AltMeal('${currentMeal.name} (лайт версия)', (baseKcal * 0.85).round(), 15, 20, 8, 25),
-      _AltMeal('Альтернатива 2', baseKcal, 20, 22, 10, 30),
-      _AltMeal('Альтернатива 3', (baseKcal * 1.1).round(), 25, 18, 12, 28),
-      _AltMeal('Альтернатива 4 (протеин)', (baseKcal * 0.95).round(), 30, 25, 6, 22),
-      _AltMeal('Альтернатива 5 (быстрая)', (baseKcal * 0.9).round(), 10, 20, 10, 35),
+      _AltMeal('${currentMeal.name} (лайт версия)', (baseKcal * 0.85).round(), 15, 20, 8, 25, 6),
+      _AltMeal('Альтернатива 2', baseKcal, 20, 22, 10, 30, 8),
+      _AltMeal('Альтернатива 3', (baseKcal * 1.1).round(), 25, 18, 12, 28, 7),
+      _AltMeal('Альтернатива 4 (протеин)', (baseKcal * 0.95).round(), 30, 25, 6, 22, 5),
+      _AltMeal('Альтернатива 5 (быстрая)', (baseKcal * 0.9).round(), 10, 20, 10, 35, 4),
     ];
     return alts.take(count).toList();
   }
@@ -233,6 +234,7 @@ class _AltMeal {
   final int protein;
   final int fat;
   final int carbs;
+  final int fiber;
 
-  const _AltMeal(this.name, this.calories, this.prepTime, this.protein, this.fat, this.carbs);
+  const _AltMeal(this.name, this.calories, this.prepTime, this.protein, this.fat, this.carbs, this.fiber);
 }

@@ -85,6 +85,30 @@ class PlanNotifier extends StateNotifier<PlanState> {
     }
   }
 
+  Future<void> swapMeal(int dayNumber, String mealType, MealItem newMeal) async {
+    if (state is PlanLoaded) {
+      final currentPlan = (state as PlanLoaded).plan;
+      final newDays = currentPlan.days.map((day) {
+        if (day.dayNumber == dayNumber) {
+          final newMeals = day.meals.map((m) {
+            if (m.mealType == mealType) return newMeal;
+            return m;
+          }).toList();
+          return day.copyWith(meals: newMeals);
+        }
+        return day;
+      }).toList();
+      
+      final updatedPlan = currentPlan.copyWith(days: newDays);
+      await PlanRepository.savePlan(updatedPlan);
+      state = PlanLoaded(
+        updatedPlan, 
+        fromCache: (state as PlanLoaded).fromCache, 
+        isStale: (state as PlanLoaded).isStale
+      );
+    }
+  }
+
   void reset() => state = const PlanIdle();
 }
 

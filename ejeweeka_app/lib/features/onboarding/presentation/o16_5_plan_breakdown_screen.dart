@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ejeweeka_app/core/router/route_names.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
-import 'package:ejeweeka_app/features/plan/providers/plan_provider.dart';
 
 class O165PlanBreakdownScreen extends ConsumerStatefulWidget {
   const O165PlanBreakdownScreen({super.key});
@@ -49,8 +48,10 @@ class _O165PlanBreakdownScreenState extends ConsumerState<O165PlanBreakdownScree
     await Future.delayed(const Duration(milliseconds: 500));
     if (!mounted) return;
     setState(() => _done = true);
-    await Future.delayed(const Duration(milliseconds: 800));
-    if (mounted) context.go(Routes.o17Statuswall);
+    // O-17 Statuswall removed from MVP. Navigate to disclaimer (first launch) or H-1.
+    if (mounted) {
+      context.go(Routes.o175Disclaimer);
+    }
   }
 
   // Helper to fire and forget a future
@@ -74,8 +75,8 @@ class _O165PlanBreakdownScreenState extends ConsumerState<O165PlanBreakdownScree
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Logo
-              Text('ejeweeka',
-                style: const TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w800,
+              const Text('ejeweeka',
+                style: TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w800,
                   color: AppColors.primary)),
               const SizedBox(height: 48),
 
@@ -100,9 +101,9 @@ class _O165PlanBreakdownScreenState extends ConsumerState<O165PlanBreakdownScree
                         gradient: AppColors.ctaGradient,
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisSize: MainAxisSize.min,
-                        children: const [
+                        children: [
                           Icon(Icons.refresh_rounded, color: Colors.white),
                           SizedBox(width: 8),
                           Text('Попробовать снова', style: TextStyle(
@@ -115,7 +116,7 @@ class _O165PlanBreakdownScreenState extends ConsumerState<O165PlanBreakdownScree
                 ),
                 const SizedBox(height: 12),
                 TextButton(
-                  onPressed: () => context.go(Routes.o17Statuswall),
+                  onPressed: () => context.go(Routes.o175Disclaimer),
                   child: const Text('Пропустить и перейти дальше',
                     style: TextStyle(color: AppColors.textSecondary)),
                 ),

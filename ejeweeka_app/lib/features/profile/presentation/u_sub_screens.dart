@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
 import 'package:ejeweeka_app/core/widgets/status_gate.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
+import 'package:ejeweeka_app/shared/utils/enum_translator.dart';
 
 // ── Shared helpers ──────────────────────────────────────────────────
 
@@ -56,9 +57,9 @@ class U4RestrictionsScreen extends ConsumerWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
         child: Column(children: [
-          _card('ОГРАНИЧЕНИЯ В ЕДЕ', p.diets?.isNotEmpty == true ? p.diets!.join(', ') : 'Нет ограничений'),
+          _card('ОГРАНИЧЕНИЯ В ЕДЕ', p.diets.isNotEmpty == true ? p.diets.map(EnumTranslator.diet).join(', ') : 'Нет ограничений'),
           _card('АЛЛЕРГИИ', p.hasAllergies == true
-            ? (p.allergies?.join(', ') ?? 'Есть (не указаны)')
+            ? (p.allergies.isNotEmpty ? p.allergies.map(EnumTranslator.allergy).join(', ') : 'Есть (не указаны)')
             : 'Нет аллергий'),
         ]),
       ),
@@ -126,7 +127,7 @@ class U7FoodPrefsScreen extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
         child: Column(children: [
           _card('НЕЖЕЛАТЕЛЬНЫЕ КАТЕГОРИИ',
-            p.excludedMealTypes.isNotEmpty ? p.excludedMealTypes.join(', ') : 'Нет исключений'),
+            p.excludedMealTypes.isNotEmpty ? p.excludedMealTypes.map(EnumTranslator.mealType).join(', ') : 'Нет исключений'),
           _card('ЛЮБИМЫЕ ПРОДУКТЫ', p.likedFoods.isNotEmpty ? p.likedFoods.join(', ') : 'Не указаны'),
           _card('НЕЛЮБИМЫЕ ПРОДУКТЫ', p.dislikedFoods.isNotEmpty ? p.dislikedFoods.join(', ') : 'Не указаны'),
         ]),
@@ -190,7 +191,7 @@ class U9ActivityScreen extends ConsumerWidget {
     final p = ref.watch(profileProvider);
 
     final levelLabel = switch (p.activityLevel) {
-      'none' => 'Не готов(а) сейчас',
+      'none' => 'Пока нет возможности',
       '1' => '1 раз в неделю',
       '2' => '2 раза в неделю',
       '3' => '3 раза в неделю',
@@ -198,17 +199,41 @@ class U9ActivityScreen extends ConsumerWidget {
       _ => p.activityLevel ?? '—',
     };
 
+    final durationLabel = switch (p.activityDuration) {
+      '10_15' => '10–15 мин',
+      '20_30' => '20–30 мин',
+      '30_45' => '30–45 мин',
+      '45_60' => '45–60 мин',
+      '60_plus' => 'Более часа',
+      _ => p.activityDuration ?? '—',
+    };
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: _appBar(context, 'Активность'),
+      appBar: _appBar(context, 'Активность и тренировки'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
         child: Column(children: [
           _card('ЧАСТОТА', levelLabel),
           if (p.activityDuration != null)
-            _card('ДЛИТЕЛЬНОСТЬ', p.activityDuration!),
-          if (p.activityTypes?.isNotEmpty == true)
-            _card('ТИП АКТИВНОСТИ', p.activityTypes!.join(', ')),
+            _card('ДЛИТЕЛЬНОСТЬ', durationLabel),
+          if (p.activityTypes.isNotEmpty == true)
+            _card('ТИП АКТИВНОСТИ', p.activityTypes.map(EnumTranslator.activityType).join(', ')),
+          
+          if (p.trainingDays != null)
+            _card('ДНЕЙ В НЕДЕЛЮ (ТРЕНИРОВКИ)', '${p.trainingDays}'),
+          if (p.workoutLocation != null)
+            _card('МЕСТО ТРЕНИРОВОК', p.workoutLocation == 'gym' ? 'Тренажерный зал' : p.workoutLocation == 'home' ? 'Дома' : p.workoutLocation!),
+          if (p.equipment.isNotEmpty == true)
+            _card('ИНВЕНТАРЬ', p.equipment.map((e) => {
+              'dumbbells': 'Гантели', 'bands': 'Резинки', 'kettlebell': 'Гиря', 'mat': 'Коврик'
+            }[e] ?? e).join(', ')),
+          if (p.fitnessLevel != null)
+            _card('УРОВЕНЬ ПОДГОТОВКИ', p.fitnessLevel == 'beginner' ? 'Новичок' : p.fitnessLevel == 'intermediate' ? 'Средний' : p.fitnessLevel == 'advanced' ? 'Продвинутый' : p.fitnessLevel!),
+          if (p.physicalLimitations.isNotEmpty == true)
+            _card('ОГРАНИЧЕНИЯ', p.physicalLimitations.map((e) => {
+              'knees': 'Болят колени', 'back': 'Болит спина', 'neck': 'Болит шея', 'pregnancy': 'Беременность', 'none': 'Нет ограничений'
+            }[e] ?? e).join(', ')),
         ]),
       ),
     );
@@ -263,6 +288,7 @@ class U11NotificationsScreen extends ConsumerStatefulWidget {
 
 class _U11State extends ConsumerState<U11NotificationsScreen> {
   late bool _meals, _water, _vitamins, _meds, _workouts, _weeklyReport;
+  late int _waterTargetMl;
   bool _dirty = false;
 
   @override
@@ -275,12 +301,14 @@ class _U11State extends ConsumerState<U11NotificationsScreen> {
     _meds = p.notifMedications;
     _workouts = p.notifWorkouts;
     _weeklyReport = p.notifWeeklyReport;
+    _waterTargetMl = p.waterTargetMl ?? 2000;
   }
 
   Future<void> _save() async {
     await ref.read(profileNotifierProvider.notifier).saveFields({
       'notif_meals': _meals,
       'notif_water': _water,
+      'water_target_ml': _waterTargetMl,
       'notif_vitamins': _vitamins,
       'notif_medications': _meds,
       'notif_workouts': _workouts,
@@ -303,6 +331,36 @@ class _U11State extends ConsumerState<U11NotificationsScreen> {
         child: Column(children: [
           _toggle('Приёмы пищи', _meals, (v) => setState(() { _meals = v; _dirty = true; })),
           _toggle('Вода', _water, (v) => setState(() { _water = v; _dirty = true; })),
+          if (_water)
+            Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: const Color(0xFFE5E7EB))),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                  const Text('Цель по воде', style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.textSecondary)),
+                  Text('$_waterTargetMl мл', style: const TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.primary)),
+                ]),
+                const SizedBox(height: 8),
+                SliderTheme(
+                  data: SliderThemeData(
+                    trackHeight: 6,
+                    activeTrackColor: AppColors.primary,
+                    inactiveTrackColor: AppColors.primary.withValues(alpha: 0.1),
+                    thumbColor: Colors.white,
+                    overlayColor: AppColors.primary.withValues(alpha: 0.1),
+                  ),
+                  child: Slider(
+                    value: _waterTargetMl.toDouble(),
+                    min: 1000,
+                    max: 4000,
+                    divisions: 15,
+                    onChanged: (v) => setState(() { _waterTargetMl = v.toInt(); _dirty = true; }),
+                  ),
+                ),
+              ]),
+            ),
           _toggle('Витамины', _vitamins, (v) => setState(() { _vitamins = v; _dirty = true; })),
           _toggle('Лекарства', _meds, (v) => setState(() { _meds = v; _dirty = true; })),
           _toggle('Тренировки', _workouts, (v) => setState(() { _workouts = v; _dirty = true; })),
@@ -549,8 +607,8 @@ class U15MotivationScreen extends ConsumerWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
         child: Column(children: [
-          _card('ТВОИ БАРЬЕРЫ', p.motivationBarriers?.isNotEmpty == true
-            ? p.motivationBarriers!.map((b) => barrierLabels[b] ?? b).join('\n• ')
+          _card('ТВОИ БАРЬЕРЫ', p.motivationBarriers.isNotEmpty == true
+            ? p.motivationBarriers.map((b) => barrierLabels[b] ?? b).join('\n• ')
             : 'Не указаны'),
           const SizedBox(height: 8),
           Container(
@@ -560,10 +618,10 @@ class U15MotivationScreen extends ConsumerWidget {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
             ),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            child: const Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Icon(Icons.lightbulb_outline_rounded, size: 18, color: AppColors.primary),
-              const SizedBox(width: 10),
-              const Expanded(child: Text(
+              SizedBox(width: 10),
+              Expanded(child: Text(
                 'Мы адаптируем уведомления и советы под твои реальные сложности',
                 style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.textSecondary, height: 1.5),
               )),

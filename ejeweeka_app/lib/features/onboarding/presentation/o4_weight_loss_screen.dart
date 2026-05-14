@@ -6,7 +6,6 @@
 //   Передаётся: target_weight, target_timeline_weeks, pace_classification
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ejeweeka_app/core/router/route_names.dart';
@@ -108,6 +107,7 @@ class _O4WeightLossScreenState extends ConsumerState<O4WeightLossScreen> {
   Future<void> _proceed() async {
     if (!_isValid) return;
     _saveData();
+    if (GoRouterState.of(context).uri.queryParameters["fromSummary"] == "true") return;
     if (mounted) context.go(Routes.o5Restrictions);
   }
 
@@ -187,7 +187,7 @@ class _O4WeightLossScreenState extends ConsumerState<O4WeightLossScreen> {
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            const Text('🟠 СТОП! НЕВОЗМОЖНЫЙ ТЕМП', style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFFD32F2F))),
+            const Text('СТОП! НЕВОЗМОЖНЫЙ ТЕМП', style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFFD32F2F))),
             const Spacer(),
             Text(pctStr, style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFFD32F2F))),
           ]),

@@ -68,6 +68,7 @@ class _O13SupplementsScreenState extends ConsumerState<O13SupplementsScreen> {
   Future<void> _proceed() async {
     if (!_isValid) return;
     await _save();
+    if (GoRouterState.of(context).uri.queryParameters["fromSummary"] == "true") return;
     if (mounted) context.go(Routes.o14Motivation);
   }
 
@@ -140,7 +141,7 @@ class _O13SupplementsScreenState extends ConsumerState<O13SupplementsScreen> {
           _sectionLabel('Готовность'),
           const SizedBox(height: 6),
           const Text(
-              'Готов(а) рассматривать витамины или БАДы для закрытия дефицитов?',
+              'Интересно ли добавление витаминов или БАДов для закрытия дефицитов?',
               style: TextStyle(fontFamily: 'Inter', fontSize: 14,
                   fontWeight: FontWeight.w600)),
           const SizedBox(height: 10),

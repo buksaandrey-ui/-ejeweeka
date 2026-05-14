@@ -9,8 +9,38 @@ import 'package:ejeweeka_app/features/onboarding/data/profile_model.dart';
 
 class ProfileRepository {
   static const _key = 'ejeweeka_profile';
+  static const _recentMealsKey = 'ejeweeka_recent_meals';
+  static const _favoriteMealsKey = 'ejeweeka_favorite_meals';
 
   static SharedPreferences get _prefs => IsarService.prefs;
+
+  // ── History & Favorites ───────────────────────────────────────
+  static List<String> get recentMeals {
+    return _prefs.getStringList(_recentMealsKey) ?? [];
+  }
+
+  static Future<void> saveRecentMeal(String hash) async {
+    final list = recentMeals;
+    if (!list.contains(hash)) {
+      list.add(hash);
+      if (list.length > 70) list.removeAt(0); // Max 14 days ~70 meals
+      await _prefs.setStringList(_recentMealsKey, list);
+    }
+  }
+
+  static List<String> get favoriteMeals {
+    return _prefs.getStringList(_favoriteMealsKey) ?? [];
+  }
+
+  static Future<void> toggleFavoriteMeal(String hash) async {
+    final list = favoriteMeals;
+    if (list.contains(hash)) {
+      list.remove(hash);
+    } else {
+      list.add(hash);
+    }
+    await _prefs.setStringList(_favoriteMealsKey, list);
+  }
 
   // ── Read ──────────────────────────────────────────────────────
   static UserProfile getOrCreate() {

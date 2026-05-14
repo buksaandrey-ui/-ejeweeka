@@ -178,7 +178,7 @@ class _FullRecipeScreenState extends ConsumerState<FullRecipeScreen> {
       child: Column(children: [
         Row(children: [
           Text('${(progress * 100).toStringAsFixed(0)}%',
-            style: TextStyle(fontFamily: 'Inter', fontSize: 24, fontWeight: FontWeight.w800,
+            style: const TextStyle(fontFamily: 'Inter', fontSize: 24, fontWeight: FontWeight.w800,
               color: AppColors.primary)),
           const SizedBox(width: 12),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -203,7 +203,7 @@ class _FullRecipeScreenState extends ConsumerState<FullRecipeScreen> {
           child: LinearProgressIndicator(
             value: progress, minHeight: 6,
             backgroundColor: const Color(0xFFE5E7EB),
-            valueColor: AlwaysStoppedAnimation(AppColors.primary),
+            valueColor: const AlwaysStoppedAnimation(AppColors.primary),
           ),
         ),
       ]),
@@ -236,7 +236,8 @@ class _FullRecipeScreenState extends ConsumerState<FullRecipeScreen> {
             final i = entry.key;
             final ing = entry.value;
             final name = ing['name'] ?? ing['ingredient'] ?? '';
-            final amount = ing['amount'] ?? ing['quantity'] ?? '';
+            final rawAmount = ing['amount'] ?? ing['quantity'] ?? ing['grams'] ?? '';
+            final amount = (rawAmount is num) ? '$rawAmountг' : rawAmount.toString();
             final checked = _ingredientChecked[i];
             return InkWell(
               onTap: () => setState(() => _ingredientChecked[i] = !_ingredientChecked[i]),

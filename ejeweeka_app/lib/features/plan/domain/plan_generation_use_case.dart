@@ -10,7 +10,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
-import 'package:ejeweeka_app/core/network/api_client.dart';
 import 'package:ejeweeka_app/features/auth/data/auth_service.dart';
 import 'package:ejeweeka_app/features/onboarding/data/payload_builder.dart';
 import 'package:ejeweeka_app/features/onboarding/data/profile_model.dart';
@@ -19,6 +18,7 @@ import 'package:ejeweeka_app/features/plan/data/plan_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ejeweeka_app/features/dashboard/data/snack_log_model.dart';
 import 'package:ejeweeka_app/features/dashboard/data/drink_log_model.dart';
+import 'package:ejeweeka_app/features/dashboard/data/meal_history_repository.dart';
 
 /// Result type for generation
 sealed class PlanResult {
@@ -83,13 +83,28 @@ class PlanGenerationUseCase {
     }
 
 
-    // 3. Build payload
-    final payload = ProfilePayloadBuilder.build(profile, snacks: snacks, drinks: drinks);
+    // 3. Load Zero-Knowledge History
+    final recentMeals = await MealHistoryRepository.getRecentMeals();
+    final favoriteMeals = await MealHistoryRepository.getFavoriteMeals();
 
-    // 4. Validate minimum required fields before sending
-    final validation = _validatePayload(payload);
-    if (validation != null) {
-      return PlanError(validation, errorCode: 'VALIDATION_ERROR');
+    // 4. Build payload
+    Map<String, dynamic> payload;
+    try {
+      payload = ProfilePayloadBuilder.build(
+        profile, 
+        snacks: snacks, 
+        drinks: drinks,
+        recentMeals: recentMeals,
+        favoriteMeals: favoriteMeals,
+      );
+
+      // 4. Validate minimum required fields before sending
+      final validation = _validatePayload(payload);
+      if (validation != null) {
+        return PlanError(validation, errorCode: 'VALIDATION_ERROR');
+      }
+    } catch (e) {
+      return PlanError('Ошибка формирования данных профиля: $e', errorCode: 'PAYLOAD_BUILD_ERROR');
     }
 
     // 5. POST /api/v1/plan/generate
@@ -141,7 +156,7 @@ class PlanGenerationUseCase {
           // Упаковываем в формат ответа API
           final fakeApiResponse = {
             'status': 'success',
-            'matrix': fallbackData
+            'data': fallbackData
           };
           final plan = MealPlan.fromApiResponse(fakeApiResponse);
           return PlanOfflineFallback(plan);
@@ -159,7 +174,13 @@ class PlanGenerationUseCase {
           errorCode: 'RATE_LIMITED',
         );
       }
+      
+      if (e.response?.statusCode == 422) {
+        print('API 422 Error: ${e.response?.data}');
+        return PlanError('Ошибка валидации: ${e.response?.data}', errorCode: '422');
+      }
 
+      print('DioException: ${e.message}, status: ${e.response?.statusCode}, data: ${e.response?.data}');
       return const PlanError(
         'Проверьте интернет-соединение и попробуйте снова',
         errorCode: 'NETWORK_ERROR',

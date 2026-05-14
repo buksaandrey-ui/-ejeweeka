@@ -82,6 +82,7 @@ class _O15FoodPrefsScreenState extends ConsumerState<O15FoodPrefsScreen> {
 
   Future<void> _proceed() async {
     _saveData();
+    if (GoRouterState.of(context).uri.queryParameters["fromSummary"] == "true") return;
     if (mounted) context.go(Routes.o25AiPersonality);
   }
 

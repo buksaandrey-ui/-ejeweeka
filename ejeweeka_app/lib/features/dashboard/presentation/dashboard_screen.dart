@@ -12,11 +12,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ejeweeka_app/core/router/route_names.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
+import 'package:ejeweeka_app/core/utils/motivation_engine.dart';
 import 'package:ejeweeka_app/core/widgets/status_gate.dart';
 import 'package:ejeweeka_app/features/dashboard/data/drink_log_model.dart';
 import 'package:ejeweeka_app/features/dashboard/data/eaten_meal_log.dart';
 import 'package:ejeweeka_app/features/dashboard/data/snack_log_model.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
+import 'package:ejeweeka_app/features/onboarding/data/profile_model.dart';
 import 'package:ejeweeka_app/features/plan/data/meal_plan_model.dart';
 import 'package:ejeweeka_app/features/plan/providers/plan_provider.dart';
 import 'package:ejeweeka_app/shared/utils/enum_translator.dart';
@@ -125,9 +127,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   /// Total consumed kcal/macros: eaten meals + snacks + drinks
   double get _totalConsumedKcal {
     double s = 0;
-    for (final e in _eatenMeals) s += e.calories;
-    for (final l in _snackLogs) s += l.calories;
-    for (final l in _drinkLogs) s += l.estimatedKcal;
+    for (final e in _eatenMeals) {
+      s += e.calories;
+    }
+    for (final l in _snackLogs) {
+      s += l.calories;
+    }
+    for (final l in _drinkLogs) {
+      s += l.estimatedKcal;
+    }
     return s;
   }
   double get _totalProtein {
@@ -213,7 +221,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 const SizedBox(height: 16),
 
                 // ── Quick actions ──────────────────────────────────────────
-                _buildQuickActions(),
+                _buildQuickActions(profile),
                 const SizedBox(height: 16),
 
                 // ── Bloc 5: Upsell banner (White post-trial) ────────
@@ -487,7 +495,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   // Quick actions
   // ──────────────────────────────────────────────────────────────
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(UserProfile profile) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -511,9 +519,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               _quickCircle(Icons.restaurant_outlined, 'Перекус', const Color(0xFFE65100),
                 () => _showSnackSheet()),
               const SizedBox(width: 14),
-              _quickCircle(Icons.monitor_weight_outlined, 'Вес', const Color(0xFF667EEA),
-                () => _showWeightInput()),
-              const SizedBox(width: 14),
+              if (profile.hcWeight != true) ...[
+                _quickCircle(Icons.monitor_weight_outlined, 'Вес', const Color(0xFF667EEA),
+                  () => _showWeightInput()),
+                const SizedBox(width: 14),
+              ],
               _quickCircle(Icons.medication_outlined, 'Витамины', const Color(0xFFFF9800), () {
                 if (!hasStatusAccess(ref, RequiredTier.black)) {
                   showLockedSnackbar(context, RequiredTier.black); return;
@@ -521,7 +531,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 context.push(Routes.vitamins);
               }),
               const SizedBox(width: 14),
-              _quickCircle(Icons.camera_alt_outlined, 'Фото', const Color(0xFF9C27B0), () {
+              _quickCircle(Icons.camera_alt_outlined, 'Анализ блюда', const Color(0xFF9C27B0), () {
                 if (!hasStatusAccess(ref, RequiredTier.gold)) {
                   showLockedSnackbar(context, RequiredTier.gold); return;
                 }
@@ -768,7 +778,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: isSelected ? const Color(0xFF00897B) : const Color(0xFFE5E7EB)),
                     ),
-                    child: Text('${v}мл', style: TextStyle(fontFamily: 'Inter', fontSize: 13,
+                    child: Text('$vмл', style: TextStyle(fontFamily: 'Inter', fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: isSelected ? Colors.white : AppColors.textPrimary)),
                   ),
@@ -831,7 +841,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 Navigator.pop(ctx);
                 setState(() {}); // update calorie ring
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text('🥤 $selectedDrink ${selectedVolume}мл — $estimatedKcal ккал'),
+                  content: Text('🥤 $selectedDrink $selectedVolumeмл — $estimatedKcal ккал'),
                   backgroundColor: const Color(0xFF00897B),
                   duration: const Duration(seconds: 2)));
               },
@@ -903,7 +913,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             const SizedBox(height: 16),
 
             // Snack selector
-            const Text('Что ел(а)?', style: TextStyle(fontFamily: 'Inter',
+            const Text('Запись еды', style: TextStyle(fontFamily: 'Inter',
               fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
             const SizedBox(height: 6),
             Wrap(spacing: 8, runSpacing: 8, children: [
@@ -1196,13 +1206,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
-      child: Column(children: [
-        const Text('🚀', style: TextStyle(fontSize: 32)),
-        const SizedBox(height: 8),
-        const Text('Создать персональный план', textAlign: TextAlign.center,
+      child: const Column(children: [
+        Text('🚀', style: TextStyle(fontSize: 32)),
+        SizedBox(height: 8),
+        Text('Создать персональный план', textAlign: TextAlign.center,
           style: TextStyle(fontFamily: 'Inter', fontSize: 16, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 4),
-        const Text('Нажми, чтобы сгенерировать план питания на основе твоего профиля',
+        SizedBox(height: 4),
+        Text('Нажми, чтобы сгенерировать план питания на основе твоего профиля',
           textAlign: TextAlign.center,
           style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.textSecondary)),
       ]),
@@ -1210,27 +1220,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   );
 
   String _greeting() {
-    final h = DateTime.now().hour;
-    final weekday = DateTime.now().weekday;
     final profile = ref.read(profileProvider);
-    final goal = profile.goal;
-
-    // Base time greeting
-    final timeGreeting = h < 12 ? 'Доброе утро,' : h < 17 ? 'Добрый день,' : h < 22 ? 'Добрый вечер,' : 'Доброй ночи,';
-
-    // Contextual greetings — rotate based on day of week
-    final contextGreetings = <String>[
-      timeGreeting, // 0: default
-      goal == 'lose_weight' ? 'Ты на верном пути,' : 'Отличный день,', // 1
-      weekday == 1 ? 'Новая неделя —' : 'Продолжаем,', // 2
-      h < 12 ? 'Энергичного утра,' : 'Продуктивного дня,', // 3
-      weekday == 5 ? 'Пятница!' : weekday >= 6 ? 'Отдыхаем,' : timeGreeting, // 4
-      '🔥', // 5: streak day — just emoji
-    ];
-
-    // Pick greeting based on day-of-week rotation
-    final idx = weekday % contextGreetings.length;
-    return contextGreetings[idx];
+    return MotivationEngine.getGreeting(profile);
   }
 
   String _todayFormatted() {
@@ -1285,13 +1276,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     // Check trial expired
     final trialStart = profile.trialStart;
-    if (trialStart != null) {
-      final start = DateTime.tryParse(trialStart.toString());
-      if (start != null) {
-        final daysSince = DateTime.now().difference(start).inDays;
-        if (daysSince < 3) return const SizedBox.shrink(); // Trial still active
-      }
-    }
+    if (trialStart == null) return const SizedBox.shrink(); // Trial is active (default)
+    
+    final daysSince = DateTime.now().difference(trialStart).inDays;
+    if (daysSince <= 3) return const SizedBox.shrink(); // Trial still active
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),

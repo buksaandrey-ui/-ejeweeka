@@ -60,7 +60,7 @@ class U2PersonalScreen extends ConsumerWidget {
             _readonlyField('Количество дней', p.trainingDays != null ? '${p.trainingDays} дней/нед' : '—'),
             _readonlyField('Где', p.workoutLocation ?? '—'),
             _readonlyField('Оборудование', (p.equipment).isNotEmpty ? p.equipment.join(', ') : '—'),
-            _readonlyField('Ограничения', (p.physicalLimitations ?? []).isNotEmpty ? p.physicalLimitations!.join(', ') : 'Нет'),
+            _readonlyField('Ограничения', (p.physicalLimitations ?? []).isNotEmpty ? p.physicalLimitations.join(', ') : 'Нет'),
           ]),
         ]),
       ),

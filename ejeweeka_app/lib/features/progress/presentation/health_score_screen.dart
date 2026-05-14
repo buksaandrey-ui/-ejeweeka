@@ -24,16 +24,16 @@ class HealthScoreScreen extends ConsumerWidget {
 
     // Calculate individual component scores (0-100)
     final bmiScore = _bmiScore(profile.bmi);
-    final nutritionScore = 72; // placeholder — would come from calorie_log compliance
-    final hydrationScore = 65; // placeholder — would come from water_log avg
-    final activityScore = 58; // placeholder — would come from activity_log frequency
-    final sleepScore = 70; // placeholder — would come from sleep data
-    final waistScore = 60; // placeholder — would come from waist_to_height
+    const nutritionScore = 72; // placeholder — would come from calorie_log compliance
+    const hydrationScore = 65; // placeholder — would come from water_log avg
+    const activityScore = 58; // placeholder — would come from activity_log frequency
+    const sleepScore = 70; // placeholder — would come from sleep data
+    const waistScore = 60; // placeholder — would come from waist_to_height
 
     // White sees only BMI + nutrition, Black+ sees all 6
     final components = <_Component>[
       _Component('ИМТ', bmiScore, Icons.monitor_weight_outlined, const Color(0xFF42A5F5), true),
-      _Component('Питание', nutritionScore, Icons.restaurant_outlined, const Color(0xFF10B981), true),
+      const _Component('Питание', nutritionScore, Icons.restaurant_outlined, Color(0xFF10B981), true),
       _Component('Гидратация', hydrationScore, Icons.water_drop_outlined, const Color(0xFF06B6D4), isBlack),
       _Component('Активность', activityScore, Icons.directions_run_outlined, const Color(0xFF6366F1), isBlack),
       _Component('Сон', sleepScore, Icons.bedtime_outlined, const Color(0xFF8B5CF6), isBlack),

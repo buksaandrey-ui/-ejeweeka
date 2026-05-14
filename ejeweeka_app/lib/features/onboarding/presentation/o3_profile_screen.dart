@@ -7,7 +7,6 @@
 //     «Хотел(а) бы также снизить вес?» → Да → O-4, Нет → O-5
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ejeweeka_app/core/router/route_names.dart';
@@ -71,10 +70,13 @@ class _O3ProfileScreenState extends ConsumerState<O3ProfileScreen> {
         _heightCtrl.text.isNotEmpty &&
         _weightCtrl.text.isNotEmpty;
 
+    if (!hasBasics) return false;
+    
     final profile = ref.read(profileProvider);
-    // Checkbox: null или false = "не хочу снизить вес"
+    final a = int.tryParse(_ageCtrl.text) ?? 0;
+    if (profile.goal == 'age_adaptation' && a > 0 && a < 40) return false;
 
-    return hasBasics;
+    return true;
   }
 
   void _recalculate() {
@@ -92,9 +94,11 @@ class _O3ProfileScreenState extends ConsumerState<O3ProfileScreen> {
 
   Future<void> _proceed() async {
     if (!_isValid) return;
+    
+    final profile = ref.read(profileProvider);
+
     final h = double.tryParse(_heightCtrl.text) ?? 0;
     final w = double.tryParse(_weightCtrl.text) ?? 0;
-    final profile = ref.read(profileProvider);
     final needsBranch = !['weight_loss', 'muscle_gain', 'maintenance'].contains(profile.goal);
 
     if (needsBranch) {
@@ -119,6 +123,7 @@ class _O3ProfileScreenState extends ConsumerState<O3ProfileScreen> {
     });
 
     if (!mounted) return;
+    if (GoRouterState.of(context).uri.queryParameters['fromSummary'] == 'true') return;
     // GoRouter redirect will handle O-4 skip if goal != weight_loss
     context.go(Routes.o4WeightLoss);
   }
@@ -206,6 +211,27 @@ class _O3ProfileScreenState extends ConsumerState<O3ProfileScreen> {
             isDecimal: false,
             onChanged: (_) { setState(() {}); _recalculate(); _saveData(); },
           ),
+          
+          if (profile.goal == 'age_adaptation' && (int.tryParse(_ageCtrl.text) ?? 0) > 0 && (int.tryParse(_ageCtrl.text) ?? 0) < 40) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFEBEE),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.4)),
+              ),
+              child: const Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Icon(Icons.error_outline_rounded, color: Color(0xFFEF4444), size: 20),
+                SizedBox(width: 8),
+                Expanded(child: Text(
+                  'Выберите другую цель на предыдущем шаге или введите возраст старше 40 лет.',
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: Color(0xFFB91C1C), height: 1.4),
+                )),
+              ]),
+            ),
+          ],
+          
           const SizedBox(height: 20),
 
           // ── Блок «Параметры тела» ─────────────────────────────
@@ -299,7 +325,7 @@ class _O3ProfileScreenState extends ConsumerState<O3ProfileScreen> {
                     ),
                     const SizedBox(width: 12),
                     const Expanded(
-                      child: Text('Хотел(а) бы также снизить вес',
+                      child: Text('Есть цель также снизить вес',
                         style: TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w600)),
                     ),
                   ],

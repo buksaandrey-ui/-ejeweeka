@@ -65,7 +65,7 @@ class O175DisclaimerScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               _disclaimerItem(
                 Icons.medical_information_outlined,
-                'ejeweeka не является медицинским приложением',
+                'ejeweeka создана для целей Wellness & Fitness',
                 'Приложение создано как инструмент персонализации питания.',
               ),
               const SizedBox(height: 16),

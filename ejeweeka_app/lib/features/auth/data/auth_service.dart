@@ -4,11 +4,14 @@
 
 import 'package:dio/dio.dart';
 import 'package:ejeweeka_app/core/storage/secure_storage.dart';
+import 'package:ejeweeka_app/features/onboarding/data/profile_repository.dart';
 
 class AuthService {
   final Dio _dio;
   static const _tokenKey = 'auth_token';
   static const _uuidKey = 'anonymous_uuid';
+  static const _appProfileIdKey = 'app_profile_id';
+  static const _entitlementStatusKey = 'entitlement_status';
 
   AuthService(this._dio);
 
@@ -22,6 +25,8 @@ class AuthService {
   }
 
   Future<String?> getStoredUuid() => SecureStorageService.read(_uuidKey);
+  Future<String?> getAppProfileId() => SecureStorageService.read(_appProfileIdKey);
+  Future<String?> getEntitlementStatus() => SecureStorageService.read(_entitlementStatusKey);
 
   // ── Private ───────────────────────────────────────────────────
 
@@ -32,8 +37,17 @@ class AuthService {
         final data = res.data as Map<String, dynamic>;
         final token = data['token'] as String;
         final uuid = data['anonymous_uuid'] as String;
+        final profileId = data['app_profile_id'] as String;
+        final status = data['entitlement_status'] as String;
+        
         await SecureStorageService.write(_tokenKey, token);
         await SecureStorageService.write(_uuidKey, uuid);
+        await SecureStorageService.write(_appProfileIdKey, profileId);
+        await SecureStorageService.write(_entitlementStatusKey, status);
+        
+        // Sync to UserProfile SSOT
+        await ProfileRepository.saveField('subscription_status', status);
+        
         return token;
       }
     } on DioException catch (e) {

@@ -159,7 +159,11 @@ class _MultiSelectSheetState<T> extends State<_MultiSelectSheet<T>> {
                     return GestureDetector(
                       onTap: () {
                         setState(() {
-                          if (sel) _selected.remove(t.$1); else _selected.add(t.$1);
+                          if (sel) {
+                            _selected.remove(t.$1);
+                          } else {
+                            _selected.add(t.$1);
+                          }
                         });
                       },
                       child: AnimatedContainer(

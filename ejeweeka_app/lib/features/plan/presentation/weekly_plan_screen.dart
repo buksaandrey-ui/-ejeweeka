@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ejeweeka_app/core/router/route_names.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
 import 'package:ejeweeka_app/core/widgets/status_gate.dart';
-import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 import 'package:ejeweeka_app/features/plan/data/meal_plan_model.dart';
 import 'package:ejeweeka_app/features/plan/presentation/meal_detail_screen.dart';
 import 'package:ejeweeka_app/features/plan/presentation/meal_swap_screen.dart';

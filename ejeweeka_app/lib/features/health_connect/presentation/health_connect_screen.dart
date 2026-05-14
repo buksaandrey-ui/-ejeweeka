@@ -177,7 +177,7 @@ class _HealthConnectScreenState extends ConsumerState<HealthConnectScreen> {
         fontWeight: FontWeight.w600)),
       value: _connected ? value : false,
       onChanged: _connected ? (v) { setState(() {}); onChanged(v); } : null,
-      activeColor: AppColors.primary,
+      activeThumbColor: AppColors.primary,
     );
 
   Widget _actions(String platform) => Column(children: [

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ejeweeka_app/core/router/route_names.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
+import 'package:ejeweeka_app/features/onboarding/utils/conflict_resolver.dart';
 
 class O16SummaryScreen extends ConsumerStatefulWidget {
   const O16SummaryScreen({super.key});
@@ -86,16 +87,16 @@ class _O16State extends ConsumerState<O16SummaryScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(child: Column(children: [
-        Padding(padding: const EdgeInsets.fromLTRB(20,16,20,0),
+        const Padding(padding: EdgeInsets.fromLTRB(20,16,20,0),
           child: Row(children: [
-            const Text('ejeweeka', style: TextStyle(fontFamily:'Inter',fontSize:15,fontWeight:FontWeight.w800,color:AppColors.primary)),
+            Text('ejeweeka', style: TextStyle(fontFamily:'Inter',fontSize:15,fontWeight:FontWeight.w800,color:AppColors.primary)),
           ])),
         const SizedBox(height:16),
-        Padding(padding: const EdgeInsets.symmetric(horizontal:20),
+        const Padding(padding: EdgeInsets.symmetric(horizontal:20),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Твой профиль', style: TextStyle(fontFamily:'Inter',fontSize:26,fontWeight:FontWeight.w800,height:1.2)),
-            const SizedBox(height:4),
-            const Text('Проверь данные и создай план', style: TextStyle(fontFamily:'Inter',fontSize:14,color:AppColors.textSecondary)),
+            Text('Твой профиль', style: TextStyle(fontFamily:'Inter',fontSize:26,fontWeight:FontWeight.w800,height:1.2)),
+            SizedBox(height:4),
+            Text('Проверь данные и создай план', style: TextStyle(fontFamily:'Inter',fontSize:14,color:AppColors.textSecondary)),
           ])),
         const SizedBox(height:16),
 
@@ -237,7 +238,7 @@ class _O16State extends ConsumerState<O16SummaryScreen> {
             Container(padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(color: const Color(0xFFFFF7ED), borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: const Color(0xFFFDE68A))),
-              child: const Text('💡 Круто! Ты ответил(а) на вопросы, которые хороший диетолог задаёт за 40–60 минут первичного приёма. Теперь ты в одной кнопке от персонального плана — составленного именно для тебя.',
+              child: const Text('💡 Круто! Ответы получены — хороший нутрициолог собирает эту базу 40–60 минут первичного приёма. Теперь ты в одной кнопке от персонального плана — составленного именно для тебя.',
                 style: TextStyle(fontFamily:'Inter',fontSize:12,color:Color(0xFF92400E),height:1.5))),
             const SizedBox(height:12),
             GestureDetector(onTap: () => context.go(Routes.o25AiPersonality),
@@ -258,6 +259,12 @@ class _O16State extends ConsumerState<O16SummaryScreen> {
   }
 
   Future<void> _submit() async {
+    final p = ref.read(profileProvider);
+
+    // Валидация несовместимостей (Conflict Resolver)
+    final bool isResolved = await ConflictResolver.resolve(context, ref, p);
+    if (!isResolved) return; // user dismissed the dialog
+
     await ref.read(profileNotifierProvider.notifier).saveFields({
       'notif_meals':_nMeals,'notif_vitamins':_nVit,'notif_medications':_nMeds,
       'notif_workouts':_nWork,'notif_water':_nWater,'notif_weekly_report':_nReport,
@@ -349,7 +356,7 @@ class _O16State extends ConsumerState<O16SummaryScreen> {
   String _barrier(String b) => {'hunger':'Постоянный голод','sweets':'Тяга к сладкому','evening_binge':'Срывы вечером/ночью',
     'no_time':'Нет времени готовить','on_the_go':'Ем на ходу','hard_to_refuse':'Сложно отказаться от привычной еды',
     'emotional':'Эмоциональное переедание','social':'Праздники и окружение',
-    'no_results':'Нет результата','never_tried':'Пока не пробовал(а)',
+    'no_results':'Нет результата','never_tried':'Без опыта',
     'lack_time':'Нехватка времени','lack_motivation':'Мотивация','stress':'Стресс',
     'social_pressure':'Социальное давление','plateau':'Плато','sweet_tooth':'Тяга к сладкому','none':'Нет барьеров'}[b] ?? b;
   String _mealType(String m) => {'soups':'Супы','porridges':'Каши','salads':'Салаты','smoothies':'Смузи','offal':'Субпродукты','eat_all':'Ем всё'}[m] ?? m;

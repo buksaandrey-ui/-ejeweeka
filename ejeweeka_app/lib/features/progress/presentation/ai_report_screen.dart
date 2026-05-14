@@ -74,10 +74,10 @@ class AiReportScreen extends ConsumerWidget {
       border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
     ),
     child: Column(children: [
-      Row(children: [
-        const Icon(Icons.auto_awesome_rounded, size: 24, color: AppColors.primary),
-        const SizedBox(width: 10),
-        const Text('Еженедельный отчёт', style: TextStyle(fontFamily: 'Inter',
+      const Row(children: [
+        Icon(Icons.auto_awesome_rounded, size: 24, color: AppColors.primary),
+        SizedBox(width: 10),
+        Text('Еженедельный отчёт', style: TextStyle(fontFamily: 'Inter',
           fontSize: 16, fontWeight: FontWeight.w700)),
       ]),
       const SizedBox(height: 8),

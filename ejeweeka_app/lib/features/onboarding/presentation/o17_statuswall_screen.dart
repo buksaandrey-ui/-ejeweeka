@@ -8,7 +8,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ejeweeka_app/core/router/route_names.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
-import 'package:ejeweeka_app/core/utils/app_config.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 
 class O17StatuswallScreen extends ConsumerStatefulWidget {
@@ -129,7 +128,7 @@ class _O17StatuswallScreenState extends ConsumerState<O17StatuswallScreen>
                       activeIndex: _activeIndex,
                       onTap: () => _toggle(0),
                       config: _AccTheme.white,
-                      features: [
+                      features: const [
                         _Feat(Icons.calendar_today_rounded, 'План питания на 3 дня'),
                         _Feat(Icons.restaurant_rounded, '1 вариант блюда (без пошаговых инструкций)'),
                         _Feat(Icons.show_chart_rounded, 'Базовый прогресс'),
@@ -147,11 +146,11 @@ class _O17StatuswallScreenState extends ConsumerState<O17StatuswallScreen>
                       plusLabel: 'Все функции Статуса White',
                       features: [
                         _Feat(Icons.event_available_rounded, dynamicPlanStr),
-                        _Feat(Icons.edit_rounded, 'Учет напитков и ручная коррекция плана (ввод блюд)'),
-                        _Feat(Icons.restaurant_rounded, '2 варианта блюд на выбор с пошаговыми инструкциями'),
-                        _Feat(Icons.description_rounded, 'Смарт-отчёты'),
+                        const _Feat(Icons.edit_rounded, 'Учет напитков и ручная коррекция плана (ввод блюд)'),
+                        const _Feat(Icons.restaurant_rounded, '2 варианта блюд на выбор с пошаговыми инструкциями'),
+                        const _Feat(Icons.description_rounded, 'Смарт-отчёты'),
                         _Feat(Icons.monitor_heart_rounded, medsFeatureLabel),
-                        _Feat(Icons.palette_rounded, '4 темы: Светлая, Океан, Закат, Лес'),
+                        const _Feat(Icons.palette_rounded, '4 темы: Светлая, Океан, Закат, Лес'),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -164,10 +163,10 @@ class _O17StatuswallScreenState extends ConsumerState<O17StatuswallScreen>
                       config: _AccTheme.gold,
                       plusLabel: 'Все функции Статуса Black',
                       features: [
-                        _Feat(Icons.restaurant_rounded, '3 варианта блюд на выбор с пошаговыми инструкциями'),
-                        _Feat(Icons.camera_alt_rounded, 'Фото-анализ (5 раз в день) с коррекцией плана'),
-                        if (hasTraining) _Feat(Icons.fitness_center_rounded, 'Персональные тренировки с видео'),
-                        _Feat(Icons.palette_rounded, '6 тем (добавляются премиальные: Gold и 4 Сезона)'),
+                        const _Feat(Icons.restaurant_rounded, '3 варианта блюд на выбор с пошаговыми инструкциями'),
+                        const _Feat(Icons.camera_alt_rounded, 'Фото-анализ (5 раз в день) с коррекцией плана'),
+                        if (hasTraining) const _Feat(Icons.fitness_center_rounded, 'Персональные тренировки с видео'),
+                        const _Feat(Icons.palette_rounded, '6 тем (добавляются премиальные: Gold и 4 Сезона)'),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -179,7 +178,7 @@ class _O17StatuswallScreenState extends ConsumerState<O17StatuswallScreen>
                       onTap: () => _toggle(3),
                       config: _AccTheme.family,
                       plusLabel: 'Всё из Статуса Gold',
-                      features: [
+                      features: const [
                         _Feat(Icons.group_rounded, 'Объединённый план для всей семьи'),
                         _Feat(Icons.shopping_cart_rounded, 'Общий список покупок'),
                       ],
@@ -240,28 +239,7 @@ class _O17StatuswallScreenState extends ConsumerState<O17StatuswallScreen>
                 ),
               ),
 
-              // ── Activation Code Link ──────────────────────────
-              if (!AppConfig.isAppReviewMode)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 40),
-                  child: TextButton(
-                    onPressed: () {
-                      context.push(Routes.activation);
-                    },
-                    style: TextButton.styleFrom(
-                      foregroundColor: AppColors.textSecondary,
-                    ),
-                    child: const Text(
-                      'У меня есть код активации',
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
-                ),
+              // Activation Code Link removed — forbidden in iOS (App Store Guideline 3.1.1)
             ],
           ),
         ),

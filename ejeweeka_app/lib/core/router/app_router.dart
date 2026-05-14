@@ -5,7 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 import 'package:ejeweeka_app/core/router/route_names.dart';

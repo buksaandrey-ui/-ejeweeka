@@ -78,7 +78,7 @@ class _O0WelcomeScreenState extends ConsumerState<O0WelcomeScreen> {
               width: 40, height: 4,
               decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)),
             ),
-            const Text('⚡ Выбери тестовый профиль', style: TextStyle(color: Colors.amber, fontSize: 16, fontWeight: FontWeight.bold)),
+            const Text('DEV: Выбери тестовый профиль', style: TextStyle(color: Colors.amber, fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
@@ -287,7 +287,7 @@ class _O0WelcomeScreenState extends ConsumerState<O0WelcomeScreen> {
                           border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
                         ),
                         child: const Text(
-                          '⚡ DEBUG: 30 пресетов → выбери и на дашборд',
+                          'DEBUG: 30 пресетов → выбери и на дашборд',
                           style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: Colors.amber),
                         ),
                       ),
@@ -315,7 +315,7 @@ class _O0WelcomeScreenState extends ConsumerState<O0WelcomeScreen> {
                       }
                     },
                     child: Text(
-                      '🔄 DEV: Сбросить все данные',
+                      'DEV: Сбросить все данные',
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 12,

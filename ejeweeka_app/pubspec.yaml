@@ -1,7 +1,7 @@
 name: ejeweeka_app
 description: ejeweeka — персональная wellness-система. План питания, КБЖУ, витамины и анализ еды по фото.
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
   sdk: '>=3.4.0 <4.0.0'

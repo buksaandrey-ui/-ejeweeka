@@ -48,14 +48,22 @@ class _O6HealthScreenState extends ConsumerState<O6HealthScreen> {
   void _toggleSymptom(String key) {
     setState(() {
       if (key == 'no_symptoms') { _symptoms.clear(); _symptoms.add('no_symptoms'); }
-      else { _symptoms.remove('no_symptoms'); if (_symptoms.contains(key)) _symptoms.remove(key); else _symptoms.add(key); }
+      else { _symptoms.remove('no_symptoms'); if (_symptoms.contains(key)) {
+        _symptoms.remove(key);
+      } else {
+        _symptoms.add(key);
+      } }
     });
   }
 
   void _toggleDisease(String key) {
     setState(() {
       if (key == 'no_disease') { _diseases.clear(); _diseases.add('no_disease'); }
-      else { _diseases.remove('no_disease'); if (_diseases.contains(key)) _diseases.remove(key); else _diseases.add(key); }
+      else { _diseases.remove('no_disease'); if (_diseases.contains(key)) {
+        _diseases.remove(key);
+      } else {
+        _diseases.add(key);
+      } }
     });
   }
 
@@ -77,6 +85,7 @@ class _O6HealthScreenState extends ConsumerState<O6HealthScreen> {
     _saveData();
     final profile = ref.read(profileProvider);
     if (!mounted) return;
+    if (GoRouterState.of(context).uri.queryParameters['fromSummary'] == 'true') return;
     if (profile.gender == 'female') {
       context.go(Routes.o7WomensHealth);
     } else {
@@ -106,8 +115,8 @@ class _O6HealthScreenState extends ConsumerState<O6HealthScreen> {
   ];
 
   static const _diseaseItems = <(String, String)>[
-    ('diabetes_2', 'Особенности углеводного обмена (2 тип)'),
-    ('diabetes_1', 'Особенности углеводного обмена (1 тип)'),
+    ('diabetes_2', 'Повышенный сахар / Резистентность (2 тип)'),
+    ('diabetes_1', 'Повышенный сахар (1 тип)'),
     ('prediabetes', 'Преддиабет'),
     ('insulin_resistance', 'Инсулинорезистентность'),
     ('high_cholesterol', 'Повышенный холестерин'),
@@ -115,7 +124,7 @@ class _O6HealthScreenState extends ConsumerState<O6HealthScreen> {
     ('thyroid', 'Особенности щитовидной железы'),
     ('gi_disease', 'Особенности ЖКТ'),
     ('kidney_disease', 'Особенности работы почек'),
-    ('gout', 'Подагра'),
+    ('gout', 'Диета при повышенной мочевой кислоте (Подагра)'),
     ('no_disease', 'Нет или не знаю'),
     ('other_disease', 'Другое'),
   ];

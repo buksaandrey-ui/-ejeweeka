@@ -2,17 +2,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ejeweeka_app/core/utils/motivation_engine.dart';
+import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 
-class WorkoutDetailScreen extends StatefulWidget {
+class WorkoutDetailScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> workout;
 
   const WorkoutDetailScreen({super.key, required this.workout});
 
   @override
-  State<WorkoutDetailScreen> createState() => _WorkoutDetailScreenState();
+  ConsumerState<WorkoutDetailScreen> createState() => _WorkoutDetailScreenState();
 }
 
-class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
+class _WorkoutDetailScreenState extends ConsumerState<WorkoutDetailScreen> {
   // Состояние: индекс упражнения -> массив булевых значений (выполнены ли подходы)
   final Map<int, List<bool>> _setsProgress = {};
   
@@ -89,11 +92,13 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
               children: [
                 _buildHeader(),
                 Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 100), // Отступ под плашку таймера
-                    itemCount: exercises.length,
-                    itemBuilder: (context, i) => _buildExerciseCard(exercises[i] as Map<String, dynamic>, i),
-                  ),
+                  child: exercises.isEmpty
+                      ? _buildEmptyActivityStub()
+                      : ListView.builder(
+                          padding: const EdgeInsets.fromLTRB(20, 16, 20, 100), // Отступ под плашку таймера
+                          itemCount: exercises.length,
+                          itemBuilder: (context, i) => _buildExerciseCard(exercises[i] as Map<String, dynamic>, i),
+                        ),
                 ),
               ],
             ),
@@ -133,6 +138,82 @@ class _WorkoutDetailScreenState extends State<WorkoutDetailScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyActivityStub() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.directions_run_rounded,
+                  size: 52, color: AppColors.primary),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Время действовать!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Для этой активности нет пошаговых инструкций. Просто выполни её в своём темпе!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 15,
+                color: AppColors.textSecondary,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  HapticFeedback.heavyImpact();
+                  final profile = ref.read(profileProvider);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${MotivationEngine.getPostWorkout(profile)}! Активность завершена.'),
+                      backgroundColor: const Color(0xFF10B981),
+                    ),
+                  );
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(Icons.check_circle_rounded, color: Colors.white),
+                label: const Text('Сделано'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF10B981),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16)),
+                  textStyle: const TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

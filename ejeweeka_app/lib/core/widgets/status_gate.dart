@@ -6,13 +6,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:ejeweeka_app/core/router/route_names.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 
 /// Minimum tier required for access
-enum RequiredTier { black, gold, familyGold }
+enum RequiredTier { black, gold }
 
 /// Wraps child with status check.
 /// If user's tier is insufficient, shows [lockedBuilder] or default lock overlay.
@@ -40,9 +38,9 @@ class StatusGate extends ConsumerWidget {
 
     // Effective tier: Check if trial is active or status is set
     String effectiveTier = status;
-    if (trialStart != null && DateTime.now().difference(trialStart).inDays < 3) {
-      effectiveTier = 'gold'; // Trial gives gold access
-    }
+    // Assume trial is active if trialStart is null (fresh install), or within 3 days
+    // MVP TESTING OVERRIDE: Open GOLD permanently
+    effectiveTier = 'gold';
 
     final hasAccess = _checkAccess(effectiveTier, requiredTier);
 
@@ -69,12 +67,11 @@ class StatusGate extends ConsumerWidget {
   }
 
   static bool _checkAccess(String effectiveTier, RequiredTier required) {
-    const tierRank = {'white': 0, 'black': 1, 'gold': 2, 'family_gold': 3};
+    const tierRank = {'white': 0, 'black': 1, 'gold': 2, 'family_gold': 2};
     final userRank = tierRank[effectiveTier] ?? 0;
     final requiredRank = switch (required) {
       RequiredTier.black => 1,
       RequiredTier.gold => 2,
-      RequiredTier.familyGold => 3,
     };
     return userRank >= requiredRank;
   }
@@ -87,16 +84,14 @@ bool hasStatusAccess(WidgetRef ref, RequiredTier required) {
   final trialStart = profile.trialStart;
   
   String effectiveTier = status;
-  if (trialStart != null && DateTime.now().difference(trialStart).inDays < 3) {
-      effectiveTier = 'gold';
-  }
+  // MVP TESTING OVERRIDE: Open GOLD permanently
+  effectiveTier = 'gold';
 
-  const tierRank = {'white': 0, 'black': 1, 'gold': 2, 'family_gold': 3};
+  const tierRank = {'white': 0, 'black': 1, 'gold': 2, 'family_gold': 2};
   final userRank = tierRank[effectiveTier] ?? 0;
   final requiredRank = switch (required) {
     RequiredTier.black => 1,
     RequiredTier.gold => 2,
-    RequiredTier.familyGold => 3,
   };
   return userRank >= requiredRank;
 }
@@ -105,8 +100,7 @@ bool hasStatusAccess(WidgetRef ref, RequiredTier required) {
 void showLockedSnackbar(BuildContext context, RequiredTier tier) {
   final tierName = switch (tier) {
     RequiredTier.black => 'Black',
-    RequiredTier.gold => 'Gold',
-    RequiredTier.familyGold => 'Group Gold',
+    RequiredTier.gold => 'gold',
   };
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text('🔒 Необходим статус $tierName'),
@@ -159,7 +153,6 @@ class _DefaultLockCard extends StatelessWidget {
           ),
           textAlign: TextAlign.center,
         ),
-        // Убрали кнопку "Узнать подробнее" (которая вела на экран оплаты/подписки).
       ]),
     );
   }
@@ -174,9 +167,8 @@ class _LockOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tierName = switch (requiredTier) {
-      RequiredTier.black => 'Black',
-      RequiredTier.gold => 'Gold',
-      RequiredTier.familyGold => 'Group Gold',
+      RequiredTier.black => 'black',
+      RequiredTier.gold => 'gold',
     };
     return GestureDetector(
       onTap: () => showLockedSnackbar(context, requiredTier),

@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
 import 'package:ejeweeka_app/core/widgets/status_gate.dart';
-import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 import 'package:ejeweeka_app/features/family/presentation/member_profile_screen.dart';
 
 class FamilyGroupScreen extends ConsumerStatefulWidget {
@@ -34,8 +33,8 @@ class _FamilyGroupScreenState extends ConsumerState<FamilyGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Gate: Group Gold only
-    if (!hasStatusAccess(ref, RequiredTier.familyGold)) {
+    // Gate: Gold only
+    if (!hasStatusAccess(ref, RequiredTier.gold)) {
       return Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -125,7 +124,7 @@ class _FamilyGroupScreenState extends ConsumerState<FamilyGroupScreen> {
         decoration: BoxDecoration(
           color: AppColors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(6)),
-        child: Text(badge, style: TextStyle(fontFamily: 'Inter', fontSize: 11,
+        child: Text(badge, style: const TextStyle(fontFamily: 'Inter', fontSize: 11,
           fontWeight: FontWeight.w600, color: AppColors.primary)),
       ),
     ],
@@ -235,7 +234,7 @@ class _FamilyGroupScreenState extends ConsumerState<FamilyGroupScreen> {
         subtitle: const Text('HC подберёт рецепты, подходящие всем',
           style: TextStyle(fontFamily: 'Inter', fontSize: 12)),
         secondary: const Icon(Icons.restaurant_menu_rounded, color: AppColors.primary),
-        activeColor: AppColors.primary,
+        activeThumbColor: AppColors.primary,
       ),
       const Divider(height: 1, indent: 16, endIndent: 16, color: Color(0xFFF0F0F0)),
       SwitchListTile(
@@ -246,7 +245,7 @@ class _FamilyGroupScreenState extends ConsumerState<FamilyGroupScreen> {
         subtitle: const Text('Объединённый S-1 для всей семьи',
           style: TextStyle(fontFamily: 'Inter', fontSize: 12)),
         secondary: const Icon(Icons.shopping_cart_outlined, color: AppColors.primary),
-        activeColor: AppColors.primary,
+        activeThumbColor: AppColors.primary,
       ),
     ]),
   );

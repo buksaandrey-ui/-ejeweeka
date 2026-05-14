@@ -1,14 +1,12 @@
 // lib/features/profile/presentation/u12_status_screen.dart
-// U-12: Статус — сравнение, текущий план, управление
+// U-12: Статус профиля — IAP paywall, email sync, account management
 // Спека: screens-map.md §U-12
 
-import 'package:go_router/go_router.dart';
 
 import 'package:flutter/material.dart';
 import 'package:ejeweeka_app/shared/widgets/hc_gradient_button.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 
@@ -43,7 +41,7 @@ class U12StatusScreen extends ConsumerWidget {
           onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
         ),
-        title: const Text('Статус',
+        title: const Text('Статус профиля',
           style: TextStyle(fontFamily: 'Inter', fontSize: 17, fontWeight: FontWeight.w700)),
         centerTitle: true,
       ),
@@ -62,7 +60,7 @@ class U12StatusScreen extends ConsumerWidget {
 
           _statusCard(
             name: 'White',
-            price: 'Бесплатно',
+            price: 'Базовый',
             features: ['Базовый план питания', 'Трекер веса', '2 цветовые темы'],
             color: const Color(0xFF9CA3AF),
             isActive: currentStatus == 'white',
@@ -70,7 +68,7 @@ class U12StatusScreen extends ConsumerWidget {
           const SizedBox(height: 8),
           _statusCard(
             name: 'Black',
-            price: '490 ₽/мес',
+            price: 'Расширенный',
             features: ['Полные рецепты', 'Витамины и БАДы', 'Умный отчёты', '5 цветовых тем', 'Health Connect'],
             color: const Color(0xFF1A1A1A),
             isActive: currentStatus == 'black',
@@ -78,28 +76,64 @@ class U12StatusScreen extends ConsumerWidget {
           const SizedBox(height: 8),
           _statusCard(
             name: 'Gold',
-            price: '990 ₽/мес',
+            price: 'Максимальный',
             features: ['Всё из Black', 'Фото-анализ (5/день)', 'План тренировок', '7 тем', 'HC-чат (RAG)'],
             color: const Color(0xFFB45309),
             isActive: currentStatus == 'gold',
           ),
-          const SizedBox(height: 8),
-          _statusCard(
-            name: 'Group Gold',
-            price: '990 ₽ + 690 ₽/чел',
-            features: ['Всё из Gold для семьи', 'До 4 участников', 'Общий список покупок', 'Общие блюда'],
-            color: const Color(0xFF991B1B),
-            isActive: currentStatus == 'family_gold',
-          ),
           const SizedBox(height: 24),
 
-          // ── Блок 4 — Управление ───────────────────────────────
+          // ── Блок IAP — Apple StoreKit ──────────────────────────
           SizedBox(
             width: double.infinity,
             height: 52,
             child: HcGradientButton(
-              onPressed: () => context.push('/onboarding/activation'),
-              text: 'Ввести код активации',
+              onPressed: () {
+                // TODO: StoreKit IAP purchase flow
+              },
+              text: 'Улучшить статус',
+            ),
+          ),
+          const SizedBox(height: 8),
+          Center(
+            child: TextButton(
+              onPressed: () {
+                // TODO: StoreKit restore purchases
+              },
+              child: const Text('Восстановить покупки Apple',
+                style: TextStyle(fontFamily: 'Inter', fontSize: 13,
+                  color: AppColors.textSecondary)),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+          // ── Блок 3 — Существующий профиль ──────────────────────
+          const Text('СИНХРОНИЗАЦИЯ',
+            style: TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w700,
+              color: AppColors.textSecondary, letterSpacing: 0.8)),
+          const SizedBox(height: 10),
+          Center(
+            child: TextButton(
+              onPressed: () {
+                // TODO: Email magic code login flow
+              },
+              child: const Text('У меня уже есть профиль',
+                style: TextStyle(fontFamily: 'Inter', fontSize: 14,
+                  fontWeight: FontWeight.w600, color: AppColors.primary,
+                  decoration: TextDecoration.underline)),
+            ),
+          ),
+
+          const SizedBox(height: 24),
+          // ── Блок 4 — Удаление аккаунта ────────────────────────
+          Center(
+            child: TextButton(
+              onPressed: () {
+                // TODO: Account deletion flow
+              },
+              child: const Text('Удалить аккаунт',
+                style: TextStyle(fontFamily: 'Inter', fontSize: 13,
+                  color: Color(0xFFEF4444))),
             ),
           ),
         ]),
@@ -109,16 +143,14 @@ class U12StatusScreen extends ConsumerWidget {
 
   Widget _currentPlanCard(String status, int? trialDays) {
     final label = switch (status) {
-      'black' => 'ejeweeka Black',
-      'gold' => 'ejeweeka Gold',
-      'family_gold' => 'ejeweeka Family Gold',
-      _ => 'ejeweeka White',
+      'black' => 'ejeweeka black',
+      'gold' => 'ejeweeka gold',
+      _ => 'ejeweeka white',
     };
 
     final color = switch (status) {
       'black' => const Color(0xFF1A1A1A),
       'gold' => const Color(0xFFB45309),
-      'family_gold' => const Color(0xFF991B1B),
       _ => AppColors.textSecondary,
     };
 

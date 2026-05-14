@@ -107,7 +107,7 @@ class PlanRouter:
             # Дополнительно: проверяем ингредиенты на наличие аллергенов
             if allergens_lower and meal.ingredients:
                 ingredient_names = ' '.join([
-                    (ing.get('name') or '').lower() for ing in (meal.ingredients or [])
+                    (ing.lower() if isinstance(ing, str) else (ing.get('name') or '').lower()) for ing in (meal.ingredients or [])
                 ])
                 has_allergen_in_ingredients = any(
                     allergen in ingredient_names for allergen in allergens_lower
@@ -134,7 +134,7 @@ class PlanRouter:
             # 3. Проверка нелюбимых продуктов (МЯГКИЙ ЗАПРЕТ)
             if disliked_lower and meal.ingredients:
                 ingredient_names = ' '.join([
-                    (ing.get('name') or '').lower() for ing in (meal.ingredients or [])
+                    (ing.lower() if isinstance(ing, str) else (ing.get('name') or '').lower()) for ing in (meal.ingredients or [])
                 ])
                 has_disliked = any(
                     disliked in ingredient_names for disliked in disliked_lower
@@ -154,7 +154,7 @@ class PlanRouter:
             # 4. Проверка диетических ограничений
             if restrictions_lower and meal.ingredients:
                 ingredient_names = ' '.join([
-                    (ing.get('name') or '').lower() for ing in (meal.ingredients or [])
+                    (ing.lower() if isinstance(ing, str) else (ing.get('name') or '').lower()) for ing in (meal.ingredients or [])
                 ])
                 blocked = False
                 
@@ -166,7 +166,7 @@ class PlanRouter:
                                        'индейка', 'баранина', 'креветки', 'кальмар']
                     # Проверяем каждый ингредиент отдельно (не строку целиком)
                     for ing in (meal.ingredients or []):
-                        ing_name = (ing.get('name') or '').lower()
+                        ing_name = (ing.lower() if isinstance(ing, str) else (ing.get('name') or '')).lower()
                         if _is_vegan_safe(ing_name):
                             continue  # растительный аналог — пропускаем
                         if any(kw in ing_name for kw in animal_keywords):
@@ -184,7 +184,7 @@ class PlanRouter:
                     dairy_keywords = ['молоко', 'кефир', 'творог', 'сыр', 'сливки', 'сметана',
                                       'йогурт', 'масло сливочное']
                     for ing in (meal.ingredients or []):
-                        ing_name = (ing.get('name') or '').lower()
+                        ing_name = (ing.lower() if isinstance(ing, str) else (ing.get('name') or '')).lower()
                         if _is_vegan_safe(ing_name):
                             continue
                         if any(kw in ing_name for kw in dairy_keywords):
@@ -249,6 +249,14 @@ class PlanRouter:
             
         scaled_ingredients = []
         for ing in (recipe.ingredients or []):
+            if isinstance(ing, str):
+                scaled_ingredients.append({
+                    "name": ing,
+                    "amount": 100,
+                    "unit": "г"
+                })
+                continue
+                
             base_amount = ing.get("amount", ing.get("grams", 100))
             try:
                 # Попытка масштабировать, если это число

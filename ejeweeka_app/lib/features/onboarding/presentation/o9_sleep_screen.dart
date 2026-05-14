@@ -89,6 +89,7 @@ class _O9SleepScreenState extends ConsumerState<O9SleepScreen> {
   Future<void> _proceed() async {
     if (!_isValid) return;
     _saveData();
+    if (GoRouterState.of(context).uri.queryParameters["fromSummary"] == "true") return;
     if (mounted) context.go(Routes.o10Activity);
   }
 
@@ -181,12 +182,12 @@ class _O9SleepScreenState extends ConsumerState<O9SleepScreen> {
                 color: const Color(0xFFFFF3E0), borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: const Color(0xFFFF9800).withValues(alpha: 0.4)),
               ),
-              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Icon(Icons.warning_amber_rounded, color: Color(0xFFFF9800), size: 20),
-                const SizedBox(width: 8),
+              child: const Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Icon(Icons.warning_amber_rounded, color: Color(0xFFFF9800), size: 20),
+                SizedBox(width: 8),
                 Expanded(child: Text(
                   'Ты ложитесь спать до окончания окна питания. Рекомендуем сдвинуть первый приём.',
-                  style: const TextStyle(fontFamily: 'Inter', fontSize: 13, color: Color(0xFFE65100), height: 1.4),
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: Color(0xFFE65100), height: 1.4),
                 )),
               ]),
             ),
@@ -337,7 +338,7 @@ class _O9SleepScreenState extends ConsumerState<O9SleepScreen> {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
         // Duration display
-        Text('ПРОДОЛЖИТЕЛЬНОСТЬ СНА',
+        const Text('ПРОДОЛЖИТЕЛЬНОСТЬ СНА',
           style: TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w700,
             color: AppColors.textSecondary, letterSpacing: 0.8)),
         const SizedBox(height: 6),

@@ -4,7 +4,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:dio/dio.dart';
 import 'package:ejeweeka_app/core/network/endpoints.dart';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
@@ -19,27 +18,26 @@ import 'package:ejeweeka_app/features/profile/presentation/u12_status_screen.dar
 import 'package:ejeweeka_app/features/profile/presentation/u16_about_screen.dart';
 import 'package:ejeweeka_app/features/family/presentation/family_group_screen.dart';
 import 'package:ejeweeka_app/features/health_connect/presentation/health_connect_screen.dart';
+import 'package:ejeweeka_app/features/profile/presentation/cheat_sheet_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
-  static const _tgBotUrl = 'https://ejeweeka.app/subscribe';
+  // External billing URL removed for App Store compliance (Guideline 3.1.1)
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
 
     final tierLabel = switch (profile.subscriptionStatus) {
-      'black' => 'ejeweeka Black',
-      'gold' => 'ejeweeka Gold',
-      'family_gold' => 'ejeweeka Family Gold',
-      _ => 'ejeweeka White',
+      'black' => 'ejeweeka black',
+      'gold' => 'ejeweeka gold',
+      _ => 'ejeweeka white',
     };
 
     final tierColor = switch (profile.subscriptionStatus) {
       'black' => const Color(0xFF1A1A1A),
       'gold' => const Color(0xFFB45309),
-      'family_gold' => const Color(0xFF991B1B),
       _ => AppColors.textSecondary,
     };
 
@@ -95,7 +93,7 @@ class ProfileScreen extends ConsumerWidget {
                     profile.bmi != null ? profile.bmi!.toStringAsFixed(1) : '—'),
                 const SizedBox(width: 8),
                 _miniStat(Icons.local_fire_department_outlined, const Color(0xFFF44336), 'Обмен',
-                    profile.tdeeCalculated != null ? '${profile.tdeeCalculated!.toStringAsFixed(0)}' : '—'),
+                    profile.tdeeCalculated != null ? profile.tdeeCalculated!.toStringAsFixed(0) : '—'),
               ]),
               const SizedBox(height: 20),
 
@@ -104,6 +102,7 @@ class ProfileScreen extends ConsumerWidget {
                 _menuItem(Icons.person_outline_rounded, 'Личные данные и цель', 'U-2', context),
                 _menuItem(Icons.medical_services_outlined, 'Здоровье', 'U-3', context),
                 _menuItem(Icons.no_meals_outlined, 'Ограничения и аллергии', 'U-4', context),
+                _menuItem(Icons.security_rounded, 'Лист ограничений', 'U-CheatSheet', context),
                 _menuItem(Icons.medication_outlined, 'Витамины и БАДы', 'U-5', context),
                 _menuItem(Icons.biotech_outlined, 'Анализы', 'U-6', context),
                 _menuItem(Icons.restaurant_outlined, 'Вкусы и предпочтения', 'U-7', context),
@@ -117,10 +116,9 @@ class ProfileScreen extends ConsumerWidget {
 
               _menuSection('Настройки', [
                 _menuItem(Icons.notifications_outlined, 'Напоминания', 'U-11', context),
-                _menuItem(Icons.workspace_premium_outlined, 'Статус', 'U-12', context),
+                _menuItem(Icons.workspace_premium_outlined, 'Статус профиля', 'U-12', context),
                 _menuItem(Icons.palette_outlined, 'Цветовая схема', 'U-13', context),
                 _menuItem(Icons.monitor_heart_outlined, 'Health Connect', 'U-14', context),
-                _menuItem(Icons.family_restroom_rounded, 'Семейный доступ', 'F-1', context),
                 _menuItem(Icons.psychology_outlined, 'Мотивация и барьеры', 'U-15', context),
                 _menuItem(Icons.info_outline_rounded, 'О проекте', 'U-16', context),
               ]),
@@ -138,17 +136,14 @@ class ProfileScreen extends ConsumerWidget {
                     );
                   }
                 }),
-                _actionRow(Icons.refresh_rounded, 'Обновить план питания', AppColors.textPrimary, () {
-                  ref.read(planNotifierProvider.notifier).generate();
-                }),
                 _actionRow(Icons.delete_outline_rounded, 'Удалить все данные', const Color(0xFFF44336), () {
                   _showDeleteDialog(context, ref);
                 }),
               ]),
 
               const SizedBox(height: 12),
-              Text('ejeweeka v2.2.0 • Zero-Knowledge Privacy',
-                style: const TextStyle(fontFamily: 'Inter', fontSize: 11,
+              const Text('ejeweeka v2.2.0 • Zero-Knowledge Privacy',
+                style: TextStyle(fontFamily: 'Inter', fontSize: 11,
                   color: AppColors.textSecondary), textAlign: TextAlign.center),
             ],
           ),
@@ -217,6 +212,7 @@ class ProfileScreen extends ConsumerWidget {
       'F-1' => const FamilyGroupScreen(),
       'U-15' => const U15MotivationScreen(),
       'U-16' => const U16AboutScreen(),
+      'U-CheatSheet' => const CheatSheetScreen(),
       _ => null,
     };
 

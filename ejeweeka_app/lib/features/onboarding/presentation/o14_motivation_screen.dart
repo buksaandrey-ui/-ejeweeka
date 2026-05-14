@@ -46,7 +46,7 @@ class _O14MotivationScreenState extends ConsumerState<O14MotivationScreen> {
     ('emotional', 'Эмоциональное переедание'),
     ('social', 'Праздники, семья, окружение'),
     ('no_results', 'Не вижу результата и теряю мотивацию'),
-    ('never_tried', 'Пока не пробовал(а) всерьёз'),
+    ('never_tried', 'Пока не было серьезных попыток'),
   ];
 
   void _toggleBarrier(String key) {
@@ -73,6 +73,7 @@ class _O14MotivationScreenState extends ConsumerState<O14MotivationScreen> {
   Future<void> _proceed() async {
     if (!_isValid) return;
     _saveData();
+    if (GoRouterState.of(context).uri.queryParameters["fromSummary"] == "true") return;
     if (mounted) context.go(Routes.o15FoodPrefs);
   }
 

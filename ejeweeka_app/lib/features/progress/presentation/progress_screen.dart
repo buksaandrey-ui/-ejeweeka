@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:ejeweeka_app/core/theme/app_theme.dart';
+import 'package:ejeweeka_app/core/utils/motivation_engine.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 import 'package:ejeweeka_app/features/progress/presentation/weight_detail_screen.dart';
 import 'package:ejeweeka_app/features/progress/presentation/activity_detail_screen.dart';
@@ -137,7 +138,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
               const SizedBox(height: 20),
 
               // ── Streak section ─────────────────────────────────────
-              _buildStreak(),
+              _buildStreak(profile),
               const SizedBox(height: 16),
 
               // ── Quick links: AI Report + History ────────────────────
@@ -243,7 +244,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
     );
   }
 
-  Widget _buildStreak() {
+  Widget _buildStreak(dynamic profile) {
     // Calculate streak from entries (consecutive days)
     int streak = 0;
     if (_entries.isNotEmpty) {
@@ -286,7 +287,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             style: const TextStyle(fontFamily: 'Inter', fontSize: 16,
               fontWeight: FontWeight.w800, color: Colors.white)),
           const SizedBox(height: 2),
-          Text(streak > 5 ? 'Отличная серия, продолжай!' : 'Записывай вес каждый день',
+          Text(streak > 5 ? 'Отличная серия, ${MotivationEngine.getPersonaLabel(profile)}!' : 'Записывай вес каждый день',
             style: const TextStyle(fontFamily: 'Inter', fontSize: 13, color: Colors.white70)),
         ])),
       ]),
@@ -448,7 +449,7 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
             child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
               if (isLast || isLow) Padding(
                 padding: const EdgeInsets.only(bottom: 2),
-                child: Text('${e.weight.toStringAsFixed(1)}',
+                child: Text(e.weight.toStringAsFixed(1),
                   style: TextStyle(fontFamily: 'Inter', fontSize: 8, fontWeight: FontWeight.w700,
                     color: isLow ? const Color(0xFF4CAF50) : AppColors.primary)),
               ),

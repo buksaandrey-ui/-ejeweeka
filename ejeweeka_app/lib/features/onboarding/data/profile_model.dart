@@ -139,6 +139,7 @@ class UserProfile {
   bool notifWorkouts = true;
   bool notifWater = true;
   bool notifWeeklyReport = true;
+  int? waterTargetMl;
 
   // ── Health Connect ────────────────────────────────────────────
   bool hcSleep = true;
@@ -238,6 +239,7 @@ class UserProfile {
       case 'notif_medications': notifMedications = value == true || value == 'true'; break;
       case 'notif_workouts': notifWorkouts = value == true || value == 'true'; break;
       case 'notif_water': notifWater = value == true || value == 'true'; break;
+      case 'water_target_ml': waterTargetMl = _parseInt(value); break;
       case 'notif_weekly_report': notifWeeklyReport = value == true || value == 'true'; break;
       case 'hc_sleep': hcSleep = value == true || value == 'true'; break;
       case 'hc_steps': hcSteps = value == true || value == 'true'; break;
@@ -301,6 +303,7 @@ class UserProfile {
     'notif_meals': notifMeals, 'notif_vitamins': notifVitamins,
     'notif_medications': notifMedications, 'notif_workouts': notifWorkouts,
     'notif_water': notifWater, 'notif_weekly_report': notifWeeklyReport,
+    'water_target_ml': waterTargetMl,
     'hc_sleep': hcSleep, 'hc_steps': hcSteps,
     'hc_workouts': hcWorkouts, 'hc_weight': hcWeight,
     'ai_personality': aiPersonality,

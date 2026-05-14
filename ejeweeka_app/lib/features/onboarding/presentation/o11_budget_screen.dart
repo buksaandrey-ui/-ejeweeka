@@ -59,6 +59,7 @@ class _O11BudgetScreenState extends ConsumerState<O11BudgetScreen> {
   Future<void> _proceed() async {
     if (!_isValid) return;
     _saveData();
+    if (GoRouterState.of(context).uri.queryParameters["fromSummary"] == "true") return;
     if (mounted) context.go(Routes.o12BloodTests);
   }
 
@@ -101,16 +102,16 @@ class _O11BudgetScreenState extends ConsumerState<O11BudgetScreen> {
           // ── Стиль готовки — 3 карточки ─────────────────────
           _label('Как ты обычно готовишь?'),
           const SizedBox(height: 10),
-          _cookingCard('daily', '🍳', 'Готовлю каждый день',
+          _cookingCard('daily', 'Готовлю каждый день',
             'Свежие блюда под каждый приём пищи'),
           const SizedBox(height: 8),
-          _cookingCard('batch_2_3_days', '📦', 'Готовлю заранее на 2-3 дня',
+          _cookingCard('batch_2_3_days', 'Готовлю заранее на 2-3 дня',
             'Батч-готовка, контейнеры, разогрев'),
           const SizedBox(height: 8),
-          _cookingCard('batch_weekly', '❄️', 'Раз в неделю (заготовки)',
+          _cookingCard('batch_weekly', 'Раз в неделю (заготовки)',
             'Замораживаю рагу, запеканки, бульоны'),
           const SizedBox(height: 8),
-          _cookingCard('none', '🛒', 'Почти не готовлю',
+          _cookingCard('none', 'Почти не готовлю',
             'Покупаю готовое, доставка, столовая'),
 
           // ── Время готовки (Progressive Disclosure) ─────────
@@ -119,11 +120,11 @@ class _O11BudgetScreenState extends ConsumerState<O11BudgetScreen> {
             _label('Сколько времени за одну готовку?'),
             const SizedBox(height: 10),
             Row(children: [
-              Expanded(child: _timeChip('up_to_15', '⚡ До 15 мин')),
+              Expanded(child: _timeChip('up_to_15', 'До 15 мин')),
               const SizedBox(width: 8),
-              Expanded(child: _timeChip('20_40', '⏱ 20–40 мин')),
+              Expanded(child: _timeChip('20_40', '20–40 мин')),
               const SizedBox(width: 8),
-              Expanded(child: _timeChip('over_60', '👨‍🍳 Больше часа')),
+              Expanded(child: _timeChip('over_60', 'Больше часа')),
             ]),
           ],
         ],
@@ -142,7 +143,7 @@ class _O11BudgetScreenState extends ConsumerState<O11BudgetScreen> {
     const opts = [
       ('economy', 'Экономный', null),
       ('medium', 'Средний', null),
-      ('premium', 'Готов(а) к качественным или премиальным продуктам', null),
+      ('premium', 'Выбираю качественные или премиальные продукты', null),
     ];
     final label = _budget == null
         ? 'Выбери уровень бюджета'
@@ -182,13 +183,17 @@ class _O11BudgetScreenState extends ConsumerState<O11BudgetScreen> {
     );
   }
 
-  Widget _cookingCard(String key, String emoji, String title, String subtitle) {
+  Widget _cookingCard(String key, String title, String subtitle) {
     final sel = _cookingStyle == key;
     return GestureDetector(
       onTap: () {
         setState(() {
           _cookingStyle = key;
-          if (key == 'none') _cookingTime = null;
+          if (key == 'none') {
+            _cookingTime = null;
+          } else if (key == 'batch_weekly') {
+            _cookingTime = 'over_60'; // Force to over 60 mins if weekly
+          }
         });
         _saveData();
       },
@@ -201,8 +206,6 @@ class _O11BudgetScreenState extends ConsumerState<O11BudgetScreen> {
           border: Border.all(color: sel ? AppColors.primary : const Color(0xFFE5E7EB), width: sel ? 1.5 : 1),
         ),
         child: Row(children: [
-          Text(emoji, style: const TextStyle(fontSize: 28)),
-          const SizedBox(width: 14),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(title, style: TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w700,
               color: sel ? AppColors.primary : AppColors.textPrimary)),
@@ -219,19 +222,21 @@ class _O11BudgetScreenState extends ConsumerState<O11BudgetScreen> {
 
   Widget _timeChip(String key, String label) {
     final sel = _cookingTime == key;
+    final disabled = _cookingStyle == 'batch_weekly' && key != 'over_60';
+
     return GestureDetector(
-      onTap: () { setState(() => _cookingTime = key); _saveData(); },
+      onTap: disabled ? null : () { setState(() => _cookingTime = key); _saveData(); },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: sel ? const Color(0xFFFFF7ED) : Colors.white,
+          color: disabled ? const Color(0xFFF3F4F6) : sel ? const Color(0xFFFFF7ED) : Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: sel ? AppColors.primary : const Color(0xFFE5E7EB), width: sel ? 1.5 : 1),
+          border: Border.all(color: disabled ? const Color(0xFFE5E7EB) : sel ? AppColors.primary : const Color(0xFFE5E7EB), width: sel && !disabled ? 1.5 : 1),
         ),
         child: Center(child: Text(label, style: TextStyle(
           fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600,
-          color: sel ? AppColors.primary : AppColors.textPrimary))),
+          color: disabled ? const Color(0xFF9CA3AF) : sel ? AppColors.primary : AppColors.textPrimary))),
       ),
     );
   }

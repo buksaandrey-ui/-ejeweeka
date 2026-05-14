@@ -1,5 +1,9 @@
 # ejeweeka — Контекст проекта (обновлять после каждой сессии)
-# Последнее обновление: 2026-05-04
+# Последнее обновление: 2026-05-13
+
+> [!CAUTION]
+> **BRAND SPELLING RULE:** Название продукта ВСЕГДА пишется только так: **ejeweeka** (lowercase).
+> Запрещено: EjeWEEKa, EJEWEEKA, Ejeweeka, ejeWEEKa и любые смешанные варианты.
 
 > [!CAUTION]
 > **CRITICAL RULE FOR ALL AI AGENTS:**
@@ -47,9 +51,14 @@ Antigravity (IDE), Claude (архитектура, UI через UI UX Pro Max +
 
 ## Проект
 ejeweeka — Массовый Apple-like wellness-продукт: простой, чистый, умный, доброжелательный помощник по питанию, сну и активности, понятный миллионам пользователей.
-Приложение использует Zero-Knowledge архитектуру: чувствительные данные хранятся исключительно на устройстве. На сервер передаётся только обезличенный JSON для генерации плана, который немедленно удаляется после ответа. Авторизация анонимная (UUID). Приложение не является медицинским устройством или клиникой.
-- **Монетизация**: Уровни доступа (статусы) работают как прозрачная подписочная модель (по аналогии с Apple One), без налета "элитного закрытого клуба". Управление через веб/TG-бота. Во время ревью Apple активируется `APP_REVIEW_MODE`.
+Приложение использует Zero-Knowledge архитектуру (zero-knowledge health profile + minimal server-side billing account): чувствительные health-данные хранятся исключительно на устройстве. На сервер передаётся только обезличенный JSON для генерации плана, который немедленно удаляется после ответа. Сервер хранит ТОЛЬКО billing/account/entitlement данные. Приложение не является медицинским устройством или клиникой.
+- **Монетизация (Hybrid)**: Уровни доступа (статусы: white / black / gold) работают как прозрачная подписочная модель. Архитектура:
+  - **iOS app**: IAP через Apple StoreKit (auto-renewable subscriptions) + status sync через email login
+  - **Web РФ (ejeweeka.ru)**: ЮKassa (СБП, карты РФ) + промокоды + управление подпиской
+  - **Backend**: Unified entitlement system — единый source of truth для статуса
+- Во время ревью Apple активируется `Review Demo Mode`.
 - **Внутренние API-имена** (`aidiet_profile`, `AIDiet.saveField`, `aidiet_subscription`) — сохранены для обратной совместимости. UI-facing имя: **ejeweeka**.
+- **Billing/account данные** (email, платёжные записи, consent logs) являются персональными данными и требуют соблюдения 152-ФЗ.
 
 ## Позиционирование (Mass-Market Wellness)
 Массовый, понятный миллионам пользователей Apple-like wellness-сервис. Простой, чистый, умный, доброжелательный. Приложение позиционируется строго как лайфстайл-помощник, не предоставляющий медицинских диагнозов, лечения или жестких "медицинских" диет. Мы не запугиваем пользователя терминами.
@@ -82,20 +91,21 @@ ejeweeka — Массовый Apple-like wellness-продукт: простой
   - 6 API endpoints (auth, plan, photo, chat, report, health)
   - Render deploy: `https://aidiet-api.onrender.com` (Активен, БД Supabase подключена, Gemini настроен)
   - Frontend (Vercel) строго подключен к боевому API (оффлайн-заглушки удалены).
-- **Фаза 3: Capacitor Build + Premium Stealth** ✅ ТЕКУЩАЯ (2026-04-25)
-  - Вариант C (гибрид): HTML→WebView для MVP, Flutter для v2
-  - ✅ `build-hybrid.sh` — копирует экраны и ассеты для гибридной сборки
-  - ✅ `capacitor-bridge.js` — камера, вибрация, safe area, API URL, status sync
+- **Фаза 3: Native Flutter App + Hybrid Monetization** ✅ ТЕКУЩАЯ (2026-05-13)
+  - ✅ Full Flutter native app (iOS/Android)
   - ✅ Ренейминг AIDiet → ejeweeka (UI-facing)
-  - ✅ Premium Stealth (O-17 Statuswall): Цены убраны из приложения, дизайн-согласование с экраном O-16.
-  - ✅ `tg-bridge-modal.js` — deep link в @healthcode_bot для управления статусом
-  - 🔄 iOS Simulator тестирование (требуется локальный `npx cap sync ios` для подтягивания новых HTML)
-  - ⬜ Android build — отложен на 3-4 месяца (Flutter v2)
+  - ✅ Review Demo Mode: при модерации Apple демонстрируется полный функционал через тестовый аккаунт
+  - ✅ Hybrid Monetization: IAP (iOS/global) + ЮKassa web (РФ) + unified backend entitlement
+  - ✅ O-17 (Statuswall) удалён из обязательного онбординга. O-16.5 → H-1
+  - 🔄 iOS Simulator тестирование
+  - ⬜ Android build — отложен на 3-4 месяца
 
-## Зафиксированные значимые статусы (2026-04-25)
-1. **Frontend-to-Backend Connection**: Vercel `main-screens` успешно общается с Render `aidiet-api`. Код генерации в `o16-summary-analysis.html` переведён в **Strict Live API Mode** (если API падает или висит — выводится реальная ошибка, а не фальшивый план-заглушка).
-2. **Экран O-17 (Statuswall)**: Полностью переписан. Избавились от прибитых к низу кнопок, текст кнопки изменён на "Вперед!", убрана "Приоритетная поддержка" из Gold, тема "Light" переименована в "Светлая".
-3. **Генерация плана**: Задействован `generatePlanAPI` через токен авторизации (Bearer JWT). Вызов идет в `app/api/plan.py`, где Gemini формирует реальный JSON на основе RAG-базы данных.
+## Зафиксированные значимые статусы (2026-05-13)
+1. **Frontend-to-Backend Connection**: Backend (FastAPI / Render) полностью функционален. Flutter app использует Bearer JWT для авторизации.
+2. **Онбординг**: O-16.5 (Персональный разбор) ведёт напрямую на H-1. O-17 (Statuswall) удалён из MVP-цепочки.
+3. **Генерация плана**: `app/api/plan.py` — Gemini формирует JSON план на основе RAG-базы данных (16000+ чанков).
+4. **Монетизация**: Hybrid architecture — IAP для App Store, ЮKassa для РФ web, unified entitlement backend.
+5. **MVP-статусы**: white / black / gold. Group Gold / Family Gold перенесены в Post-MVP.
 - Фаза 5: App Store Assets + Юридика (ТОО Казахстан)
 - **Фаза 6: Archetype Prompt Factory** ✅ (2026-05-04)
   - 3-Layer Composable Prompt Architecture: 5 GoalClusters × 2 Genders × 3 LifeStages + Pregnancy/BF overrides
@@ -137,19 +147,30 @@ ejeweeka — Массовый Apple-like wellness-продукт: простой
 | O-13 | `supplements`, `supplement_openness` |
 | O-14 | `motivation_barriers` |
 | O-15 | `liked_foods`, `disliked_foods`, `excluded_meal_types` |
-| O-17 | `subscription_status` |
 | Calculated | `bmr_kcal`, `target_daily_calories`, `target_daily_fiber`, `tdee_calculated` |
 | UI | `selected_theme`, `trial_start`, `_firstLaunch`, `_schema_version` |
+| Billing (server-side) | `entitlement_status`, `entitlement_source`, `billing_account_id`, `app_profile_id` |
 
 ### Data Pipeline:
 ```
-Онбординг (O-1..O-15) → AIDiet.saveField() → aidiet_profile
+Онбординг (O-1..O-15) → saveField() → local profile
     ↓
-O-16 Summary ← getProfileSummary() ← AIDiet.getProfile()
+O-16 Summary ← getProfileSummary()
     ↓
-O-16 «Составить план» → buildProfilePayload() → api-connector.js
+O-16 «Составить план» → buildProfilePayload() → API
     ↓
 Backend: plan.py → BMR/TDEE → ArchetypePromptFactory → PromptAssembler → Gemini → JSON Plan
+    ↓
+O-16.5 (Персональный разбор) → H-1 (Дашборд)
+    ↓
+Trial (3 дня Gold) стартует автоматически при первом входе на H-1
+```
+
+### Billing Pipeline (server-side):
+```
+iOS App: StoreKit IAP → POST /api/v1/iap/verify → entitlements table
+Web РФ: ЮKassa → POST /webhooks/yookassa → entitlements table
+Status Sync: POST /auth/link-email → GET /entitlements/status → local state update
 ```
 
 ### Запрещённые паттерны:

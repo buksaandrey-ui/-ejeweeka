@@ -172,7 +172,7 @@ class _WeightDetailScreenState extends ConsumerState<WeightDetailScreen> {
           if (target != null) Column(children: [
             const Icon(Icons.flag_outlined, color: AppColors.primary, size: 20),
             const SizedBox(height: 4),
-            Text('${target.toStringAsFixed(1)}', style: const TextStyle(fontFamily: 'Inter',
+            Text(target.toStringAsFixed(1), style: const TextStyle(fontFamily: 'Inter',
               fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.primary)),
             const Text('цель', style: TextStyle(fontFamily: 'Inter', fontSize: 11,
               color: AppColors.textSecondary)),
@@ -241,7 +241,7 @@ class _WeightDetailScreenState extends ConsumerState<WeightDetailScreen> {
               child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
                 if (isLast || isLow) Padding(
                   padding: const EdgeInsets.only(bottom: 2),
-                  child: Text('${e.weight.toStringAsFixed(1)}',
+                  child: Text(e.weight.toStringAsFixed(1),
                     style: TextStyle(fontFamily: 'Inter', fontSize: 8, fontWeight: FontWeight.w700,
                       color: isLow ? const Color(0xFF10B981) : AppColors.primary)),
                 ),

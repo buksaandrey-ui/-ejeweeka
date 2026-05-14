@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:ejeweeka_app/core/router/route_names.dart';
-import 'package:ejeweeka_app/core/theme/app_theme.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {

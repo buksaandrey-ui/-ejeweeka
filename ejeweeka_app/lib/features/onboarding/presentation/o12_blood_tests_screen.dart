@@ -97,13 +97,16 @@ class _O12BloodTestsScreenState extends ConsumerState<O12BloodTestsScreen> {
 
   Future<void> _proceed() async {
     _saveData();
+    if (GoRouterState.of(context).uri.queryParameters["fromSummary"] == "true") return;
     if (mounted) context.go(Routes.o13Supplements);
   }
 
   @override
   void dispose() {
     try { _saveData(); } catch (_) {}
-    for (final c in _ctrl.values) c.dispose();
+    for (final c in _ctrl.values) {
+      c.dispose();
+    }
     _otherCtrl.dispose();
     super.dispose();
   }

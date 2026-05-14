@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ejeweeka_app/core/router/route_names.dart';
-import 'package:ejeweeka_app/core/theme/app_theme.dart';
 import 'package:ejeweeka_app/features/onboarding/data/profile_repository.dart';
 import 'package:ejeweeka_app/features/onboarding/providers/profile_provider.dart';
 import 'package:ejeweeka_app/shared/widgets/motivating_tip_card.dart';
@@ -50,8 +49,7 @@ class _O2GoalScreenState extends ConsumerState<O2GoalScreen> {
     if (!_isValid) return;
     await ref.read(profileNotifierProvider.notifier).saveField('goal', _selectedGoal);
     if (!mounted) return;
-    // Routing: weight_loss → O-4 (will be handled by GoRouter redirect)
-    // All others → O-3 → O-5 (O-4 is conditionally skipped)
+    if (GoRouterState.of(context).uri.queryParameters['fromSummary'] == 'true') return;
     context.go(Routes.o3Profile);
   }
 

@@ -115,6 +115,18 @@ class DayPlan {
     );
   }
 
+  DayPlan copyWith({
+    int? dayNumber,
+    List<MealItem>? meals,
+    Map<String, dynamic>? workout,
+  }) {
+    return DayPlan(
+      dayNumber: dayNumber ?? this.dayNumber,
+      meals: meals ?? this.meals,
+      workout: workout ?? this.workout,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
     'day': dayNumber,
     'meals': meals.map((m) => m.toJson()).toList(),
@@ -134,6 +146,7 @@ class MealPlan {
   final List<DayPlan> days;
   final List<String> allergenWarnings;
   final int? estimatedCost;
+  final List<String> prohibitedFoodsSheet;
 
   const MealPlan({
     required this.generatedAt,
@@ -145,6 +158,7 @@ class MealPlan {
     required this.modelUsed,
     required this.days,
     this.allergenWarnings = const [],
+    this.prohibitedFoodsSheet = const [],
     this.estimatedCost,
   });
 
@@ -173,7 +187,37 @@ class MealPlan {
       days: days,
       allergenWarnings: (json['allergen_warnings'] as List<dynamic>?)
           ?.map((e) => e.toString()).toList() ?? [],
+      prohibitedFoodsSheet: (data['prohibited_foods_sheet'] as List<dynamic>?)
+          ?.map((e) => e.toString()).toList() ?? [],
       estimatedCost: (data['estimated_cost'] as num?)?.toInt(),
+    );
+  }
+
+  MealPlan copyWith({
+    String? generatedAt,
+    int? targetKcal,
+    int? bmr,
+    int? tdee,
+    int? daysGenerated,
+    int? mealsPerDay,
+    String? modelUsed,
+    List<DayPlan>? days,
+    List<String>? allergenWarnings,
+    List<String>? prohibitedFoodsSheet,
+    int? estimatedCost,
+  }) {
+    return MealPlan(
+      generatedAt: generatedAt ?? this.generatedAt,
+      targetKcal: targetKcal ?? this.targetKcal,
+      bmr: bmr ?? this.bmr,
+      tdee: tdee ?? this.tdee,
+      daysGenerated: daysGenerated ?? this.daysGenerated,
+      mealsPerDay: mealsPerDay ?? this.mealsPerDay,
+      modelUsed: modelUsed ?? this.modelUsed,
+      days: days ?? this.days,
+      allergenWarnings: allergenWarnings ?? this.allergenWarnings,
+      prohibitedFoodsSheet: prohibitedFoodsSheet ?? this.prohibitedFoodsSheet,
+      estimatedCost: estimatedCost ?? this.estimatedCost,
     );
   }
 
@@ -187,6 +231,7 @@ class MealPlan {
     'model_used': modelUsed,
     'days': days.map((d) => d.toJson()).toList(),
     'allergen_warnings': allergenWarnings,
+    'prohibited_foods_sheet': prohibitedFoodsSheet,
     'estimated_cost': estimatedCost,
   };
 
@@ -215,6 +260,8 @@ class MealPlan {
       days: days,
       allergenWarnings: (j['allergen_warnings'] as List<dynamic>?)
           ?.map((e) => e.toString()).toList() ?? [],
+      prohibitedFoodsSheet: (j['prohibited_foods_sheet'] as List<dynamic>?)
+          ?.map((e) => e.toString()).toList() ?? [],
       estimatedCost: (j['estimated_cost'] as num?)?.toInt(),
     );
   }
@@ -227,8 +274,9 @@ class MealPlan {
   }
 
   DayPlan? get today {
+    if (days.isEmpty) return null;
     final weekday = DateTime.now().weekday; // 1=Mon…7=Sun
     final index = (weekday - 1) % days.length;
-    return days.isEmpty ? null : days[index];
+    return days[index];
   }
 }

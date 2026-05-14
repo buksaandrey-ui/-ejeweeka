@@ -103,14 +103,43 @@ class _O5RestrictionsScreenState extends ConsumerState<O5RestrictionsScreen> {
         _diets.add('none');
       } else {
         _diets.remove('none');
-        if (_diets.contains(key)) _diets.remove(key); else _diets.add(key);
+        if (_diets.contains(key)) {
+          _diets.remove(key);
+        } else {
+          _diets.add(key);
+          // Mutual exclusivity logic
+          if (key == 'vegan') {
+            _diets.remove('vegetarian');
+            _diets.remove('no_red_meat');
+            _diets.remove('pescatarian');
+            _diets.remove('no_dairy');
+          } else if (key == 'vegetarian') {
+            _diets.remove('vegan');
+            _diets.remove('no_red_meat');
+            _diets.remove('pescatarian');
+          } else if (key == 'pescatarian') {
+            _diets.remove('vegan');
+            _diets.remove('vegetarian');
+            _diets.remove('no_red_meat');
+          } else if (key == 'no_red_meat') {
+            _diets.remove('vegan');
+            _diets.remove('vegetarian');
+            _diets.remove('pescatarian');
+          } else if (key == 'no_dairy') {
+            _diets.remove('vegan');
+          }
+        }
       }
     });
   }
 
   void _toggleAllergy(String key) {
     setState(() {
-      if (_allergies.contains(key)) _allergies.remove(key); else _allergies.add(key);
+      if (_allergies.contains(key)) {
+        _allergies.remove(key);
+      } else {
+        _allergies.add(key);
+      }
     });
   }
 
@@ -153,6 +182,7 @@ class _O5RestrictionsScreenState extends ConsumerState<O5RestrictionsScreen> {
   Future<void> _proceed() async {
     if (!_isValid) return;
     _saveData();
+    if (GoRouterState.of(context).uri.queryParameters["fromSummary"] == "true") return;
     if (mounted) context.go(Routes.o6Health);
   }
 
@@ -164,6 +194,23 @@ class _O5RestrictionsScreenState extends ConsumerState<O5RestrictionsScreen> {
     _customDietFocus.dispose();
     _customAllergyFocus.dispose();
     super.dispose();
+  }
+
+  Set<String> get _disabledDiets {
+    final disabled = <String>{};
+    if (_diets.contains('vegan')) {
+      disabled.addAll(['vegetarian', 'no_red_meat', 'pescatarian', 'no_dairy']);
+    } else if (_diets.contains('vegetarian')) {
+      disabled.addAll(['vegan', 'no_red_meat', 'pescatarian']);
+    } else if (_diets.contains('pescatarian')) {
+      disabled.addAll(['vegan', 'vegetarian', 'no_red_meat']);
+    } else if (_diets.contains('no_red_meat')) {
+      disabled.addAll(['vegan', 'vegetarian', 'pescatarian']);
+    }
+    if (_diets.contains('no_dairy')) {
+      disabled.add('vegan');
+    }
+    return disabled;
   }
 
   @override
@@ -192,6 +239,7 @@ class _O5RestrictionsScreenState extends ConsumerState<O5RestrictionsScreen> {
             selected: _diets,
             onToggle: _toggleDiet,
             exclusiveKey: 'none',
+            disabledKeys: _disabledDiets,
           ),
 
           // ── Кастомные ограничения (чипы) ──────────────────────

@@ -10,10 +10,10 @@ import 'package:ejeweeka_app/shared/widgets/onboarding_scaffold.dart';
 import 'package:ejeweeka_app/shared/widgets/hc_check_item.dart';
 
 const _personalities = [
-  ('premium', '🎩 Эстет (Стандарт)', 'Уважительный, строгий, статусный. Обращается как консьерж.'),
-  ('buddy', '🤝 Свой человек', 'Теплый, свойский. Общается как лучший друг с легким сленгом.'),
-  ('strict', '🦾 Железный тренер', 'Требовательный, нацеленный на дисциплину и результат.'),
-  ('sassy', '😈 Дерзкий', 'Остроумный, подкалывает, мотивирует через вызов и сарказм.'),
+  ('premium', 'Эстет (Стандарт)', 'Уважительный, строгий, статусный. Обращается как консьерж.'),
+  ('buddy', 'Свой человек', 'Теплый, свойский. Общается как лучший друг с легким сленгом.'),
+  ('strict', 'Железный тренер', 'Требовательный, нацеленный на дисциплину и результат.'),
+  ('sassy', 'Дерзкий', 'Остроумный, подкалывает, мотивирует через вызов и сарказм.'),
 ];
 
 class O25AiPersonalityScreen extends ConsumerStatefulWidget {
@@ -38,6 +38,7 @@ class _O25AiPersonalityScreenState extends ConsumerState<O25AiPersonalityScreen>
     if (!_isValid) return;
     await ref.read(profileNotifierProvider.notifier).saveField('ai_personality', _selectedPersonality);
     if (!mounted) return;
+    if (GoRouterState.of(context).uri.queryParameters['fromSummary'] == 'true') return;
     context.go(Routes.o16Summary);
   }
 

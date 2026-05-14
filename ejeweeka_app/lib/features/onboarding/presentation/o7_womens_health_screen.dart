@@ -45,7 +45,11 @@ class _O7WomensHealthScreenState extends ConsumerState<O7WomensHealthScreen> {
   void _toggleWH(String key) {
     setState(() {
       if (key == 'none') { _womensHealth.clear(); _womensHealth.add('none'); }
-      else { _womensHealth.remove('none'); if (_womensHealth.contains(key)) _womensHealth.remove(key); else _womensHealth.add(key); }
+      else { _womensHealth.remove('none'); if (_womensHealth.contains(key)) {
+        _womensHealth.remove(key);
+      } else {
+        _womensHealth.add(key);
+      } }
     });
   }
 
@@ -60,6 +64,7 @@ class _O7WomensHealthScreenState extends ConsumerState<O7WomensHealthScreen> {
   Future<void> _proceed() async {
     if (!_isValid) return;
     _saveData();
+    if (GoRouterState.of(context).uri.queryParameters["fromSummary"] == "true") return;
     if (mounted) context.go(Routes.o8MealPattern);
   }
 

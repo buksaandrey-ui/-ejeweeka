@@ -1,7 +1,6 @@
 // lib/features/onboarding/providers/profile_provider.dart
 // Riverpod providers — sync reads from SharedPreferences + async saves
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:ejeweeka_app/features/onboarding/data/profile_model.dart';
 import 'package:ejeweeka_app/features/onboarding/data/profile_repository.dart';

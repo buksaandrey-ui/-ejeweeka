@@ -19,15 +19,15 @@ class U3HealthScreen extends ConsumerWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          _card('СИМПТОМЫ', p.symptoms?.isNotEmpty == true
-            ? p.symptoms!.join(', ') : 'Нет жалоб'),
-          _card('ХРОНИЧЕСКИЕ СОСТОЯНИЯ', p.diseases?.isNotEmpty == true
-            ? p.diseases!.join(', ') : 'Не указаны'),
+          _card('СИМПТОМЫ', p.symptoms.isNotEmpty == true
+            ? p.symptoms.join(', ') : 'Нет жалоб'),
+          _card('ХРОНИЧЕСКИЕ СОСТОЯНИЯ', p.diseases.isNotEmpty == true
+            ? p.diseases.join(', ') : 'Не указаны'),
           _card('ЛЕКАРСТВА', p.takesMedications == 'yes'
             ? (p.medications ?? 'Указано: принимает') : 'Не принимает'),
           if (p.gender == 'female')
-            _card('ЖЕНСКОЕ ЗДОРОВЬЕ', p.womensHealth?.isNotEmpty == true
-              ? p.womensHealth!.join(', ') : 'Не указано'),
+            _card('ЖЕНСКОЕ ЗДОРОВЬЕ', p.womensHealth.isNotEmpty == true
+              ? p.womensHealth.join(', ') : 'Не указано'),
         ]),
       ),
     );

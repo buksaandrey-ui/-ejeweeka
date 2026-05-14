@@ -156,6 +156,7 @@ class _O8MealPatternScreenState extends ConsumerState<O8MealPatternScreen> {
   Future<void> _proceed() async {
     if (!_isValid) return;
     _saveData();
+    if (GoRouterState.of(context).uri.queryParameters["fromSummary"] == "true") return;
     if (mounted) context.go(Routes.o9Sleep);
   }
 
@@ -485,7 +486,7 @@ class _O8MealPatternScreenState extends ConsumerState<O8MealPatternScreen> {
       child: Row(children: [
         const Icon(Icons.check_circle_rounded, color: Color(0xFF52B044), size: 18),
         const SizedBox(width: 8),
-        Expanded(child: Text('Окно питания: $start — $end (${hours}ч). $_dailyMeals приёма.',
+        Expanded(child: Text('Окно питания: $start — $end ($hoursч). $_dailyMeals приёма.',
           style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600,
             color: Color(0xFF2E7D32)))),
       ]),

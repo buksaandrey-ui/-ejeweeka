@@ -126,6 +126,7 @@ class UserProfilePayload(BaseModel):
     height: float
     target_weight: Optional[float] = None
     target_timeline_weeks: Optional[int] = None
+    wants_to_lose_weight: Optional[bool] = None
     goal: str
     activity_level: str
     country: Optional[str] = "RU" # Default fallback for legacy apps
@@ -302,10 +303,14 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
 
         
     print(f"🔍 Ищем медицинский контекст для: {search_query}")
-    contexts = search_knowledge(db, search_query, limit=5)
-    context_text = "\\n\\n".join([f"Совет от {c.doctor_name} ({c.specialization}): {c.content}" for c in contexts])
-    if not context_text:
-        context_text = "Специфических медицинских рекомендаций не найдено (база пуста)."
+    context_text = "Специфических медицинских рекомендаций не найдено (база пуста)."
+    contexts = []
+    try:
+        contexts = search_knowledge(db, search_query, limit=5)
+        if contexts:
+            context_text = "\\n\\n".join([f"Совет от {c.doctor_name} ({c.specialization}): {c.content}" for c in contexts])
+    except Exception as e:
+        print(f"⚠️ Ошибка RAG-движка (возможно, невалидный GEMINI_API_KEY): {e}")
 
     # 2. Расчет BMR и Цели
     if profile.gender == 'female':

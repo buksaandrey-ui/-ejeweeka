@@ -11,6 +11,7 @@ class HcExpandableSection extends StatefulWidget {
   final void Function(String key) onToggle;
   final String? exclusiveKey; // Ключ, который сбрасывает все остальные (напр. 'none')
   final bool initiallyExpanded;
+  final Set<String>? disabledKeys;
 
   const HcExpandableSection({
     super.key,
@@ -20,6 +21,7 @@ class HcExpandableSection extends StatefulWidget {
     required this.onToggle,
     this.exclusiveKey,
     this.initiallyExpanded = false,
+    this.disabledKeys,
   });
 
   @override
@@ -158,9 +160,10 @@ class _HcExpandableSectionState extends State<HcExpandableSection>
                 const Divider(height: 1, color: Color(0xFFF0F0F0)),
                 ...widget.options.map((opt) {
                   final isSelected = widget.selected.contains(opt.$1);
+                  final isDisabled = widget.disabledKeys?.contains(opt.$1) ?? false;
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () => widget.onToggle(opt.$1),
+                    onTap: isDisabled ? null : () => widget.onToggle(opt.$1),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 12),
@@ -182,12 +185,12 @@ class _HcExpandableSectionState extends State<HcExpandableSection>
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? AppColors.primary
-                                  : Colors.white,
+                                  : (isDisabled ? const Color(0xFFF3F4F6) : Colors.white),
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(
                                 color: isSelected
                                     ? AppColors.primary
-                                    : const Color(0xFFD1D5DB),
+                                    : (isDisabled ? const Color(0xFFE5E7EB) : const Color(0xFFD1D5DB)),
                                 width: 1.5,
                               ),
                             ),
@@ -208,7 +211,7 @@ class _HcExpandableSectionState extends State<HcExpandableSection>
                                     : FontWeight.w500,
                                 color: isSelected
                                     ? AppColors.primary
-                                    : AppColors.textPrimary,
+                                    : (isDisabled ? const Color(0xFF9CA3AF) : AppColors.textPrimary),
                               ),
                             ),
                           ),

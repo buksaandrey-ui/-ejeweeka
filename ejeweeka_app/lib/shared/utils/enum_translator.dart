@@ -34,4 +34,54 @@ class EnumTranslator {
     'full': 'Полное',
     'large': 'Крупное'
   }[b] ?? b ?? '—';
+
+  static String activityType(String? t) => {
+    'walking': 'Ходьба',
+    'running': 'Бег',
+    'strength': 'Силовые',
+    'home_workout': 'Домашние',
+    'swimming': 'Плавание',
+    'yoga': 'Йога/растяжка',
+    'cycling': 'Велосипед',
+    'team_sports': 'Командные',
+    'pilates': 'Пилатес'
+  }[t] ?? t ?? '';
+
+  static String diet(String? d) => {
+    'none': 'Нет ограничений',
+    'vegetarian': 'Вегетарианство',
+    'vegan': 'Веганство',
+    'no_red_meat': 'Без красного мяса',
+    'pescatarian': 'Пескетарианство',
+    'no_dairy': 'Без молочных продуктов',
+    'gluten_free': 'Без глютена',
+    'no_sugar': 'Без сахара',
+    'halal': 'Халяль',
+    'kosher': 'Кошерное питание'
+  }[d] ?? d ?? '';
+
+  static String allergy(String? a) => {
+    'nuts': 'Орехи',
+    'peanuts': 'Арахис',
+    'dairy': 'Молочные продукты',
+    'eggs': 'Яйца',
+    'fish': 'Рыба',
+    'shellfish': 'Морепродукты',
+    'soy': 'Соя',
+    'citrus': 'Цитрусовые',
+    'honey': 'Мёд'
+  }[a] ?? a ?? '';
+
+  static String mealType(String? t) => {
+    'pork': 'Свинина',
+    'beef': 'Говядина',
+    'chicken': 'Курица',
+    'fish': 'Рыба',
+    'seafood': 'Морепродукты',
+    'dairy': 'Молочка',
+    'eggs': 'Яйца',
+    'mushrooms': 'Грибы',
+    'spicy': 'Острое',
+    'sweet': 'Сладкое'
+  }[t] ?? t ?? '';
 }
