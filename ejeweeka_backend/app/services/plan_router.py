@@ -50,35 +50,53 @@ class PlanRouter:
         target_region = region_map.get(country.upper(), 'Европа')
         target_budget = getattr(profile, 'budget_level', 'Средний') or 'Средний'
         
-        target_city = (getattr(profile, 'city', '') or '').lower()
+        target_city = (getattr(profile, 'city', '') or '').strip()
         
-        # Базовая выборка по типу приема пищи
+        from sqlalchemy import text as sa_text
+        
+        # Базовая выборка по типу приема пищи + бюджет
         query = db.query(MealCache).filter(
-            MealCache.meal_type == meal_type
-        )
-        
-        # Строгая фильтрация по городу и бюджету (если город указан)
-        query = query.filter(
+            MealCache.meal_type == meal_type,
             func.jsonb_extract_path_text(cast(MealCache.regional_availability, JSONB), 'budget') == target_budget
         )
+        
+        # Фильтрация по городу/региону
+        # ВАЖНО: SQLAlchemy .contains() для JSONB массивов НЕ РАБОТАЕТ корректно.
+        # Используем нативный PostgreSQL оператор @> через text().
         if target_city:
-            query = query.filter(
-                func.jsonb_extract_path_text(cast(MealCache.regional_availability, JSONB), 'city') == target_city
+            city_query = query.filter(
+                sa_text("regional_availability->'cities' @> :city_json").bindparams(city_json=f'"{target_city}"')
             )
+            all_meals_filtered = city_query.all()
+            
+            # Fallback 1: если city не дал результатов, пробуем region
+            if not all_meals_filtered:
+                region_query = query.filter(
+                    func.jsonb_extract_path_text(cast(MealCache.regional_availability, JSONB), 'region') == target_region
+                )
+                all_meals_filtered = region_query.all()
+            
+            # Fallback 2: если и region пуст — берём ВСЕ по бюджету (любой регион)
+            if not all_meals_filtered:
+                all_meals_filtered = query.all()
         else:
-            query = query.filter(
+            region_query = query.filter(
                 func.jsonb_extract_path_text(cast(MealCache.regional_availability, JSONB), 'region') == target_region
             )
+            all_meals_filtered = region_query.all()
+            
+            # Fallback: если region пуст — берём ВСЕ по бюджету
+            if not all_meals_filtered:
+                all_meals_filtered = query.all()
+        
+        all_meals = all_meals_filtered
         
         # Если готовка раз в неделю, отдаем предпочтение рецептам с freezable=True или batch_friendly
         if (profile.cooking_style or '').lower() in ['раз в неделю', 'batch_weekly']:
             # Пытаемся сначала найти замораживаемые или подходящие для длительного хранения
-            batch_query = query.filter(MealCache.freezable == True)
-            all_meals = batch_query.all()
-            if not all_meals:
-                all_meals = query.all()
-        else:
-            all_meals = query.all()
+            freezable_meals = [m for m in all_meals if m.freezable]
+            if freezable_meals:
+                all_meals = freezable_meals
         
         
         safe_meals = []
@@ -314,9 +332,9 @@ class PlanRouter:
         type_recipes = {}
         for m_type in meal_targets.keys():
             safe_recipes = PlanRouter.get_safe_recipes(db, m_type, profile, limit=100)
-            if len(safe_recipes) < required_per_type:
+            if len(safe_recipes) < variants_per_meal:
                 # Cache miss! Мы должны вернуть None, чтобы api/plan.py вызвал Auto-Seeding
-                print(f"⚠️ Cache Miss для '{m_type}': нужно {required_per_type}, найдено {len(safe_recipes)}.")
+                print(f"⚠️ Cache Miss для '{m_type}': нужно минимум {variants_per_meal}, найдено {len(safe_recipes)}.")
                 return None
             type_recipes[m_type] = safe_recipes
 
@@ -339,10 +357,12 @@ class PlanRouter:
             day_meals = []
             
             for m_type, m_kcal in meal_targets.items():
-                # Берем нужный срез рецептов для этого дня
-                start_idx = (d - 1) * variants_per_meal
-                end_idx = start_idx + variants_per_meal
-                day_variants = type_recipes[m_type][start_idx:end_idx]
+                # Циклически выбираем рецепты, если их меньше чем нужно на всю неделю
+                pool_size = len(type_recipes[m_type])
+                day_variants = []
+                for i in range(variants_per_meal):
+                    idx = ((d - 1) * variants_per_meal + i) % pool_size
+                    day_variants.append(type_recipes[m_type][idx])
                 
                 for v_idx, recipe in enumerate(day_variants):
                     scaled_meal = PlanRouter.scale_recipe(recipe, m_kcal, variant_num=v_idx + 1)
