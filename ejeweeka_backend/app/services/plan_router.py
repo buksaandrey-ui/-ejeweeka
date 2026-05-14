@@ -50,20 +50,25 @@ class PlanRouter:
         target_region = region_map.get(country.upper(), 'Европа')
         target_budget = getattr(profile, 'budget_level', 'Средний') or 'Средний'
         
+        target_city = (getattr(profile, 'city', '') or '').lower()
+        
         # Базовая выборка по типу приема пищи
         query = db.query(MealCache).filter(
             MealCache.meal_type == meal_type
         )
         
-        # Если в базе уже есть региональная матрица (JSON)
-        # Мы фильтруем: JSON ключи содержат target_region, и значение равно target_budget
-        # SQL equivalent: WHERE regional_availability->>'СНГ' = 'Средний'
+        # Строгая фильтрация по городу и бюджету (если город указан)
         query = query.filter(
-            func.jsonb_extract_path_text(
-                cast(MealCache.regional_availability, JSONB), 
-                target_region
-            ) == target_budget
+            func.jsonb_extract_path_text(cast(MealCache.regional_availability, JSONB), 'budget') == target_budget
         )
+        if target_city:
+            query = query.filter(
+                func.jsonb_extract_path_text(cast(MealCache.regional_availability, JSONB), 'city') == target_city
+            )
+        else:
+            query = query.filter(
+                func.jsonb_extract_path_text(cast(MealCache.regional_availability, JSONB), 'region') == target_region
+            )
         
         # Если готовка раз в неделю, отдаем предпочтение рецептам с freezable=True или batch_friendly
         if (profile.cooking_style or '').lower() in ['раз в неделю', 'batch_weekly']:

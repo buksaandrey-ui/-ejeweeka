@@ -96,35 +96,53 @@ def normalize_name(name: str) -> str:
     
     return name
 
-def estimate_cost(normalized_name: str, amount: float, unit: str, budget: str, currency: str = 'RUB') -> float:
-    """Примерный подсчет стоимости с учётом валюты региона"""
-    budget_key = budget.lower() if budget else "средний"
-    price_matrix = get_price_matrix(currency)
-    
-    # Собираем все доступные цены для бюджета и ниже
-    prices = {}
-    if budget_key in ["экономный", "эконом"]:
-        prices.update(price_matrix.get("экономный", {}))
-    elif budget_key == "средний":
-        prices.update(price_matrix.get("экономный", {}))
-        prices.update(price_matrix.get("средний", {}))
-    else:
+from app.db import SessionLocal
+from app.models.grocery_price import GroceryPrice
+from sqlalchemy import func
+
+def estimate_cost(normalized_name: str, amount: float, unit: str, budget: str, currency: str = 'RUB', city: str = '', country: str = 'RU') -> float:
+    """Примерный подсчет стоимости с учётом валюты и базы GroceryPrice для города/страны"""
+    db = SessionLocal()
+    found_price = 0
+    try:
+        # Пытаемся найти цены по городу
+        query = db.query(GroceryPrice).filter(
+            func.lower(GroceryPrice.product_name).contains(normalized_name.lower())
+        )
+        if city:
+            query = query.filter(func.lower(GroceryPrice.city) == city.lower())
+        else:
+            query = query.filter(func.lower(GroceryPrice.country) == country.lower())
+            
+        record = query.first()
+        
+        if record:
+            budget_key = budget.lower() if budget else "средний"
+            if budget_key in ["экономный", "эконом"]:
+                found_price = record.base_price
+            else:
+                found_price = record.premium_price or record.base_price
+    finally:
+        db.close()
+        
+    if not found_price:
+        # Fallback к старой матрице
+        budget_key = budget.lower() if budget else "средний"
+        price_matrix = get_price_matrix(currency)
+        prices = {}
         prices.update(price_matrix.get("экономный", {}))
         prices.update(price_matrix.get("средний", {}))
         prices.update(price_matrix.get("без разницы", {}))
-
-    # Ищем совпадения (очень базово)
-    found_price = 0
-    for k, v in prices.items():
-        if k in normalized_name:
-            found_price = v
-            break
-            
-    if not found_price:
-        # Дефолтная цена зависит от валюты
-        default_prices = {'RUB': 200, 'AED': 10, 'THB': 50, 'TRY': 30, 'ILS': 15, 'USD': 5, 'EUR': 4}
-        found_price = default_prices.get(currency, 200)
         
+        for k, v in prices.items():
+            if k in normalized_name:
+                found_price = v
+                break
+                
+        if not found_price:
+            default_prices = {'RUB': 200, 'AED': 10, 'THB': 50, 'TRY': 30, 'ILS': 15, 'USD': 5, 'EUR': 4}
+            found_price = default_prices.get(currency, 200)
+
     # Расчет по единицам
     if unit in ["г", "гр", "ml", "мл"]:
         return (amount / 1000) * found_price
@@ -132,7 +150,7 @@ def estimate_cost(normalized_name: str, amount: float, unit: str, budget: str, c
         return amount * found_price
     return 0
 
-def build_shopping_list(plan_data: Dict[str, Any], budget_level: str, country: str = "Россия") -> Dict[str, Any]:
+def build_shopping_list(plan_data: Dict[str, Any], budget_level: str, country: str = "Россия", city: str = "") -> Dict[str, Any]:
     """
     Парсит JSON-план, суммирует ингредиенты, округляет до удобных магазинных пачек 
     и считает примерную стоимость корзины в валюте региона пользователя.
@@ -197,7 +215,7 @@ def build_shopping_list(plan_data: Dict[str, Any], budget_level: str, country: s
             amount = round(amount)
             if amount == 0: amount = 1
             
-        cost = estimate_cost(item["norm_name"], amount, unit, budget_level, currency_code)
+        cost = estimate_cost(item["norm_name"], amount, unit, budget_level, currency_code, city, country)
         total_cost += cost
         
         shopping_list.append({

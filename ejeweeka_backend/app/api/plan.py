@@ -111,7 +111,9 @@ def normalize_plan_for_frontend(plan_data, budget_level="Средний"):
     from app.services.shopping_list_builder import build_shopping_list
     # Мы пока не знаем budget_level в этой функции, 
     # но можем попробовать извлечь его или поставить дефолт.
-    shopping_list_data = build_shopping_list(plan_data, budget_level, country=getattr(profile, 'country', 'RU') if 'profile' in dir() else 'RU')
+    country_str = getattr(profile, 'country', 'RU') if 'profile' in dir() else 'RU'
+    city_str = getattr(profile, 'city', '') if 'profile' in dir() else ''
+    shopping_list_data = build_shopping_list(plan_data, budget_level, country=country_str, city=city_str)
     normalized['shopping_list'] = shopping_list_data['items']
     normalized['estimated_cost'] = shopping_list_data.get('total_estimated_cost', shopping_list_data.get('total_estimated_cost_rub', 0))
     normalized['currency_code'] = shopping_list_data.get('currency_code', 'RUB')
@@ -470,7 +472,24 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
                             if keyword in ing_name_lower:
                                 detected_allergens.add(allergen_tag)
                     
-                    safe_diseases = list(profile.diseases or []) if profile.diseases else []
+                    country = getattr(profile, 'country', 'RU')
+                    city = getattr(profile, 'city', '')
+                    region_map = {
+                        'RU': 'СНГ (Россия, Беларусь, Казахстан)',
+                        'BY': 'СНГ (Россия, Беларусь, Казахстан)',
+                        'KZ': 'СНГ (Россия, Беларусь, Казахстан)',
+                        'TH': 'Азия (Таиланд, Бали)',
+                        'ID': 'Азия (Таиланд, Бали)',
+                        'AE': 'Азия (Таиланд, Бали)',
+                    }
+                    target_region = region_map.get(country.upper(), 'Европа')
+                    target_budget = getattr(profile, 'budget_level', 'Средний') or 'Средний'
+                    
+                    regional_avail = {
+                        "region": target_region, 
+                        "budget": target_budget,
+                        "city": city.lower() if city else ''
+                    }
                     
                     new_meal = MealCache(
                         ingredients_hash=h, name=r_name, image_url=fallback_url,
@@ -486,7 +505,8 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
                         storage_instructions=r_data.get('storage_instructions', ''),
                         reheating_instructions=r_data.get('reheating_instructions', ''),
                         freezable=r_data.get('freezable', False),
-                        ingredients=r_data.get('ingredients',[]), steps=r_data.get('steps',[])
+                        ingredients=r_data.get('ingredients',[]), steps=r_data.get('steps',[]),
+                        regional_availability=regional_avail
                     )
                     db.add(new_meal)
                     seeded_recipes_for_images.append((new_meal, ing_text, r_name))
