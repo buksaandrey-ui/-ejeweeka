@@ -78,9 +78,9 @@ class PromptAssembler:
             elif profile.age and profile.age >= 45:
                 selected_words.extend(blocks.get(f"{gender_prefix}_over50" if gender_prefix == 'male' else f"{gender_prefix}_over45", []))
                 
-            if 'похудение' in profile.goal.lower():
+            if 'похудение' in (profile.goal or '').lower() or 'сниз' in (profile.goal or '').lower():
                 selected_words.extend(blocks.get(f"{gender_prefix}_weightloss", []))
-            elif 'набор' in profile.goal.lower():
+            elif 'набор' in (profile.goal or '').lower() or 'масс' in (profile.goal or '').lower():
                 selected_words.extend(blocks.get(f"{gender_prefix}_muscle", []))
             else:
                 selected_words.extend(blocks.get(f"{gender_prefix}_health", []))
@@ -176,15 +176,47 @@ class PromptAssembler:
     @staticmethod
     def _build_geo_restrictions(profile) -> str:
         country = getattr(profile, 'country', 'RU')
-        return f"""[ЛОКАЛИЗАЦИЯ И ПРОДУКТОВАЯ КОРЗИНА]
-Пользователь находится в регионе: {country}.
+        city = getattr(profile, 'city', '')
+        
+        local_staples_str = ""
+        db = _get_safety_db()
+        if db and city:
+            try:
+                from app.models.grocery_price import GroceryPrice
+                from app.models.city_alias import CityAlias
+                from sqlalchemy import func
+                
+                # Check for aliases (Nearest Neighbor fallback)
+                resolved_city = city.lower()
+                alias = db.query(CityAlias).filter(func.lower(CityAlias.user_city) == resolved_city).first()
+                if alias:
+                    resolved_city = alias.mapped_major_city.lower()
+                    
+                products = db.query(GroceryPrice.product_name).filter(
+                    func.lower(GroceryPrice.city) == resolved_city
+                ).all()
+                
+                if products:
+                    product_list = [p[0] for p in products]
+                    local_staples_str = f"СПИСОК САМЫХ ДОСТУПНЫХ МЕСТНЫХ ПРОДУКТОВ ДЛЯ г. {city} ({resolved_city}):\n{', '.join(product_list)}\nОБЯЗАТЕЛЬНОЕ УСЛОВИЕ: При составлении рецептов используй преимущественно продукты из этого списка. Не используй редкие или дорогие для данного региона ингредиенты."
+            except Exception as e:
+                print(f"⚠️ Ошибка получения локальной корзины для {city}: {e}")
+            finally:
+                try: db.close()
+                except: pass
+
+        res = f"""[ЛОКАЛИЗАЦИЯ И ПРОДУКТОВАЯ КОРЗИНА]
+Пользователь находится в регионе: {country}, г. {city}.
 Ты обязан использовать ТОЛЬКО ту базовую продуктовую корзину (20-40 наименований), которая является легкодоступной и недорогой в этом регионе.
+{local_staples_str}
+
 Категорически ЗАПРЕЩЕНО использовать:
 - Труднодоступные или дорогие локальные деликатесы.
 - Гречку, творог, кефир (если регион не Россия или СНГ).
 Вместо этого используй универсальные дешевые локальные аналоги (например, рис, нут, чечевица для Ближнего Востока/Азии).
 Цены на рецепты должны быть адекватными для {country}.
 """
+        return res
 
     @staticmethod
     def _build_biometrics(profile, bmr: float, tdee: float, target_kcal: float) -> str:
@@ -207,6 +239,9 @@ class PromptAssembler:
                           f"Обязательно выписывай мощную витаминную поддержку.\n"
 
         guardrails += f"- Заболевания: {', '.join(profile.diseases) if profile.diseases else 'Нет'}\n"
+        if hasattr(profile, 'medications') and profile.medications:
+            meds_str = ', '.join(profile.medications) if isinstance(profile.medications, list) else str(profile.medications)
+            guardrails += f"- Препараты/Витамины: {meds_str}\n"
         guardrails += f"- Аллергии/Исключения: {', '.join(profile.allergies) if profile.allergies else 'Нет'}\n"
         guardrails += f"- Диетические ограничения: {', '.join(profile.effective_restrictions) if profile.effective_restrictions else 'Нет'}\n"
         guardrails += f"- Текущие симптомы: {', '.join(profile.symptoms) if profile.symptoms else 'Нет'}\n"
@@ -292,12 +327,19 @@ class PromptAssembler:
             for dr in drinks:
                 abv = dr.get('abv')
                 abv_str = f", алк: {abv}%" if abv else ""
-                s += f"  - {dr.get('name')} ({dr.get('volume_ml', 0)} мл, {dr.get('estimated_kcal', 0)} ккал{abv_str})\n"
+                macros_str = f"БЖУ: {dr.get('protein',0)}/{dr.get('fat',0)}/{dr.get('carbs',0)}"
+                s += f"  - {dr.get('name')} ({dr.get('volume_ml', 0)} мл, {dr.get('estimated_kcal', 0)} ккал, {macros_str}{abv_str})\n"
                 if abv and abv > 0:
                     has_alcohol = True
             if has_alcohol:
                 s += "⚠️ ПРАВИЛО (АЛКОГОЛЬ): Пользователь употреблял алкоголь. Обязательно добавь в план на следующий день продукты, поддерживающие печень и водно-солевой баланс (электролиты, продукты с калием, рассол, квашеную капусту, зелень). Учти пустые калории этанола при расчете энергетического баланса.\n"
         
+        if hasattr(profile, 'supplement_logs') and profile.supplement_logs:
+            s += "\n--- ПРИНЯТЫЕ ВИТАМИНЫ / ПРЕПАРАТЫ ---\n"
+            for sup in profile.supplement_logs:
+                s += f"  - {sup.get('name')} (тип: {sup.get('type')})\n"
+            s += "Пожалуйста, учитывай это при планировании следующих приемов пищи (например, если принят витамин D, предложи что-то с жирами для лучшего усвоения).\n"
+
         return s
 
 
@@ -679,6 +721,7 @@ class PromptAssembler:
         Ты - эксперт-нутрициолог. Пользователь имеет следующие ограничения:
         Аллергии: {', '.join(allergies) if allergies else 'Нет'}
         Заболевания: {', '.join(diseases) if diseases else 'Нет'}
+        Медикаменты: {', '.join(getattr(profile, 'medications', [])) if getattr(profile, 'medications', []) else 'Нет'}
         Ограничения: {', '.join(restrictions) if restrictions else 'Нет'}
         
         Составь топ-15 (или меньше, если ограничений мало) самых популярных продуктов, которые ему КАТЕГОРИЧЕСКИ НЕЛЬЗЯ.

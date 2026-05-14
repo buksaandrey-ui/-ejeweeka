@@ -27,7 +27,7 @@ MEAL_TYPE_MAP = {
     'перекус': 'snack',
 }
 
-def normalize_plan_for_frontend(plan_data, budget_level="Средний"):
+def normalize_plan_for_frontend(plan_data, budget_level="Средний", profile=None):
     """
     Конвертирует ответ Gemini в формат, ожидаемый фронтендом.
     Решает проблемы:
@@ -111,8 +111,8 @@ def normalize_plan_for_frontend(plan_data, budget_level="Средний"):
     from app.services.shopping_list_builder import build_shopping_list
     # Мы пока не знаем budget_level в этой функции, 
     # но можем попробовать извлечь его или поставить дефолт.
-    country_str = getattr(profile, 'country', 'RU') if 'profile' in dir() else 'RU'
-    city_str = getattr(profile, 'city', '') if 'profile' in dir() else ''
+    country_str = getattr(profile, 'country', 'RU') if profile else 'RU'
+    city_str = getattr(profile, 'city', '') if profile else ''
     shopping_list_data = build_shopping_list(plan_data, budget_level, country=country_str, city=city_str)
     normalized['shopping_list'] = shopping_list_data['items']
     normalized['estimated_cost'] = shopping_list_data.get('total_estimated_cost', shopping_list_data.get('total_estimated_cost_rub', 0))
@@ -135,6 +135,7 @@ class UserProfilePayload(BaseModel):
     allergies: Optional[List[str]] = []
     restrictions: Optional[List[str]] = []  # Диеты/ограничения (веганство, кето, и т.д.)
     diseases: Optional[List[str]] = []
+    supplement_logs: Optional[List[dict]] = []
     symptoms: Optional[List[str]] = []
     city: Optional[str] = ""
     budget_level: Optional[str] = "Средний"
@@ -159,7 +160,7 @@ class UserProfilePayload(BaseModel):
     disliked_foods: Optional[List[str]] = []
     excluded_meal_types: Optional[List[str]] = []
     motivation_barriers: Optional[List[str]] = []  # Барьеры прошлого
-    tier: str = "T1"
+    tier: str = "Gold"
     activity_multiplier: Optional[float] = None  # Точный коэффициент активности (1.2 — 1.725)
     
     # ── Новые поля из Flutter ProfileModel (Zero-Knowledge) ──
@@ -170,16 +171,16 @@ class UserProfilePayload(BaseModel):
     notif_workouts: Optional[bool] = None
     notif_water: Optional[bool] = None
     notif_weekly_report: Optional[bool] = None
-    hc_sleep: Optional[bool] = None
-    hc_steps: Optional[bool] = None
-    hc_workouts: Optional[bool] = None
-    hc_weight: Optional[bool] = None
+    eje_sleep: Optional[bool] = None
+    eje_steps: Optional[bool] = None
+    eje_workouts: Optional[bool] = None
+    eje_weight: Optional[bool] = None
     disclaimer_accepted: Optional[bool] = None
     onboarding_complete: Optional[bool] = None
     schema_version: Optional[int] = None
     first_launch: Optional[str] = None
     trial_start: Optional[str] = None
-    chosen_status: Optional[str] = None
+    chosen_status: Optional[str] = "Gold"
     target_daily_calories: Optional[float] = None
     tdee_calculated: Optional[float] = None
     selected_theme: Optional[str] = None
@@ -208,8 +209,6 @@ class UserProfilePayload(BaseModel):
     cooking_style: Optional[str] = None  # daily | batch_2_3_days | batch_weekly | none
     
     # Горизонт планирования и любимые блюда (Zero-Knowledge)
-    recent_meal_hashes: Optional[List[str]] = []
-    favorite_meal_hashes: Optional[List[str]] = []
     shopping_frequency: Optional[str] = None  # daily | few_days | weekly
     
     # Логи для корректировки плана
@@ -359,7 +358,7 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
         # Мягкий дефицит допустим, но минимум 1800 ккал и не ниже TDEE - 500
         target_kcal = max(target_kcal, max(1800, tdee - 500))
 
-    days_to_generate = 3 if profile.tier.lower() == 't1' or profile.tier == 'free' else 7
+    days_to_generate = 3 if profile.tier.lower() in ['t1', 'free'] else 7
     meal_pattern = (profile.meal_pattern or '').lower()
     if '5' in meal_pattern:
         meals_per_day = 5
@@ -373,13 +372,13 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
     # ЭТАП 1: Сборка плана через Smart Router (Hybrid Cache)
     from app.services.plan_router import PlanRouter
     
-    status = (profile.tier or 'T1').upper()
-    if status == 'T2':
+    status = (profile.tier or 'GOLD').upper()
+    if status in ['T2', 'SILVER']:
         variants_count = 2
-    elif status == 'T3':
+    elif status in ['T3', 'GOLD', 'FAMILY_GOLD']:
         variants_count = 3
     else:
-        variants_count = 1
+        variants_count = 3 # Default to Gold features as requested
         
     # Пытаемся собрать план (variants_count варианта на каждый приём пищи)
     final_plan = PlanRouter.assemble_plan(
@@ -500,7 +499,7 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
                         fiber=r_data.get('fiber',0),
                         meal_type=m_type,
                         allergens_present=list(detected_allergens),
-                        safe_for_diseases=safe_diseases,
+                        safe_for_diseases=r_data.get('safe_for_diseases', []),
                         wellness_rationale=r_data.get('wellness_rationale', ''),
                         storage_instructions=r_data.get('storage_instructions', ''),
                         reheating_instructions=r_data.get('reheating_instructions', ''),
@@ -626,7 +625,7 @@ async def generate_plan(request: Request, profile: UserProfilePayload, backgroun
         print(f"⚠️ Ошибка маршрутизации тренировок: {we}")
 
     # ЭТАП 4: Нормализация
-    normalized_data = normalize_plan_for_frontend(final_plan, profile.budget_level)
+    normalized_data = normalize_plan_for_frontend(final_plan, profile.budget_level, profile=profile)
     
     # ЭТАП 5: Генерация Cheat Sheet (Zero-Knowledge Caching)
     import hashlib
